@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+
+
+<style id='less'>
+:root {
+    --scale: 1;
+}
+</style>
+
+<style>
+
+.div1 {
+    position: absolute;
+    display:inline-block;
+    border: 1px solid black;
+    background-color: yellow;
+    padding: 5px;
+    text-align: center;
+    
+}
+</style>
+</head>
+<body >
+
+<h1>The calc() Function</h1>
+
+<p>Create a div that stretches across the window, with a 50px gap between both sides of the div and the edges of the window:</p>
+
+<div class="div1"  style='width: calc(var(--scale) * 100px);left:calc(var(--scale) * 0px);'>Some text... e</div>
+
+
+<div class="div1" style='width: calc(var(--scale) * 100px);left:calc(var(--scale) * 150px);'>Some text... Here</div>
+
+<div class="div1" style='width: calc(var(--scale) * 100px);left:calc(var(--scale) * 250px);'>Some text... Here</div>
+
+<div class="div1" style='width: calc(var(--scale) * 100px);left:calc(var(--scale) * 350px);'>Some text... Here</div>
+
+<div class="div1" style='width: calc(var(--scale) * 100px);left:calc(var(--scale) * 450px);'>Some text... Here</div>
+
+<div class="div1" style='width: calc(var(--scale) * 100px);left:calc(var(--scale) * 550px);'>Some text... Here</div>
+
+<div class="div1" style='width: calc(var(--scale) * 100px);left:calc(var(--scale) * 650px);'>Some text... Here</div>
+
+<div class="div1" style='width: calc(var(--scale) * 100px);left:calc(var(--scale) * 750px);'>Some text... Here</div>
+
+<div class="div1" style='width: calc(var(--scale) * 100px);left:calc(var(--scale) * 850px);'>Some text... Here</div>
+
+<div class="div1" style='width: calc(var(--scale) * 100px);left:calc(var(--scale) * 950px);'>Some text... Here</div>
+
+<div class="div1" style='width: calc(var(--scale) * 100px);left:calc(var(--scale) * 1050px);'>Some text... Here</div>
+
+<div class="div1" style='width: calc(var(--scale) * 100px);left:calc(var(--scale) * 1150px);'>Some text... Here</div>
+
+</body>
+
+<script>
+	function _(df){
+    return document.getElementById(df);
+    }
+
+</script>
+</html>

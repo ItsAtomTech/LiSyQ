@@ -1,0 +1,17 @@
+C:\Users\UIser\AppData\Local\Temporary Projects\WindowsApp1\bin\Debug\WindowsApp1.exe.config
+C:\Users\UIser\AppData\Local\Temporary Projects\WindowsApp1\bin\Debug\WindowsApp1.exe
+C:\Users\UIser\AppData\Local\Temporary Projects\WindowsApp1\bin\Debug\WindowsApp1.pdb
+C:\Users\UIser\AppData\Local\Temporary Projects\WindowsApp1\bin\Debug\WindowsApp1.xml
+C:\Users\UIser\AppData\Local\Temporary Projects\WindowsApp1\bin\Debug\Interop.WMPLib.dll
+C:\Users\UIser\AppData\Local\Temporary Projects\WindowsApp1\bin\Debug\AxInterop.WMPLib.dll
+C:\Users\UIser\AppData\Local\Temporary Projects\WindowsApp1\obj\Debug\WindowsApp1.vbprojAssemblyReference.cache
+C:\Users\UIser\AppData\Local\Temporary Projects\WindowsApp1\obj\Debug\Interop.WMPLib.dll
+C:\Users\UIser\AppData\Local\Temporary Projects\WindowsApp1\obj\Debug\AxInterop.WMPLib.dll
+C:\Users\UIser\AppData\Local\Temporary Projects\WindowsApp1\obj\Debug\WindowsApp1.vbproj.ResolveComReference.cache
+C:\Users\UIser\AppData\Local\Temporary Projects\WindowsApp1\obj\Debug\WindowsApp1.Form1.resources
+C:\Users\UIser\AppData\Local\Temporary Projects\WindowsApp1\obj\Debug\WindowsApp1.Resources.resources
+C:\Users\UIser\AppData\Local\Temporary Projects\WindowsApp1\obj\Debug\WindowsApp1.vbproj.GenerateResource.cache
+C:\Users\UIser\AppData\Local\Temporary Projects\WindowsApp1\obj\Debug\WindowsApp1.vbproj.CoreCompileInputs.cache
+C:\Users\UIser\AppData\Local\Temporary Projects\WindowsApp1\obj\Debug\WindowsApp1.exe
+C:\Users\UIser\AppData\Local\Temporary Projects\WindowsApp1\obj\Debug\WindowsApp1.xml
+C:\Users\UIser\AppData\Local\Temporary Projects\WindowsApp1\obj\Debug\WindowsApp1.pdb
