@@ -182,14 +182,14 @@ function push_data(){
 
 var ds;
 
-function see_event(){
+function see_event(){//clicked on track ?
 	var scrolled = _("timeline_container").scrollLeft;
 	// console.log(event.clientX+scrolled);
 	if((click_on_track == true && event.shiftKey == true && event.buttons == 1) || playing == false){
 	
 		
-		play_head(event.clientX+scrolled - 2);
-		time = (event.clientX - 10)+scrolled;
+		play_head((event.clientX+scrolled - 2 ) / zoom_scale);
+		time = ((event.clientX - 10)+scrolled ) / zoom_scale;
 		_("thisvid").currentTime = ((time-2)/33.333);
 		player_seeked = true;
 		
@@ -475,8 +475,11 @@ function add_sub_tracks(data,com,mode,sub_index){
 			sub_track.classList.add("sub_track");
 			sub_track.addEventListener("mousedown",set_track_node);
 			sub_track.setAttribute("content_id", content_id);
-			sub_track.style.left = (block_contents.start_at)+"px";
-			sub_track.style.width = block_contents.content_length+"px";
+			
+			sub_track.style.left = "calc(var(--scale) *"+ (block_contents.start_at)+"px)";
+			sub_track.style.width = "calc(var(--scale) *"+ block_contents.content_length+"px)";
+			
+			
 			sub_track.style.backgroundColor = block_contents.color+"50";
 			sub_track.addEventListener("contextmenu", function (e){}, false);
 		
@@ -535,11 +538,11 @@ function modify_sub_track(data,com){
 
 	selected_content.getElementsByClassName("content_details_inline")[0].innerHTML = data.name;
 	
-	selected_content.style.width = tm_data.content_length + "px";
+	selected_content.style.width = "calc(var(--scale) *" + tm_data.content_length + "px)";
 	selected_content.style.backgroundColor = tm_data.color + "50";
 	
 	if(com != undefined){
-		selected_content.style.left = data.start_at + "px";
+		selected_content.style.left = "calc(var(--scale) *" + data.start_at + "px)";
 		tm_data.start_at = data.start_at;
 	
 	}
@@ -603,7 +606,7 @@ function set_track_node(){//gets the content block selected
 	click_on_content(selected_content.getAttribute("content_id"));
 	
 	if(this.style.left.length > 0){
-		origin_sub = this.style.left.replace(/px/gi, "");
+		origin_sub = this.style.left.replace(/[^\d.]/gi, "");
 		ds = this;
 	}else{
 		origin_sub = this.getBoundingClientRect().x;
@@ -637,14 +640,14 @@ function reposition_subtrack(){
 		var scrolled_c = _("timeline_container").scrollLeft;
 		
 		var changes = (current_position - initial_pos_sub_track[0]);	
-		var calculated_position = parseInt(origin_sub)+(changes*move_sensitivity);
+		var calculated_position = (parseInt(origin_sub)+(changes) / zoom_scale);
 		var content_ids = the_element.getAttribute("content_id");
 		
 		if(calculated_position <= 0){		
 			content_id_block.style.left = 0;
 			
 		}else{
-			content_id_block.style.left = calculated_position+"px";
+			content_id_block.style.left = "calc(var(--scale) *" + calculated_position+"px)";
 		}
 
 		var content_lengths = timeline_data[selected_track_index].sub_tracks[content_ids].content_length;
@@ -748,7 +751,7 @@ if(playing == true){
 						// console.log("Track #"+ tr +", content block #"+ str +" : "+ time + "\n content_index: " + (time - subtracks.start_at));
 
 						
-						to_output(ch_track,port_chan,timeline_data[tr].sub_tracks[str].data[(timeFixed -  time_delay) - subtracks.start_at],timeline_data[tr].default_value);
+						to_output(ch_track,port_chan,timeline_data[tr].sub_tracks[str].data[parseInt((timeFixed -  time_delay) - subtracks.start_at)],timeline_data[tr].default_value);
 						
 						not_empty = true;
 
@@ -969,9 +972,9 @@ var pl = _("playhead");
 var time_ex;
 
 function play_head(time){
-		time_ex = time;
+		time_ex = time * zoom_scale;
 	
-	if(time <= _("timeline_container").scrollWidth){
+	if(time <= _("timeline_container").scrollWidth / zoom_scale){
 		//pl.style.left = (time)+"px";
 		//pl.style.transform =  "translateX("+time+"px)";		
 		window.requestAnimationFrame(pl_trans);
@@ -1005,19 +1008,19 @@ function jump_to_time(){
 	var my_selected_track_ = document.getElementsByClassName("track_con")[selected_track_index];
 	
 	if (get_size(my_selected_track_)[0] < time_jump){
-		my_selected_track_.style.width = time_jump+"px";
+		my_selected_track_.style.width = (zoom_scale * time_jump)+"px";
 		gen_ruler();
 	};
 	
 	//If following, play at this time
 	if(follow_playhead){
 		time = time_jump;
-		play_head(time_jump+10);
+		play_head(time_jump+10 / zoom_scale);
 	}
 	
 	
 	//scroll time to view
-	_("timeline_container").scrollTo(time_jump - (_("timeline_container").getBoundingClientRect().width * 0.5),_("timeline_container").scrollTop);
+	_("timeline_container").scrollTo(((time_jump * zoom_scale) - (_("timeline_container").getBoundingClientRect().width * 0.5)),_("timeline_container").scrollTop);
 	
 	
 	destroy_dia();
@@ -1118,7 +1121,10 @@ var prev_wi = 0;
 
 function gen_ruler(){
 	
-	var width_ref = parseInt((_("timeline_container").scrollWidth)/(1000/30));
+	var width_ref = parseInt((_("timeline_container").scrollWidth)/((1000/30) ));
+	
+	
+	
 	var  rv = _("ruler_view");
 	     rv.addEventListener("mousedown",click_on_ruler);
 	
@@ -1180,8 +1186,8 @@ function move_ruler(){
 function click_on_ruler(){
 	
 	if(follow_playhead == true){
-		play_head(event.clientX - 2 + _("timeline_container").scrollLeft);
-		time = event.clientX - 10 + _("timeline_container").scrollLeft;
+		play_head((event.clientX - 2 + _("timeline_container").scrollLeft) / zoom_scale);
+		time = (event.clientX - 10 + _("timeline_container").scrollLeft) / zoom_scale;
 	
 		_("thisvid").currentTime = ((time-2)/33.333);
 		player_seeked = true;
@@ -1189,11 +1195,11 @@ function click_on_ruler(){
 		play_on_current();
 	
 	}else if(follow_playhead == false && playing == false){
-		play_head(event.clientX - 2 + _("timeline_container").scrollLeft);
-		time = event.clientX - 10 + _("timeline_container").scrollLeft;
+		play_head((event.clientX - 2 + _("timeline_container").scrollLeft)/ zoom_scale);
+		time = (event.clientX - 10 + _("timeline_container").scrollLeft ) / zoom_scale;
 	
 		
-		_("thisvid").currentTime = ((time-2)/33.333);
+		_("thisvid").currentTime = (((time-2)/33.333));
 		player_seeked = true;
 		
 		play_on_current();
@@ -1821,7 +1827,7 @@ function rails(){
 	
 		// console.log("currentTime: "+ time +"\nvid time: "+ parseInt(this_vid.currentTime * 33.333));
 	
-		if(time+10 <= _("timeline_container").scrollWidth){
+		if(time+10 <= (_("timeline_container").scrollWidth) / zoom_scale){
 						
 			if(counter_for_limit > limitThreshold){	
 			
@@ -1879,7 +1885,7 @@ function rails(){
 	}
 
 		
-	if(time+10 >= _("timeline_container").scrollWidth - 3){
+	if(time+10 >= (_("timeline_container").scrollWidth - 3) / zoom_scale){
 		
 		//console.log("Ended at: "+ parseInt((time/33.33))+"s" );
 		
@@ -1915,12 +1921,12 @@ function scroll_timeline(){
 				
 				limitThreshold = 2;
 				
-				if((_("timeline_container").scrollLeft + get_size(_("timeline_container"))[0]) <= time+10){
+				if((_("timeline_container").scrollLeft + get_size(_("timeline_container"))[0]) <= (time+10) * zoom_scale){
 					
 					_("timeline_container").scrollTo(time, _("timeline_container").scrollTop);
 					
 				}else if(_("playhead").getBoundingClientRect().left < 0 && follow_playhead == true){
-					_("timeline_container").scrollTo(time, _("timeline_container").scrollTop);
+					_("timeline_container").scrollTo(time * zoom_scale, _("timeline_container").scrollTop);
 				}
 				
 			}else{
@@ -1931,7 +1937,7 @@ function scroll_timeline(){
 					return;
 				}
 				
-				_("timeline_container").scrollTo(time-(_("timeline_container").getBoundingClientRect().width * 0.5),_("timeline_container").scrollTop);
+				_("timeline_container").scrollTo((time * zoom_scale)-(_("timeline_container").getBoundingClientRect().width * 0.5),_("timeline_container").scrollTop);
 				
 				if(_("timeline_container").scrollLeft != prevScrollLeft){//adjust scroll Interval if not scrolling horizontally			
 					limitThreshold = 3;

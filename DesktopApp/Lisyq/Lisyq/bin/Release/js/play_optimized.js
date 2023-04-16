@@ -110,7 +110,7 @@ not_empty = false;
 						
 						// console.log("Track #"+ tr +", content block #"+ str +" : "+ time + "\n content_index: " + (time - subtracks.start_at));
 						
-	to_consolidator(ch_track,port_chan,timeline_data[tr].sub_tracks[str].data[time_index - subtracks.start_at],timeline_data[tr].default_value, time_index);
+	to_consolidator(ch_track,port_chan,timeline_data[tr].sub_tracks[str].data[parseInt(time_index - subtracks.start_at)],timeline_data[tr].default_value, time_index);
 						
 						not_empty = true;
 

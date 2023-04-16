@@ -1,3 +1,7 @@
-2023/02/16-12:40:34.684 181c Reusing MANIFEST D:\Projects\Windows\LiSyQ\DesktopApp\Lisyq\Lisyq\bin\Release\Lisyq.exe.WebView2\EBWebView\Default\IndexedDB\devtools_devtools_0.indexeddb.leveldb/MANIFEST-000001
-2023/02/16-12:40:34.708 181c Recovering log #4
-2023/02/16-12:40:34.708 181c Reusing old log D:\Projects\Windows\LiSyQ\DesktopApp\Lisyq\Lisyq\bin\Release\Lisyq.exe.WebView2\EBWebView\Default\IndexedDB\devtools_devtools_0.indexeddb.leveldb/000004.log 
+2023/03/24-15:32:35.973 1154 Reusing MANIFEST D:\Projects\Windows\LiSyQ\DesktopApp\Lisyq\Lisyq\bin\Release\Lisyq.exe.WebView2\EBWebView\Default\IndexedDB\devtools_devtools_0.indexeddb.leveldb/MANIFEST-000002
+2023/03/24-15:32:35.993 1154 Recovering log #3
+2023/03/24-15:32:35.993 1154 Reusing old log D:\Projects\Windows\LiSyQ\DesktopApp\Lisyq\Lisyq\bin\Release\Lisyq.exe.WebView2\EBWebView\Default\IndexedDB\devtools_devtools_0.indexeddb.leveldb/000003.log 
+2023/03/24-15:33:16.368 18c8 Level-0 table #6: started
+2023/03/24-15:33:16.407 18c8 Level-0 table #6: 1027 bytes OK
+2023/03/24-15:33:16.473 18c8 Delete type=0 #3
+2023/03/24-15:33:16.474 18c8 Manual compaction at level-0 from (begin) .. (end); will stop at (end)

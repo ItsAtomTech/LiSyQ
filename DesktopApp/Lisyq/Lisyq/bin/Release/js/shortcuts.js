@@ -10,7 +10,7 @@ var editing_shortcuts = true;
 function shortcuts(e){
 	
 		
-		//console.log(e.key)
+		// console.log(e)
 		
 		
 	if(e.code == "KeyS" && e.ctrlKey == true){
@@ -139,6 +139,25 @@ function shortcuts(e){
 			edit_track_option('port');
 			
 		}
+		
+		
+		//Timeline scaling
+		
+		if(e.code == "Equal" && e.shiftKey == true){
+	
+			zoomTimeline("+");
+			
+		}
+		
+		
+		if(e.code == "Minus" && e.shiftKey == true){
+			
+			zoomTimeline("-");
+	
+			
+		}
+		
+		
 	
 	}
 	

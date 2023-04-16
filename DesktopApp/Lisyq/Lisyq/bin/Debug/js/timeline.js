@@ -966,7 +966,7 @@ function set_delay(val){
 
 
 var pl = _("playhead");
-var time_ex;
+var time_ex*zoom_scale;
 
 function play_head(time){
 		time_ex = time;

@@ -105,7 +105,7 @@ body{
 	/* border:solid yellow 1px; */
 	
 	background-image:url(../images/strip.png);
-	background-size:33.3333px auto;
+	background-size:calc(var(--scale)*33.3333px) auto;
 
 	background-clip:border-box;
 	background-position:-1px 0px;
@@ -144,6 +144,11 @@ body{
 .track_not_in_view .sub_track{
 	display:none;
 	opacity:0.1;
+	
+}
+
+.track_not_in_view{
+	visibility:hidden;
 	
 }
 

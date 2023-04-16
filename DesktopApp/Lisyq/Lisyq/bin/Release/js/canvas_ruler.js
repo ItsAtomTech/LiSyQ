@@ -119,18 +119,24 @@ function paint_ruler() {
   ctx.beginPath();
   ctx.moveTo(0, rulerHeight - 0.5);
   ctx.lineTo(ctx.canvas.width, rulerHeight - 0.5);
+  
+  scaledFactor = scaleFactor * zoom_scale;//zoom_scale is located on timeline js
 
   addFullScaleLineX({
     ctx: ctx,
     addUnitScaleLineX: addUnitScaleLineX,
-    startX: calculateStartX(zeroScaleLinePosX, scaleFactor),
+    startX: calculateStartX(zeroScaleLinePosX, scaledFactor),
     endX: rulerWidth,
-    scaleFactor: scaleFactor,
+    scaleFactor: scaledFactor,
     rulerUnit: 100,
-    startDialNumber: calculateStartDialNumber(zeroScaleLinePosX, scaleFactor)
+    startDialNumber: calculateStartDialNumber(zeroScaleLinePosX, scaledFactor)
   });
 
   ctx.stroke();
+  
+  
+  
+  
 }
 
 function clear_ruler() {
@@ -171,7 +177,7 @@ function subtract(out, a, b) {
 // var ctx = setupCanvas(canvas);
 var ctx = canvas.getContext("2d");
 var scaleDelta = 0;
-var offsetDelta = 33;
+var offsetDelta = 66;
 
 var zeroScaleLinePosX = -0;
 let scaleFactor = 0.3333;
