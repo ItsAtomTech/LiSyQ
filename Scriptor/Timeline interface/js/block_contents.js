@@ -9,6 +9,14 @@ var plugins = [{
 	"thumbnail_src": "ambient/images/amb_v1.png",
 	"default_value": "000000",
 	"regenerator_src": "plugins/ambient/js/generator.js"
+},{
+	"plugin_name": "Aipexil Plugin v0.1",
+	"plugin_src": "aipexil/aipexil.html",
+	"type_name": "aipexil",
+	"thumbnail_src": "aipexil/images/rgb_plug_square.jpg",
+	"default_value": "0",
+	"regenerator_src": "plugins/aipexil/js/generator.js",
+	"regen_function": "regen_f3e9cc2243ff902c80b908829745750d",
 }];
 
 
@@ -215,7 +223,17 @@ function generate_plugins(pl_data,id){
 		regen_script.src = pl_data.regenerator_src;
 		regen_script.id = pl_data.type_name+id;
 		document.head.appendChild(regen_script);
-		regenerators.push(pl_data.type_name+"_main");
+		
+		if(pl_data.regen_function == undefined || pl_data.regen_function == null){
+			regenerators.push(pl_data.type_name+"_main");
+			console.log("No such regen specified for "+ pl_data.plugin_name +", Uses default");
+		}else{
+			regenerators.push(pl_data.regen_function);
+			
+		}
+		
+		
+		
 	
 }
 
@@ -266,6 +284,7 @@ function t_s(){
 function find_plug(nm){
 	
 		
+		
 	for(plg = 0; plg < plugins.length;plg++){
 		
 		
@@ -273,14 +292,14 @@ function find_plug(nm){
 			
 			return plg;
 			
-		}else{
-			return undefined;
 		}
 		
 		
 		
 	}
 	
+	//return undefined if not found at all
+	return undefined;
 	
 }
 
@@ -530,6 +549,8 @@ function set_coords_context(x,y){//This function sets the X,Y coords for Native 
 
 function regen_from_plugin(plug_id,data){
 
+	console.log(plug_id);
+	console.log(data)
 	return window[regenerators[plug_id]].call(null, JSON.stringify(data));
 
 }

@@ -1,15 +1,42 @@
 #include <FastLED.h>
 #include "modules/allaboard.cpp"
+
+
+
+String fxbin; //Cached store of string values from lisyq channel
+
+
 #include "modules/lisyqRecv.cpp"
 
-#define LED_PIN     D1
+
+
+#define LED_PIN     D3
+#define LED_PIN_2 	D5
+#define LED_PIN_3 	D6
+
+
+// #define UP_BUTTON D5
+// #define SELECT_BUTTON D6
+// #define DOWN_BUTTON D7
+
+
+#define NUM_LEDS_MAX 1000
 #define NUM_LEDS    24
 #define BRIGHTNESS  128
 #define LED_TYPE    WS2811
 #define COLOR_ORDER GRB
-CRGB leds[NUM_LEDS];
+CRGB leds[3][NUM_LEDS_MAX];
 
-#define UPDATES_PER_SECOND 100
+
+#define UPDATES_PER_SECOND 30
+
+
+//Some more effects externally
+#include "modules/pacifica_waves.cpp"
+#include "modules/fire2012.cpp"
+
+
+
 
 // This example shows several ways to set up and use 'palettes' of colors
 // with FastLED.
@@ -33,43 +60,54 @@ CRGB leds[NUM_LEDS];
 CRGBPalette16 currentPalette;
 TBlendType    currentBlending;
 
+
+
+
+
 extern CRGBPalette16 myRedWhiteBluePalette;
 extern const TProgmemPalette16 myRedWhiteBluePalette_p PROGMEM;
+
+String f = "";
+
 
 
 void setup() {
     delay( 3000 ); // power-up safety delay
-    FastLED.addLeds<LED_TYPE, LED_PIN, COLOR_ORDER>(leds, NUM_LEDS).setCorrection( TypicalLEDStrip );
+    FastLED.addLeds<LED_TYPE, LED_PIN, COLOR_ORDER>(leds[0], NUM_LEDS).setCorrection( TypicalLEDStrip );
+    FastLED.addLeds<LED_TYPE, LED_PIN_2, COLOR_ORDER>(leds[1], NUM_LEDS).setCorrection( TypicalLEDStrip );
+    FastLED.addLeds<LED_TYPE, LED_PIN_3, COLOR_ORDER>(leds[2], NUM_LEDS).setCorrection( TypicalLEDStrip );
     FastLED.setBrightness(  BRIGHTNESS );
     
     Serial.begin(115200);
-    
+
+    gPal = HeatColors_p;
+
     currentPalette = RainbowColors_p;
     currentBlending = LINEARBLEND;
 }
 
+unsigned long prevMils = 0;
 
-void loop(){
-    recvWithEndMarker();
-    showNewData();
+
+//running color effects
+void rainbowFx(int index, int pal_index, int speed, int brightness){
+
+      ChangePalettePeriodically(pal_index);
+      
+      static uint8_t startIndex[3] = {0,0,0};
+      startIndex[index] = startIndex[index] + map(speed,0,255, -30.0, 30.0) ; /* motion speed */
+
+      FillLEDsFromPaletteColors( startIndex[index], index, brightness);
   
-    ChangePalettePeriodically();
-    
-    static uint8_t startIndex = 0;
-    startIndex = startIndex + 1; /* motion speed */
-    
-    FillLEDsFromPaletteColors( startIndex);
-    
-    FastLED.show();
-    FastLED.delay(1000 / UPDATES_PER_SECOND);
 }
 
-void FillLEDsFromPaletteColors( uint8_t colorIndex)
+
+
+void FillLEDsFromPaletteColors( uint8_t colorIndex, int index, uint8_t brightness)
 {
-    uint8_t brightness = 255;
     
     for( int i = 0; i < NUM_LEDS; ++i) {
-        leds[i] = ColorFromPalette( currentPalette, colorIndex, brightness, currentBlending);
+        leds[index][i] = ColorFromPalette( currentPalette, colorIndex, brightness, currentBlending);
         colorIndex += 3;
     }
 }
@@ -83,25 +121,21 @@ void FillLEDsFromPaletteColors( uint8_t colorIndex)
 // Additionally, you can manually define your own color palettes, or you can write
 // code that creates color palettes on the fly.  All are shown here.
 
-void ChangePalettePeriodically()
+void ChangePalettePeriodically(int fx_index)
 {
-    uint8_t secondHand = (millis() / 1000) % 60;
-    static uint8_t lastSecond = 99;
     
-    if( lastSecond != secondHand) {
-        lastSecond = secondHand;
-        if( secondHand ==  0)  { currentPalette = RainbowColors_p;         currentBlending = LINEARBLEND; }
-        if( secondHand == 10)  { currentPalette = RainbowStripeColors_p;   currentBlending = NOBLEND;  }
-        if( secondHand == 15)  { currentPalette = RainbowStripeColors_p;   currentBlending = LINEARBLEND; }
-        if( secondHand == 20)  { SetupPurpleAndGreenPalette();             currentBlending = LINEARBLEND; }
-        if( secondHand == 25)  { SetupTotallyRandomPalette();              currentBlending = LINEARBLEND; }
-        if( secondHand == 30)  { SetupBlackAndWhiteStripedPalette();       currentBlending = NOBLEND; }
-        if( secondHand == 35)  { SetupBlackAndWhiteStripedPalette();       currentBlending = LINEARBLEND; }
-        if( secondHand == 40)  { currentPalette = CloudColors_p;           currentBlending = LINEARBLEND; }
-        if( secondHand == 45)  { currentPalette = PartyColors_p;           currentBlending = LINEARBLEND; }
-        if( secondHand == 50)  { currentPalette = myRedWhiteBluePalette_p; currentBlending = NOBLEND;  }
-        if( secondHand == 55)  { currentPalette = myRedWhiteBluePalette_p; currentBlending = LINEARBLEND; }
-    }
+        if( fx_index ==  0)  { currentPalette = RainbowColors_p;         currentBlending = LINEARBLEND; }
+        if( fx_index == 1)  { currentPalette = RainbowStripeColors_p;   currentBlending = NOBLEND;  }
+        if( fx_index == 2)  { currentPalette = RainbowStripeColors_p;   currentBlending = LINEARBLEND; }
+        if( fx_index == 3)  { SetupPurpleAndGreenPalette();             currentBlending = LINEARBLEND; }
+        if( fx_index == 4)  { SetupTotallyRandomPalette();              currentBlending = LINEARBLEND; }
+        if( fx_index == 5)  { SetupBlackAndWhiteStripedPalette();       currentBlending = NOBLEND; }
+        if( fx_index == 6)  { SetupBlackAndWhiteStripedPalette();       currentBlending = LINEARBLEND; }
+        if( fx_index == 7)  { currentPalette = CloudColors_p;           currentBlending = LINEARBLEND; }
+        if( fx_index == 8)  { currentPalette = PartyColors_p;           currentBlending = LINEARBLEND; }
+        if( fx_index == 9)  { currentPalette = myRedWhiteBluePalette_p; currentBlending = NOBLEND;  }
+        if( fx_index == 10)  { currentPalette = myRedWhiteBluePalette_p; currentBlending = LINEARBLEND; }
+    
 }
 
 // This function fills the palette with totally random colors.
@@ -168,6 +202,58 @@ const TProgmemPalette16 myRedWhiteBluePalette_p PROGMEM =
     CRGB::Black,
     CRGB::Black
 };
+
+
+
+#include "modules/neocommands.cpp"
+neocommands cmd;
+
+
+void loop(){
+    recvWithEndMarker();
+    showNewData();
+
+    if(millis() - prevMils >= UPDATES_PER_SECOND){  
+      prevMils = millis();  
+ 
+      
+
+      // Serial.println(channel_cache_1);  
+      // Serial.println(channel_cache_2);  
+      // Serial.println(channel_cache_3);  
+
+      
+      for(int ch = 0; ch < channel_size; ch++){
+
+        cmd.parseCommand(fxbin, ch);   
+      
+      }
+
+//helps on better handling of fire2012 across channels;
+  if(fireFxCalled){
+    random16_add_entropy( random());
+    fireFxCalled = false;
+  }
+      
+   
+      
+      
+      //FillLEDsFromPaletteColors( startIndex, 1);
+
+      // rainbowFx(0);
+      
+      // pacifica_loop(1);
+
+      // fire2012(2);
+
+     
+      
+      FastLED.show();
+      //FastLED.delay(1000 / UPDATES_PER_SECOND);
+
+    }
+
+}
 
 
 

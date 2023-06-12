@@ -1,7 +1,3 @@
-2023/03/29-20:50:13.183 13ac Recovering log #4
-2023/03/29-20:50:13.292 13ac Level-0 table #6: started
-2023/03/29-20:50:13.510 13ac Level-0 table #6: 133996 bytes OK
-2023/03/29-20:50:13.583 13ac Level-0 table #7: started
-2023/03/29-20:50:13.828 13ac Level-0 table #7: 133866 bytes OK
-2023/03/29-20:50:14.929 13ac Delete type=0 #4
-2023/03/29-20:50:14.930 13ac Delete type=3 #1
+2023/05/19-22:04:23.417 19ac Reusing MANIFEST D:\Projects\Windows\LiSyQ\DesktopApp\Lisyq\Lisyq\bin\Release\Lisyq.exe.WebView2\EBWebView\Default\EntityExtractionAssetStore.db/MANIFEST-000005
+2023/05/19-22:04:23.563 19ac Recovering log #11
+2023/05/19-22:04:23.616 19ac Reusing old log D:\Projects\Windows\LiSyQ\DesktopApp\Lisyq\Lisyq\bin\Release\Lisyq.exe.WebView2\EBWebView\Default\EntityExtractionAssetStore.db/000011.log 

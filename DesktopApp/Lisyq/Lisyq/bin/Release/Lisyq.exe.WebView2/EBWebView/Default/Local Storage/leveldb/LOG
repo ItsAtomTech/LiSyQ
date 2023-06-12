@@ -1,3 +1,7 @@
-2023/04/16-18:54:18.652 1ad4 Reusing MANIFEST D:\Projects\Windows\LiSyQ\DesktopApp\Lisyq\Lisyq\bin\Release\Lisyq.exe.WebView2\EBWebView\Default\Local Storage\leveldb/MANIFEST-000078
-2023/04/16-18:54:18.694 1ad4 Recovering log #80
-2023/04/16-18:54:18.694 1ad4 Reusing old log D:\Projects\Windows\LiSyQ\DesktopApp\Lisyq\Lisyq\bin\Release\Lisyq.exe.WebView2\EBWebView\Default\Local Storage\leveldb/000080.log 
+2023/06/12-18:26:58.677 16a0 Reusing MANIFEST D:\Projects\Windows\LiSyQ\DesktopApp\Lisyq\Lisyq\bin\Release\Lisyq.exe.WebView2\EBWebView\Default\Local Storage\leveldb/MANIFEST-000078
+2023/06/12-18:26:58.705 16a0 Recovering log #234
+2023/06/12-18:26:58.707 16a0 Reusing old log D:\Projects\Windows\LiSyQ\DesktopApp\Lisyq\Lisyq\bin\Release\Lisyq.exe.WebView2\EBWebView\Default\Local Storage\leveldb/000234.log 
+2023/06/12-18:26:58.721 16a0 Delete type=2 #184
+2023/06/12-18:26:58.721 16a0 Delete type=2 #186
+2023/06/12-18:26:58.721 16a0 Delete type=2 #188
+2023/06/12-18:26:58.721 16a0 Delete type=0 #189

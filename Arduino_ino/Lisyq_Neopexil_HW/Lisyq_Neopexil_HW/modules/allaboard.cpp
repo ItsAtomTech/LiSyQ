@@ -17,7 +17,7 @@
 #define D3 0
 
 //GPIO2 U1TXD
-#define D4 4
+#define D4 2
 
 //GPI014 MTMS HSPI CLK
 #define D5 14

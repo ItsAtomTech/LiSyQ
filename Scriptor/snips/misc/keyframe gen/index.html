@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html> 
+<head> 
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, user-scalable=0">
+	<!-- <link rel="stylesheet" href="font-awesome/css/solid.min.css"> -->
+	<!-- <link rel="stylesheet" href="font-awesome/css/fontawesome.min.css"> -->
+
+ </head>
+ <body class='primary_color'>
+
+	
+	<div class="keyframe_container">
+	<label>Time length</label>
+	<input type="number" oninput="change_time(this)" id="time_val"><br>
+	
+	
+	<label>Start at:</label>
+	<input type="number" id="time_start"><br>
+	<label>Start end:</label>
+	<input type="number" id="time_end">
+	
+	
+	<select id="fx">
+	<option value="fx:fire:f1">Effect 1</option>
+	<option value="fx:ocean:f1">Effect 2</option>
+	</select><br>
+	
+	<button onclick="add_keyframe()">Add to Keyframes</button>
+	
+	
+
+	</div>
+
+
+
+
+
+ </body>
+
+
+ <script src="js/generator.js"  ></script>
+ <script src="js/interface.js"  ></script>
+ </html>

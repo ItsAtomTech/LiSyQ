@@ -106,7 +106,7 @@ Public Class Main
             For Each strg In arrayLists
 
                 Try
-                    'Cports.Ports(pchd).WriteTimeout = 300
+                    Cports.Ports(pchd).WriteTimeout = 34
                     'Cports.Ports(pchd).WriteLine(strg)
 
                     Dim Df = Cports.Ports(pchd).BytesToWrite
@@ -114,12 +114,11 @@ Public Class Main
                     If Df <= 1 Or strg = "" Or strg = " " Then
                         Dim ParObject As Object = {pchd, strg}
                         Dim Th = New System.Threading.Thread(New Threading.ThreadStart(Sub() Cports.SendToCOM(ParObject)))
-                        Th.Priority = Threading.ThreadPriority.Lowest
+                        Th.Priority = Threading.ThreadPriority.Normal
+
                         Th.IsBackground = True
                         Th.Start()
                     End If
-
-
 
 
                 Catch ex As Exception

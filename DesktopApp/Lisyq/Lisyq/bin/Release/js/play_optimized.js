@@ -22,7 +22,7 @@ function scanOptimized(){
 	
 	
 	
-	for(i = 0;i <=  total_time;i++){
+	for(i = 0;i <=  parseInt(total_time);i++){
 		
 		scan_to_optimize(i);
 		
