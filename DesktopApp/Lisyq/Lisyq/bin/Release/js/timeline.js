@@ -607,6 +607,7 @@ function set_track_node(){//gets the content block selected
 		//if user clicks on not selected content, remove all selections
 		if(selected_contents.indexOf(this) <= -1){
 			revoke_selections("force");
+			revoke_selections("force");
 		}
 		
 		
@@ -1810,17 +1811,21 @@ function paste_content(){
 				
 				let this_track = document.querySelector('[tracks_id="'+selected_track_index+'"]').querySelector('[content_id="'+selected_contents_indexes[extId]+'"]')
 				
-				selected_contents[extId] = decople_data(this_track);
+				
+				//seems like decopling produces a bug
+				//selected_contents[extId] = decople_data(this_track);
+
+				selected_contents[extId] = this_track;
 				
 				extId++;
 		}
 		
-		console.log(selected_contents_indexes);
+		// console.log(selected_contents_indexes);
 		
 				
 		prev_content = null;
 		
-		console.log(pasting_copies);
+		// console.log(pasting_copies);
 		
 		push_undo("subtrack", "add", selected_track_indexes,decople_data(pasting_copies), selected_contents_indexes);
 	

@@ -9,6 +9,14 @@ var plugins = [{
 	"thumbnail_src": "ambient/images/amb_v1.png",
 	"default_value": "000000",
 	"regenerator_src": "plugins/ambient/js/generator.js"
+},{
+	"plugin_name": "Aipexil Plugin v0.1",
+	"plugin_src": "aipexil/aipexil.html",
+	"type_name": "aipexil",
+	"thumbnail_src": "aipexil/images/rgb_plug_square.jpg",
+	"default_value": "0",
+	"regenerator_src": "plugins/aipexil/js/generator.js",
+	"regen_function": "regen_f3e9cc2243ff902c80b908829745750d",
 }];
 
 
@@ -215,7 +223,17 @@ function generate_plugins(pl_data,id){
 		regen_script.src = pl_data.regenerator_src;
 		regen_script.id = pl_data.type_name+id;
 		document.head.appendChild(regen_script);
-		regenerators.push(pl_data.type_name+"_main");
+		
+		if(pl_data.regen_function == undefined || pl_data.regen_function == null){
+			regenerators.push(pl_data.type_name+"_main");
+			console.log("No such regen specified for "+ pl_data.plugin_name +", this plugin Uses default regen function");
+		}else{
+			regenerators.push(pl_data.regen_function);
+			
+		}
+		
+		
+		
 	
 }
 
@@ -266,6 +284,7 @@ function t_s(){
 function find_plug(nm){
 	
 		
+		
 	for(plg = 0; plg < plugins.length;plg++){
 		
 		
@@ -273,14 +292,14 @@ function find_plug(nm){
 			
 			return plg;
 			
-		}else{
-			return undefined;
 		}
 		
 		
 		
 	}
 	
+	//return undefined if not found at all
+	return undefined;
 	
 }
 
@@ -458,8 +477,26 @@ function add_to_timeline(idf){
 
 //Adding Into Templates from Timeline
 function sendToTimelineTemplates(){
-	if(!selected_content){
+	if(!selected_content && selected_contents.length <= 1){
 		return false;
+	}else if(selected_contents.length > 1){
+		
+		let extID = 0;
+		for(sel of selected_contents){
+			
+				var to_send = timeline_data[selected_track_indexes[extID]].sub_tracks[sel.getAttribute("content_id")];
+	
+			let dataSend = JSON.parse(JSON.stringify(to_send));
+				dataSend.content = dataSend.data;
+			
+				current_mode = "add";
+				add_to_templates(dataSend);
+			
+			extID++;
+		}
+		
+		
+		return;
 	}
 	
 	var to_send = timeline_data[selected_track_index].sub_tracks[selected_content.getAttribute("content_id")];
@@ -530,6 +567,8 @@ function set_coords_context(x,y){//This function sets the X,Y coords for Native 
 
 function regen_from_plugin(plug_id,data){
 
+	console.log(plug_id);
+	console.log(data)
 	return window[regenerators[plug_id]].call(null, JSON.stringify(data));
 
 }

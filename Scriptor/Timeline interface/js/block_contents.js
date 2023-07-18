@@ -477,8 +477,26 @@ function add_to_timeline(idf){
 
 //Adding Into Templates from Timeline
 function sendToTimelineTemplates(){
-	if(!selected_content){
+	if(!selected_content && selected_contents.length <= 1){
 		return false;
+	}else if(selected_contents.length > 1){
+		
+		let extID = 0;
+		for(sel of selected_contents){
+			
+				var to_send = timeline_data[selected_track_indexes[extID]].sub_tracks[sel.getAttribute("content_id")];
+	
+			let dataSend = JSON.parse(JSON.stringify(to_send));
+				dataSend.content = dataSend.data;
+			
+				current_mode = "add";
+				add_to_templates(dataSend);
+			
+			extID++;
+		}
+		
+		
+		return;
 	}
 	
 	var to_send = timeline_data[selected_track_index].sub_tracks[selected_content.getAttribute("content_id")];
