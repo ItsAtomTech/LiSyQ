@@ -226,7 +226,7 @@ function generate_plugins(pl_data,id){
 		
 		if(pl_data.regen_function == undefined || pl_data.regen_function == null){
 			regenerators.push(pl_data.type_name+"_main");
-			console.log("No such regen specified for "+ pl_data.plugin_name +", Uses default");
+			console.log("No such regen specified for "+ pl_data.plugin_name +", this plugin Uses default regen function");
 		}else{
 			regenerators.push(pl_data.regen_function);
 			

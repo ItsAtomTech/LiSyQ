@@ -1,5 +1,7 @@
 //Start of Undo Redo
 	
+//v1.2 - added multiple selections
+	
 var undo_stack = [];
 var redo_stack = [];
 
@@ -75,22 +77,55 @@ function undo(){
 			
 			case "add":
 			
-				selected_track_index = undo_data.data.index;
-				remove_content(undo_data.data.subtrack_index,'undo');
+				if(typeof(undo_data.data.index) == 'object'){
+					let exIndex = 0;
+						
 					
+					let idxfliped = decople_data(undo_data.data.index);
+							idxfliped.reverse();
+					let data_fliped = decople_data(undo_data.data.subtrack_index);
+							data_fliped.reverse();
+							
+					
+					for(idx of idxfliped){
+						selected_track_index = idx;
+						remove_content(data_fliped[exIndex],'undo');
+						exIndex++;
+					}
+					
+					
+			
+				}else{
+					selected_track_index = undo_data.data.index;
+					remove_content(undo_data.data.subtrack_index,'undo');
+				}
 				
 			
 			break;	
 			
 			case "delete":
+		
+				if(typeof(undo_data.data.index) == 'object'){
+					let exIndex = 0;
+					
+					for(idx of undo_data.data.index){
+						selected_track_index = idx;
+													
+						var sub_track_index = undo_data.data.subtrack_index[exIndex];
+						add_sub_tracks(undo_data.data.track_data[[exIndex]],'redo','insert',sub_track_index);
+						
+						
+						exIndex++;
+					}
 			
-				selected_track_index = undo_data.data.index;
+				}else{
+					selected_track_index = undo_data.data.index;
+					
+					var sub_track_index = parseInt(undo_data.data.subtrack_index);
+					
 				
-				var sub_track_index = parseInt(undo_data.data.subtrack_index);
-				
-			
-				add_sub_tracks(undo_data.data.track_data,'undo','insert',sub_track_index);
-				
+					add_sub_tracks(undo_data.data.track_data,'undo','insert',sub_track_index);
+				}
 			
 				
 			
@@ -99,11 +134,34 @@ function undo(){
 				
 			case "edit":
 			
-				selected_track_index = undo_data.data.index;			
+			
+			//Loop through all index if many
+			if(typeof(undo_data.data.index) == 'object'){
+				
+				let exIndex = 0;
+				
+				for(idx of undo_data.data.index){
+					selected_track_index = idx;			
+				var parent_node = parentTrack(idx);			
+					selected_content = parent_node.querySelector('[content_id="'+undo_data.data.subtrack_index[exIndex]+'"]');
+							
+					modify_sub_track(undo_data.data.track_data[exIndex],'undo');
+					
+					exIndex++;
+				}
+				
+				
+			}else{
+				
+					selected_track_index = undo_data.data.index;			
 				var parent_node = parentTrack(undo_data.data.index);			
 					selected_content = parent_node.querySelector('[content_id="'+undo_data.data.subtrack_index+'"]');
 							
 					modify_sub_track(undo_data.data.track_data,'undo');
+				
+			};
+			
+			
 					
 				
 
@@ -160,8 +218,7 @@ function undo(){
 }
 	
 	
-	
-	
+		
 
 
 function redo(){
@@ -179,29 +236,84 @@ function redo(){
 			
 			case "add":
 			
-				selected_track_index = redo_data.data.index;
-				var sub_track_index = redo_data.data.subtrack_index;
-				
-				add_sub_tracks(redo_data.data.track_data,'redo','insert',sub_track_index);
-				
-				
+			
+				if(typeof(redo_data.data.index) == 'object'){
+					let exIndex = 0;
 					
+					for(idx of redo_data.data.index){
+						selected_track_index = idx;
+													
+						var sub_track_index = redo_data.data.subtrack_index[exIndex];
+						add_sub_tracks(redo_data.data.track_data[[exIndex]],'redo','insert',sub_track_index);
+
+						exIndex++;
+													
+					}
+				}else{
+					selected_track_index = redo_data.data.index;
+					var sub_track_index = redo_data.data.subtrack_index;
+					
+					add_sub_tracks(redo_data.data.track_data,'redo','insert',sub_track_index);				
+				}
+			
+								
 				
 			
 			break;	
 			
 			case "delete":
 			
-				selected_track_index = redo_data.data.index;			
-				remove_content(redo_data.data.subtrack_index,'redo');
+			
+				if(typeof(redo_data.data.index) == 'object'){
+					let exIndex = 0;
+					
+						let idxfliped = decople_data(redo_data.data.index);
+							idxfliped.reverse();
+						let data_fliped = decople_data(redo_data.data.subtrack_index);
+							data_fliped.reverse();
+							
+					
+					for(idx of idxfliped){
+						selected_track_index = idx;
+						remove_content(data_fliped[exIndex],'undo');
+						exIndex++;
+					}
+			
+				}else{
+					selected_track_index = redo_data.data.index;
+					remove_content(redo_data.data.subtrack_index,'redo');
+				}
 				
+
 			
 			break;
 			
 				
 			case "edit":
 						
+
+
+						
+			//Loop through all index if many
+			if(typeof(redo_data.data.index) == 'object'){
 				
+				let exIndex = 0;
+				
+				for(idx of redo_data.data.index){
+					selected_track_index = idx;			
+				var parent_node = parentTrack(idx);			
+					selected_content = parent_node.querySelector('[content_id="'+redo_data.data.subtrack_index[exIndex]+'"]');
+							
+					modify_sub_track(redo_data.data.track_data[exIndex],'undo');
+					
+					exIndex++;
+				}
+				
+				
+			}else{
+			
+					
+									
 				selected_track_index = redo_data.data.index;			
 				var parent_node = parentTrack(redo_data.data.index);			
 					selected_content = parent_node.querySelector('[content_id="'+redo_data.data.subtrack_index+'"]');
@@ -209,6 +321,9 @@ function redo(){
 					modify_sub_track(redo_data.data.track_data,'redo');
 				
 				
+			};
+			
+			
 			
 			break;
 			
@@ -291,6 +406,8 @@ function subtrack_undo_format(action_command, index, track,subtrack_index){
 		"subtrack_index": subtrack_index,
 		"track_data": track
 	};
+	
+	// console.log(track_format);
 	
 	return track_format;
 }

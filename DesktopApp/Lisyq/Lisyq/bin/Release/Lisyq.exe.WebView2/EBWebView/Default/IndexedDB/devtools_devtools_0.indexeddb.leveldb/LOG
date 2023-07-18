@@ -1,3 +1,5 @@
-2023/05/20-19:00:14.251 14cc Reusing MANIFEST D:\Projects\Windows\LiSyQ\DesktopApp\Lisyq\Lisyq\bin\Release\Lisyq.exe.WebView2\EBWebView\Default\IndexedDB\devtools_devtools_0.indexeddb.leveldb/MANIFEST-000002
-2023/05/20-19:00:14.274 14cc Recovering log #8
-2023/05/20-19:00:14.274 14cc Reusing old log D:\Projects\Windows\LiSyQ\DesktopApp\Lisyq\Lisyq\bin\Release\Lisyq.exe.WebView2\EBWebView\Default\IndexedDB\devtools_devtools_0.indexeddb.leveldb/000008.log 
+2023/07/18-17:28:25.249 d78 Reusing MANIFEST D:\Projects\Windows\LiSyQ\DesktopApp\Lisyq\Lisyq\bin\Release\Lisyq.exe.WebView2\EBWebView\Default\IndexedDB\devtools_devtools_0.indexeddb.leveldb/MANIFEST-000002
+2023/07/18-17:28:25.269 d78 Recovering log #8
+2023/07/18-17:28:25.271 d78 Reusing old log D:\Projects\Windows\LiSyQ\DesktopApp\Lisyq\Lisyq\bin\Release\Lisyq.exe.WebView2\EBWebView\Default\IndexedDB\devtools_devtools_0.indexeddb.leveldb/000008.log 
+2023/07/18-17:28:25.290 d78 Delete type=0 #5
+2023/07/18-17:28:25.290 d78 Delete type=2 #6

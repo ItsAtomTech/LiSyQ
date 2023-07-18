@@ -3,9 +3,15 @@ var time_per_pexil = 30; //1 pexil = 30... milisecond for this program
 
 var time = 0;
 var selected_track_index = 0;
+var selected_track_indexes = [];
 var initial_pos_sub_track = [];
 var play_start = setInterval(rails, time_per_pexil);
 var selected_content;
+
+var selected_contents = [];
+var selected_contents_data = [];
+var selected_contents_indexes = [];
+
 var loaded_from_data = false;
 var sub_data_id;
 
@@ -24,6 +30,7 @@ var optimizedData = false;
 // Elements
 var main_timeline = _("timeline_");
 var origin_sub;
+var origin_sub_pos = [];
 var can_move_track = true;
 var click_on_track;
 var follow_playhead = false;
@@ -61,6 +68,7 @@ let limitThreshold = 2;
 //Misc
 
 var copied;
+var copies = [];
 //Encode and Decoder
 var for_rep = ["'",'"',",","/","\\","<","\n"];
 var to_rep = ["&#39;","&#34;","&#44;","&#47;","&#92;","&lt;","&#13;"];
@@ -483,7 +491,6 @@ function add_sub_tracks(data,com,mode,sub_index){
 			sub_track.style.backgroundColor = block_contents.color+"50";
 			sub_track.addEventListener("contextmenu", function (e){}, false);
 		
-		
 			
 		var div_details = document.createElement("div");
 			div_details.classList.add("content_details_inline");
@@ -497,6 +504,12 @@ function add_sub_tracks(data,com,mode,sub_index){
 			selected_content = parentTrack(selected_track_index).querySelector('[content_id="'+content_id+'"]'); 
 			has_moved = true;
 		
+		if(com == 'multiple'){
+			selected_contents_indexes.push(content_id);
+
+			sub_track.classList.add("selected_content");
+			
+		}
 		
 		
 		
@@ -521,9 +534,7 @@ function modify_sub_track(data,com){
 	
 	var selected_item = selected_content.getAttribute('content_id');
 	
-	
-	
-	
+
 	if(com == undefined){
 		push_undo("subtrack", "edit", selected_track_index, decople_data(timeline_data[selected_track_index].sub_tracks[data_id]),data_id);
 	}
@@ -556,9 +567,18 @@ function modify_sub_track(data,com){
 
 
 var content_id_block;
-
+let multiple_selected = false;
+let prev_content;
+let sameSelection = true;
 
 function set_track_node(){//gets the content block selected
+	
+	if(prev_content == selected_content){
+		
+		sameSelection = true;
+	}else{
+		sameSelection = false;
+	}
 	
 	
 	click_on_track = false;
@@ -579,12 +599,23 @@ function set_track_node(){//gets the content block selected
 	this.parentNode.addEventListener("mouseup", remove_onmove);
 	this.parentNode.addEventListener("mouseleave", remove_onmove);
 
+
+	if(e.ctrlKey){
+		multiple_selected = true;
+	}else{
+		multiple_selected = false;
+		//if user clicks on not selected content, remove all selections
+		if(selected_contents.indexOf(this) <= -1){
+			revoke_selections("force");
+		}
+		
+		
+	}
+	
 	
 	content_id_block = this;
 	initial_pos_sub_track = [e.clientX, e.clientY];		
 	selected_content = this;
-	
-
 	
 	
 	if(can_move_track == false){
@@ -592,32 +623,146 @@ function set_track_node(){//gets the content block selected
 	}
 	
 		
-
+	//remove all selection visually
+	revoke_selections(this);
 	
 	
-	for(s_tr = 0; s_tr < document.getElementsByClassName("selected_content").length;s_tr++){	
-		document.getElementsByClassName("selected_content")[s_tr].classList.remove("selected_content");	
+	//for multiple select if the item was selected or removed
+	var content_selected;
+	
+	if(multiple_selected){
+		content_selected = (this.classList.toggle("selected_content"));
+		
+		 push_to_selections(prev_content);
+		
+		//push or remove content from multiple selections array
+		if(content_selected){
+			push_to_selections(this);
+		}else{
+			remove_on_selections(this)
+		}
+		
+		prev_content = null;
+	}else{
+		this.classList.add("selected_content");
+		
+		//If the selected object was clicked again
+		if(prev_content == selected_content){
+			
+			// console.log("same");
+			
+			if(selected_contents.length){
+				revoke_selections("force");
+				revoke_selections("force");
+				this.classList.add("selected_content");
+			}
+			selected_contents.length = 0;
+			
+		}
+		
+		prev_content = selected_content;
+		
 	}
-	
-	this.classList.add("selected_content");
 	
 	
 	
 	click_on_content(selected_content.getAttribute("content_id"));
 	
+	selected_track_indexes.length = 0;
+	selected_contents_data.length = 0;
+	
 	if(this.style.left.length > 0){
 		origin_sub = this.style.left.replace(/[^\d.]/gi, "");
 		ds = this;
+		
+		//multiple selections
+		if(selected_contents.length){
+			
+			let ext = 0;
+			for(cons of selected_contents){
+				
+				origin_sub_pos[ext] = cons.style.left.replace(/[^\d.]/gi, "");
+				
+				
+				var sel_tr_i = cons.parentNode.getAttribute("tracks_id");
+				var sel_sub_i = cons.getAttribute("content_id");
+				
+				
+		
+				selected_track_indexes[ext] = sel_tr_i;
+				
+				
+				selected_contents_data[ext] = timeline_data[sel_tr_i].sub_tracks[sel_sub_i];
+				
+				selected_contents_indexes[ext] = decople_data(sel_sub_i);
+				
+				
+				ext++;
+			}
+		}
+		
+		
 	}else{
 		origin_sub = this.getBoundingClientRect().x;
 	}
 }
+
+//Multiple selections helper
+
+function revoke_selections(elm){		
+	//remove all selection visually
+	for(s_tr = 0; s_tr < document.getElementsByClassName("selected_content").length;s_tr++){	
+	
+		let current_selected_con = selected_contents.indexOf(document.getElementsByClassName("selected_content")[s_tr]);
+	
+		if(!multiple_selected && (current_selected_con <= -1)){
+			
+			document.getElementsByClassName("selected_content")[s_tr].classList.remove("selected_content");	
+			selected_contents.length = 0;
+			
+		}
+		
+		if(elm == "force"){
+			try{
+				document.getElementsByClassName("selected_content")[s_tr].classList.remove("selected_content");	
+				selected_contents.length = 0;
+			}catch(e){
+				//--
+			}
+		}
+	
+	}
+	
+}
+
+	
+function push_to_selections(elm){	
+		if(!elm){
+			return;
+		}
+	
+		let onSelection = (selected_contents.indexOf(elm));		
+		if(onSelection <= -1){
+			selected_contents.push(elm);
+		}
+}
+	
+function remove_on_selections(elm){
+		let elm_to_remove = (selected_contents.indexOf(elm));
+		selected_contents.splice(elm_to_remove, 1);
+		// selected_contents.push(elm);		
+}
+
+
+
+
 
 
 var movement = 0;
 
 //@ move_subtrack
 //@ move subtrack
+//draging a sub_tracks to mouse postion
 function reposition_subtrack(){
 		
 		if(can_move_track == false || event.buttons >= 2){
@@ -625,6 +770,16 @@ function reposition_subtrack(){
 			return;
 		}		
 				
+
+				
+		if(selected_contents.length > 1){
+			prev_content = null;
+			
+			multiple_moves();
+			
+			return;
+		}
+		
 		
 	try{
 		var selected_item = selected_content.getAttribute('content_id');
@@ -675,6 +830,71 @@ function reposition_subtrack(){
 		//
 	}
 
+}
+
+let extIndex = 0;
+function multiple_moves(){
+	try{
+		var selected_item = selected_content.getAttribute('content_id');
+	
+	// TO-DO: Add logic for UNDO on multiple edit - DONE
+		
+	
+		if(movement <= 0){
+			push_undo("subtrack", "edit", selected_track_indexes,decople_data(selected_contents_data), selected_contents_indexes);
+		}
+
+	 
+	extIndex = 0;
+	for(contents of selected_contents){
+	
+	
+		var the_element = contents;
+		var the_parent = contents.parentNode.getAttribute("tracks_id")
+		var current_position = event.clientX;
+		var scrolled_c = _("timeline_container").scrollLeft;
+		
+		var changes = (current_position - initial_pos_sub_track[0]);	
+		var calculated_position = (parseInt(origin_sub_pos[extIndex])+(changes) / zoom_scale);
+		var content_ids = the_element.getAttribute("content_id");
+		
+		if(calculated_position <= 0){		
+			contents.style.left = 0;
+			
+		}else{
+			contents.style.left = "calc(var(--scale) *" + calculated_position+"px)";
+		}
+
+		var content_lengths = timeline_data[the_parent].sub_tracks[content_ids].content_length;
+
+		timeline_data[the_parent].sub_tracks[content_ids].start_at = calculated_position;
+		
+		timeline_data[the_parent].sub_tracks[content_ids].end_at = calculated_position+content_lengths;
+		
+		set_coords_context(event.screenX,event.screenY);
+		
+	extIndex++;
+		
+	}
+			
+		if(movement <= 0 || movement%6 == 0){
+			
+			push_undo("subtrack", "edit", selected_track_indexes,selected_contents_data, selected_contents_indexes);
+		} 
+		
+		
+		has_moved = true;
+		select_count = 0;
+		
+		movement++;
+	}catch(e){
+		
+		console.log(e);
+	}
+	
+	
+	
+	
 }
 
 
@@ -1216,6 +1436,13 @@ function click_on_ruler(){
 //removing content blocks and tracks
 function remove_content(id,com){
 	select_count = 0;
+	
+	if(selected_contents.length > 0 && com == undefined){
+		
+		remove_multiple();
+		return;
+	}
+	
 	if(!selected_content && id == undefined){
 		console.log("No selection");
 		return false;
@@ -1234,8 +1461,6 @@ function remove_content(id,com){
 	}
 	
 	
-	
-		
 	if(com == undefined){
 		//if com is undefined (which means not internal commands such as undo, add to undo stack)
 		
@@ -1246,10 +1471,17 @@ function remove_content(id,com){
 	
 	timeline_data[selected_track_index].sub_tracks.splice(data_id,1);
 	
-	selected_content.removeEventListener("mousemove",reposition_subtrack);	
-	selected_content.removeEventListener("mousedown",set_track_node);	
+	
+		selected_content.removeEventListener("mousemove",reposition_subtrack);	
+		selected_content.removeEventListener("mousedown",set_track_node);
+			// selected_content.removeEventListener("mousedown",set_track_node);
+		selected_content.remove();	
+	
+	
+
+	
 	// selected_content.removeEventListener("mousedown",set_track_node);
-	selected_content.remove();	
+	// selected_content.remove();	
 		
 	
 	for(sta = parseInt(data_id);sta < timeline_data[selected_track_index].sub_tracks.length;sta++){
@@ -1260,9 +1492,59 @@ function remove_content(id,com){
 
 	
 	selected_content = null;
+	selected_contents.length = 0;
 	return timeline_data;
 	
 	
+}
+
+//removing multiple content blocks and tracks
+function remove_multiple(com){
+	select_count = 0;
+	
+
+	
+	if(!selected_content && id == undefined){
+		console.log("No selection");
+		return false;
+	}
+	
+	let extId = 0;
+	for(contents  of selected_contents)	{
+			
+		var data_id = contents.getAttribute("content_id");
+		
+					
+		selected_track_index = selected_track_indexes[extId];
+		var parent_node = parentTrack(selected_track_index);
+		
+		timeline_data[selected_track_index].sub_tracks.splice(data_id,1);
+		
+		contents.removeEventListener("mousemove",reposition_subtrack);	
+		contents.removeEventListener("mousedown",set_track_node);	
+		// selected_content.removeEventListener("mousedown",set_track_node);
+		contents.remove();	
+			
+		
+		for(sta = parseInt(data_id);sta < timeline_data[selected_track_index].sub_tracks.length;sta++){
+			parent_node.getElementsByClassName("sub_track")[sta].setAttribute("content_id",sta);
+			
+		}
+	
+		extId++;
+	}
+		if(com == undefined){
+			push_undo("subtrack", "delete", selected_track_indexes,decople_data(selected_contents_data), selected_contents_indexes);
+		}
+		
+
+	
+		
+		selected_content = null;
+		selected_contents.length = 0;
+		return timeline_data;
+		
+
 }
 
 
@@ -1341,14 +1623,14 @@ function click_on_content(df){
 	
 	sdf = setTimeout(reset_select_count, 300)
 	
-	if(select_count > 1 && (prev_id == df && prev_track == selected_track_index)){
+	if(select_count > 1 && (prev_id == df && prev_track == selected_track_index) && multiple_selected == false){
 		
 		open_edit_for(timeline_data[selected_track_index].sub_tracks[df],"edit");
 		
 	}else if(prev_track != selected_track_index){
 		
 		
-		window.clearTimeout(sdf);
+		window.clearTimeout(reset_select_count);
 		select_count = 1;
 		
 	}
@@ -1384,7 +1666,7 @@ function open_edit_for(dt,type){
 	}
 	
 	
-	console.log(dt);
+	// console.log(dt);
 	
 	var plugin_id = find_plug(dt.type);
 	
@@ -1408,6 +1690,27 @@ function copy_content(){
 		return false;
 	}
 	
+	copies.length = 0;
+	
+	if(selected_contents.length > 0){
+		
+		let temp_copies = [];
+		
+		let extIndex = 0;
+		for(selections of selected_contents_data){
+			
+			let no_track_data = decople_data(selections);
+			no_track_data.track_id =  selected_track_indexes[extIndex];
+			temp_copies[extIndex] = no_track_data;
+			extIndex++;
+		}
+		copies = normalize_copies(temp_copies);
+		copied = null;
+		return;
+		
+	}
+	
+	
 	var to_copy = timeline_data[selected_track_index].sub_tracks[selected_content.getAttribute("content_id")];
 	
 	copied = JSON.parse(JSON.stringify(to_copy));
@@ -1415,12 +1718,115 @@ function copy_content(){
 	return true;
 }
 
+function normalize_copies(dta){
+	
+	//normalizing track_ids
+	let base_track_id;
+	dta.sort(function(a,b){return parseInt(a.track_id) - parseInt(b.track_id) });
+	base_track_id = dta[0].track_id;
+	
+	for(z=0;z < dta.length;z++){
+	
+		dta[z].track_distance = dta[z].track_id - base_track_id;
+		delete  dta[z].track_id;
+	}
+	
+	
+	//normalizing subtrack_starting distances
+	let base_subtract_start;
+	
+	dta.sort(function(a,b){return parseInt(a.start_at) - parseInt(b.start_at) });
+	base_subtract_start = dta[0].start_at;
+		
+	for(z=0;z < dta.length;z++){
+	
+		dta[z].start_distance = dta[z].start_at - base_subtract_start;
+		//delete  dta[z].track_id;
+	}
+	
+	
+	return dta;
+	
+	// console.log(dta, base_track_id);
+}
+
 
 function paste_content(){
 	
 	var to_paste = JSON.parse(JSON.stringify(copied));	
-	if(!to_paste){
+	if(!to_paste && copies.length <= 0){
 		return false;
+	}else if(copies.length > 0){
+		
+		let start_at_track = decople_data(selected_track_index);
+		
+		revoke_selections('force');
+		revoke_selections('force');
+		
+		let pasting_copies = [];
+		selected_track_indexes.length = 0;
+		selected_contents_indexes.length = 0;
+
+		
+		let extId = 0;
+		for(tps of copies){
+			
+			topaste = decople_data(tps);
+			
+			topaste.start_at = topaste.start_distance + time;
+			topaste.end_at = topaste.start_at + topaste.content_length;
+			selected_track_index = start_at_track + topaste.track_distance;
+			
+			pasting_copies[extId] = topaste;
+			
+			// console.log(selected_track_index);
+				
+				//dont overlap of available tracks
+				
+			let base_track_id_;
+			
+			let getLast = decople_data(copies);
+			
+			getLast.sort(function(a,b){return parseInt(b.track_distance) - parseInt(a.track_distance) });
+			
+			base_track_id_ = getLast[0].track_distance;
+				
+			if(document.querySelectorAll("[tracks_id='"+selected_track_index+"']").length <= 0){
+
+				add_track();
+				
+				// alert("Pasting on Outbound tracks, not allowed!");
+				// return;				
+			}
+			
+				selected_track_indexes[extId] = selected_track_index;
+				delete pasting_copies[extId].start_distance;
+				delete pasting_copies[extId].track_distance;
+			
+					add_sub_tracks(pasting_copies[extId], 'multiple');
+				
+				
+				
+				
+				let this_track = document.querySelector('[tracks_id="'+selected_track_index+'"]').querySelector('[content_id="'+selected_contents_indexes[extId]+'"]')
+				
+				selected_contents[extId] = decople_data(this_track);
+				
+				extId++;
+		}
+		
+		console.log(selected_contents_indexes);
+		
+				
+		prev_content = null;
+		
+		console.log(pasting_copies);
+		
+		push_undo("subtrack", "add", selected_track_indexes,decople_data(pasting_copies), selected_contents_indexes);
+	
+		
+		
+		return true;
 	}
 	
 	to_paste.start_at = time;
@@ -1794,7 +2200,13 @@ let prevPortsCount = 0;
 function rails(){
 	
 	//For Template Player Rail
-	t_rail();
+	try{
+		t_rail();
+	}catch(e){
+		return;
+		//--
+	}
+	
 	
 	
 	if(playing == true){
