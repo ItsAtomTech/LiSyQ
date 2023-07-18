@@ -663,8 +663,7 @@ function set_track_node(){//gets the content block selected
 		
 		prev_content = selected_content;
 		
-	}
-	
+	}	
 	
 	
 	click_on_content(selected_content.getAttribute("content_id"));

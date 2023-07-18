@@ -480,7 +480,7 @@ function sendToTimelineTemplates(){
 	if(!selected_content && selected_contents.length <= 1){
 		return false;
 	}else if(selected_contents.length > 1){
-		
+		//multiple add
 		let extID = 0;
 		for(sel of selected_contents){
 			
