@@ -567,8 +567,8 @@ function set_coords_context(x,y){//This function sets the X,Y coords for Native 
 
 function regen_from_plugin(plug_id,data){
 
-	console.log(plug_id);
-	console.log(data)
+	// console.log(plug_id);
+	// console.log(data)
 	return window[regenerators[plug_id]].call(null, JSON.stringify(data));
 
 }

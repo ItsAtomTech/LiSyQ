@@ -20,3 +20,4 @@ D:\Projects\Windows\LiSyQ\DesktopApp\Lisyq\Lisyq\obj\Release\Lisyq.vbproj.CopyCo
 D:\Projects\Windows\LiSyQ\DesktopApp\Lisyq\Lisyq\obj\Release\Lisyq.exe
 D:\Projects\Windows\LiSyQ\DesktopApp\Lisyq\Lisyq\obj\Release\Lisyq.xml
 D:\Projects\Windows\LiSyQ\DesktopApp\Lisyq\Lisyq\obj\Release\Lisyq.pdb
+D:\Projects\Windows\LiSyQ\DesktopApp\Lisyq\Lisyq\obj\Release\Lisyq.ProgressBar.resources

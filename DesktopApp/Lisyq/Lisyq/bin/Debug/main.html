@@ -12,6 +12,13 @@
 		<link rel="stylesheet" id="color" href="css/coloring.css">
 		<link rel="stylesheet" href="css/dailoge.css">
 		<link rel="icon" type="image/png" href="images/favicon.ico"/>
+	
+	<style id='dyna_scaler'>
+		:root {
+			--scale: 1;
+		}
+	</style>
+	
  </head>
  <body class='primary_color' onresize="init_resize()">
 	
@@ -182,6 +189,12 @@
 		
 		</div>
 		
+		<div class="zoom_setter">
+			<div class=" track_number_con" title='Timeline Zoom scale'><span class='micro'>Zoom: </span> <input type='number' onchange='applyScale(this.value);decup(event)' onmousewheel='applyScale(this.value)' class='plane_input track_input primary_color small' min='0.5' max='2' step='0.1' value=0 id='zoom_disp' /></div>
+		
+		
+		</div>
+		
 	
 	
 	</div>
@@ -211,11 +224,13 @@
 	<script src="js/indexer.js"></script>
 	<script src="js/media_player.js"></script>
 	<script src="js/dialogue.js"></script>
+	<script src="js/scaler.js"></script>
  
  <script>
  
  add_track(null,'init');
  set_delay();
+ applyScale(1);
  
 	<!-- var g = load_saved(); -->
 	<!-- optimizedData = false; -->

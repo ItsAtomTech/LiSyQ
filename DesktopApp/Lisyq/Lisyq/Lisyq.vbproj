@@ -137,6 +137,12 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <Compile Include="NotificationManager.vb" />
+    <Compile Include="ProgressBar.Designer.vb">
+      <DependentUpon>ProgressBar.vb</DependentUpon>
+    </Compile>
+    <Compile Include="ProgressBar.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Sample_Send.Designer.vb">
       <DependentUpon>Sample_Send.vb</DependentUpon>
     </Compile>
@@ -156,6 +162,9 @@
       <LastGenOutput>Resources.Designer.vb</LastGenOutput>
       <CustomToolNamespace>My.Resources</CustomToolNamespace>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ProgressBar.resx">
+      <DependentUpon>ProgressBar.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Sample_Send.resx">
       <DependentUpon>Sample_Send.vb</DependentUpon>

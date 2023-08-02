@@ -663,8 +663,7 @@ function set_track_node(){//gets the content block selected
 		
 		prev_content = selected_content;
 		
-	}
-	
+	}	
 	
 	
 	click_on_content(selected_content.getAttribute("content_id"));
@@ -1076,6 +1075,40 @@ function sendPort(pch,str){
 		//
 		
 	}
+}
+		
+async function show_loading(total,current,info){
+
+	if(info == undefined || info == null){
+		info = "";
+	}
+	
+	let pr = parseInt(((current/total) * 100));
+		
+		console.log("Progress: ", pr);
+		
+	try{
+		window.chrome.webview.hostObjects.NativeObject.set_progress(pr, info);
+		window.chrome.webview.hostObjects.NativeObject.show_progress();
+	}catch(e){
+	//
+	
+	
+	
+	}
+
+}
+			
+//Hides the Progress window if shown			
+function finish_loading(){
+
+	try{
+		window.chrome.webview.hostObjects.NativeObject.set_progress(100, "Done");
+		window.chrome.webview.hostObjects.NativeObject.close_progress();
+	}catch(e){
+	//
+	}
+
 }
 	
 
@@ -1956,10 +1989,14 @@ function test_(df){
 }
 
 
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
 
 
 
-function load_from_file(df){
+
+async function load_from_file(df){
 	
 	var project_data = JSON.parse(df);
 		
@@ -1991,6 +2028,13 @@ function load_from_file(df){
 		for(dtracks = 0;dtracks < timeline_data_.length;dtracks++){
 			
 			
+			//To-Do: Try Loading Display Logic here...
+			
+			show_loading(timeline_data_.length, dtracks+1, "Loading tracks");
+			
+			await sleep(1);
+			
+			
 			add_track();		
 			selected_track_index = dtracks;
 			
@@ -2007,20 +2051,29 @@ function load_from_file(df){
 
 
 	_("total_tracks").innerHTML = timeline_data.length;
-	
+	//Hides the Progress 
+
 	
 	
 	timeline_data = timeline_data_;
-		
+	
+	show_loading(3, 1, "Regenerating Data...");
+	await sleep(2);
+	
 	regen_empty_data();
 	
+	
+	show_loading(3, 2, "Cleaning stacks...");
+	await sleep(2);
 	reset_undo_redo();
 	
-	
+	show_loading(3, 3, "Optimizing playback...");
+	await sleep(2);
 	loaded_from_data = false;
 	
 	
-	scanOptimized();
+	scanOptimized();	
+	finish_loading();
 	return;
 	
 }

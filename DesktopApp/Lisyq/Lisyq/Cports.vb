@@ -13,11 +13,7 @@ Module Cports
         Try
             Cports.Ports(Params(0)).WriteTimeout = 30
 
-
-
             Cports.Ports(Params(0)).WriteLine(Params(1))
-
-
 
 
         Catch ex As Exception

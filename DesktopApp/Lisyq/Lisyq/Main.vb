@@ -73,6 +73,8 @@ Public Class Main
     Dim df As String
 
 
+
+
     <ClassInterface(ClassInterfaceType.None)>
     <ComVisible(True)>
     Public Class WebJsObject
@@ -98,7 +100,7 @@ Public Class Main
 
 
 
-
+        ' Process output string to be sent to Ouput mediums
         Public Function outputs() As String
             Dim pchd As Integer = 0
             Dim arrayLists() As String = Main.df.Split("|")
@@ -148,6 +150,7 @@ Public Class Main
 
         End Function
 
+        ' This sets the value To be sent To outputs from the js object
         Public Function set_values(port As Integer, Data As String)
 
             phc = port
@@ -210,6 +213,36 @@ Public Class Main
 
 
         End Function
+
+        ' Progress Window Logic Start
+
+        Public Function set_progress(progress As Integer, info As String)
+
+            ProgressBar.Progress = progress
+            ProgressBar.ProgressText = info
+
+
+        End Function
+
+        Public Function show_progress()
+
+
+            ProgressBar.ShowProgress()
+
+            If ProgressBar.Visible = False Then
+                ProgressBar.ShowDialog()
+
+            End If
+
+
+
+        End Function
+
+        Public Function close_progress()
+            ProgressBar.Close()
+        End Function
+
+        ' Progress Window End
 
 
     End Class
@@ -315,7 +348,7 @@ Public Class Main
         If OpenFileDialog1.ShowDialog <> Windows.Forms.DialogResult.Cancel Then
             Dim fileReader As String = My.Computer.FileSystem.ReadAllText(OpenFileDialog1.FileName)
 
-
+            ProgressBar.Show()
 
             WebView21.ExecuteScriptAsync("load_from_file('" + fileReader + "')")
 

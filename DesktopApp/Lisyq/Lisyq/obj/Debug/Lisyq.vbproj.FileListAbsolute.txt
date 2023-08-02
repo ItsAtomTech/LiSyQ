@@ -20,3 +20,4 @@ D:\Projects\Windows\LiSyq\DesktopApp\Lisyq\Lisyq\obj\Debug\Lisyq.xml
 D:\Projects\Windows\LiSyq\DesktopApp\Lisyq\Lisyq\obj\Debug\Lisyq.pdb
 D:\Projects\Windows\LiSyq\DesktopApp\Lisyq\Lisyq\obj\Debug\Lisyq.Sample_Send.resources
 D:\Projects\Windows\LiSyq\DesktopApp\Lisyq\Lisyq\obj\Debug\Lisyq.Main.resources
+D:\Projects\Windows\LiSyQ\DesktopApp\Lisyq\Lisyq\obj\Debug\Lisyq.ProgressBar.resources
