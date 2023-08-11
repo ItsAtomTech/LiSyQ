@@ -770,7 +770,9 @@ function reposition_subtrack(){
 			return;
 		}		
 				
-
+		
+		// console.log(event);
+		
 				
 		if(selected_contents.length > 1){
 			prev_content = null;
@@ -813,12 +815,23 @@ function reposition_subtrack(){
 		
 		set_coords_context(event.screenX,event.screenY);
 		
+		//This pushes to undo when user is done moving selected elm
+	
+		event.target.onmouseup = (function(){
+					
+			push_undo("subtrack", "edit", selected_track_index, decople_data(timeline_data[selected_track_index].sub_tracks[selected_item]), selected_item);
+		
+		});	
+		event.target.onmouseleave = (function(){
+					
+			push_undo("subtrack", "edit", selected_track_index, decople_data(timeline_data[selected_track_index].sub_tracks[selected_item]), selected_item);
+		
+		});
 	
 		
 		
 		if(movement <= 0 || movement%6 == 0){
-			
-			push_undo("subtrack", "edit", selected_track_index, decople_data(timeline_data[selected_track_index].sub_tracks[selected_item]), selected_item);
+			//
 		}
 		
 		has_moved = true;
@@ -879,8 +892,22 @@ function multiple_moves(){
 			
 		if(movement <= 0 || movement%6 == 0){
 			
-			push_undo("subtrack", "edit", selected_track_indexes,selected_contents_data, selected_contents_indexes);
+			
 		} 
+		
+		//Push to undo stack after moving
+		
+		event.target.onmouseup = (function(){
+
+			push_undo("subtrack", "edit", selected_track_indexes,selected_contents_data, selected_contents_indexes);
+		
+		});	
+		event.target.onmouseleave = (function(){
+					
+			push_undo("subtrack", "edit", selected_track_indexes,selected_contents_data, selected_contents_indexes);
+		
+		});
+		
 		
 		
 		has_moved = true;

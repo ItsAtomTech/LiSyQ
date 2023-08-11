@@ -493,6 +493,10 @@ Public Class Main
         MsgBox(relativeLocation)
     End Sub
 
+    Private Sub ToolStripImportTemplate_Click(sender As Object, e As EventArgs) Handles ToolStripImportTemplate.Click
+        WebView21.ExecuteScriptAsync("openImportTemplates()")
+    End Sub
+
     Private Sub UseWebEngine1ToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles UseWebEngine1ToolStripMenuItem.Click
 
         Dim confirm_change As DialogResult
@@ -542,4 +546,6 @@ Public Class Main
         Next
 
     End Sub
+
+
 End Class

@@ -66,6 +66,7 @@ Partial Class Main
         Me.SaveAsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.ToolsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.PortConfigurationToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ClearBuffersToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.LocalPathToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.UseWebEngine1ToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.UseWebEngine2ToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
@@ -79,7 +80,7 @@ Partial Class Main
         Me.ToolStripMenuItem17 = New System.Windows.Forms.ToolStripMenuItem()
         Me.ToolStripMenuItem18 = New System.Windows.Forms.ToolStripMenuItem()
         Me.ToolStripMenuItem19 = New System.Windows.Forms.ToolStripMenuItem()
-        Me.ClearBuffersToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ToolStripImportTemplate = New System.Windows.Forms.ToolStripMenuItem()
         CType(Me.WebView21, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.template_menu.SuspendLayout()
         Me.content_menu.SuspendLayout()
@@ -394,7 +395,7 @@ Partial Class Main
         'ToolsToolStripMenuItem
         '
         Me.ToolsToolStripMenuItem.BackColor = System.Drawing.Color.FromArgb(CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer))
-        Me.ToolsToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.PortConfigurationToolStripMenuItem, Me.ClearBuffersToolStripMenuItem, Me.LocalPathToolStripMenuItem, Me.UseWebEngine1ToolStripMenuItem, Me.UseWebEngine2ToolStripMenuItem})
+        Me.ToolsToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.PortConfigurationToolStripMenuItem, Me.ClearBuffersToolStripMenuItem, Me.ToolStripImportTemplate, Me.LocalPathToolStripMenuItem, Me.UseWebEngine1ToolStripMenuItem, Me.UseWebEngine2ToolStripMenuItem})
         Me.ToolsToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlLightLight
         Me.ToolsToolStripMenuItem.Name = "ToolsToolStripMenuItem"
         Me.ToolsToolStripMenuItem.Size = New System.Drawing.Size(48, 23)
@@ -408,6 +409,14 @@ Partial Class Main
         Me.PortConfigurationToolStripMenuItem.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.Q), System.Windows.Forms.Keys)
         Me.PortConfigurationToolStripMenuItem.Size = New System.Drawing.Size(216, 22)
         Me.PortConfigurationToolStripMenuItem.Text = "Port Configuration"
+        '
+        'ClearBuffersToolStripMenuItem
+        '
+        Me.ClearBuffersToolStripMenuItem.BackColor = System.Drawing.SystemColors.ControlDarkDark
+        Me.ClearBuffersToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlLightLight
+        Me.ClearBuffersToolStripMenuItem.Name = "ClearBuffersToolStripMenuItem"
+        Me.ClearBuffersToolStripMenuItem.Size = New System.Drawing.Size(216, 22)
+        Me.ClearBuffersToolStripMenuItem.Text = "Clear Buffers"
         '
         'LocalPathToolStripMenuItem
         '
@@ -447,7 +456,7 @@ Partial Class Main
         Me.AddNewTrackToolStripMenuItem.BackColor = System.Drawing.Color.DimGray
         Me.AddNewTrackToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlLightLight
         Me.AddNewTrackToolStripMenuItem.Name = "AddNewTrackToolStripMenuItem"
-        Me.AddNewTrackToolStripMenuItem.Size = New System.Drawing.Size(180, 22)
+        Me.AddNewTrackToolStripMenuItem.Size = New System.Drawing.Size(155, 22)
         Me.AddNewTrackToolStripMenuItem.Text = "Add New Track"
         '
         'Panel1
@@ -533,13 +542,13 @@ Partial Class Main
         Me.ToolStripMenuItem19.Size = New System.Drawing.Size(202, 22)
         Me.ToolStripMenuItem19.Text = "Add To Timeline Templ."
         '
-        'ClearBuffersToolStripMenuItem
+        'ToolStripImportTemplate
         '
-        Me.ClearBuffersToolStripMenuItem.BackColor = System.Drawing.SystemColors.ControlDarkDark
-        Me.ClearBuffersToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlLightLight
-        Me.ClearBuffersToolStripMenuItem.Name = "ClearBuffersToolStripMenuItem"
-        Me.ClearBuffersToolStripMenuItem.Size = New System.Drawing.Size(216, 22)
-        Me.ClearBuffersToolStripMenuItem.Text = "Clear Buffers"
+        Me.ToolStripImportTemplate.BackColor = System.Drawing.SystemColors.ControlDarkDark
+        Me.ToolStripImportTemplate.ForeColor = System.Drawing.SystemColors.ButtonFace
+        Me.ToolStripImportTemplate.Name = "ToolStripImportTemplate"
+        Me.ToolStripImportTemplate.Size = New System.Drawing.Size(216, 22)
+        Me.ToolStripImportTemplate.Text = "Import Templates"
         '
         'Main
         '
@@ -621,4 +630,5 @@ Partial Class Main
     Friend WithEvents UseWebEngine1ToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents UseWebEngine2ToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents ClearBuffersToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents ToolStripImportTemplate As ToolStripMenuItem
 End Class
