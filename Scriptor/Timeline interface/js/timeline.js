@@ -2465,6 +2465,7 @@ function modeSelect(mode){
 	}else{
 		_("timeline_container").style.visibility = "visible";
 		_("template_player_container").style.display = "none";
+		current_mode = "add";
 		playMode = "timeline";
 		editing_shortcuts = true;
 		
