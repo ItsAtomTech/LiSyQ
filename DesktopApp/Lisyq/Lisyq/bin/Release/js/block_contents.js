@@ -481,6 +481,17 @@ function sendToTimelineTemplates(){
 		return false;
 	}else if(selected_contents.length > 1){
 		//multiple add
+		
+		if(selected_contents.length > 10){
+			
+			alert("Please Select no more than 10 content blocks for this!");
+			
+			return ;
+			
+		}
+		
+		
+		
 		let extID = 0;
 		for(sel of selected_contents){
 			

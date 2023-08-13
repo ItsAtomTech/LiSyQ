@@ -19,6 +19,16 @@
 		}
 	</style>
 	
+	
+	<style>
+	
+	.selection-area {
+    background: rgba(46, 115, 252, 0.11);
+    border: 2px solid rgba(98, 155, 255, 0.81);
+    border-radius: 0.1em;
+}
+	</style>
+	
  </head>
  <body class='primary_color' onresize="init_resize()">
 	
@@ -227,7 +237,10 @@
 	<script src="js/dialogue.js"></script>
 	<script src="js/scaler.js"></script>
 	
+	<script src="js/viselect.umd.js"></script>
+	
 	<script defer src="js/impexporter.js"></script>
+	<script defer src="js/dragSelectHelper.js"></script>
 	
  
  <script>
@@ -236,12 +249,17 @@
  set_delay();
  applyScale(1);
  
-	<!-- var g = load_saved(); -->
+	var g = load_saved();
 	<!-- optimizedData = false; -->
 	<!-- modeSelect('manual'); -->
 	
 	
  </script>
+ 
+ 
+
+ 
+ 
  
  </html>
  

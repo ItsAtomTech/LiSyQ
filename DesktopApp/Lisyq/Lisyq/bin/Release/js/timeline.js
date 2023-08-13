@@ -207,7 +207,21 @@ function see_event(){//clicked on track ?
 	}
 	
 	
-
+		try{
+			if(event.ctrlKey){
+				selection.enable();
+			}else if(event.ctrlKey == false){
+				selection.disable();				
+				
+				enableAutoHide();
+				
+			}
+	
+		}catch(e){
+			//--
+		}
+	
+	
 	
 	
 	play_on_current();
@@ -602,6 +616,7 @@ function set_track_node(){//gets the content block selected
 
 	if(e.ctrlKey){
 		multiple_selected = true;
+		selection.cancel();
 	}else{
 		multiple_selected = false;
 		//if user clicks on not selected content, remove all selections
@@ -781,6 +796,16 @@ function reposition_subtrack(){
 			
 			return;
 		}
+		
+		
+			
+		try{
+			selection.disable();	
+			enableAutoHide();			
+		}catch(e){
+			//--
+		}
+		
 		
 		
 	try{
@@ -1498,6 +1523,9 @@ function click_on_ruler(){
 function remove_content(id,com){
 	select_count = 0;
 	
+	//removes from dragselections as well
+	selection.clearSelection(true, true);
+	
 	if(selected_contents.length > 0 && com == undefined){
 		
 		remove_multiple();
@@ -1554,21 +1582,19 @@ function remove_content(id,com){
 	
 	selected_content = null;
 	selected_contents.length = 0;
+	
+	
+	
 	return timeline_data;
 	
 	
 }
 
 //removing multiple content blocks and tracks
-function remove_multiple(com){
+function remove_multiple(com,id){
 	select_count = 0;
 	
 
-	
-	if(!selected_content && id == undefined){
-		console.log("No selection");
-		return false;
-	}
 	
 	let extId = 0;
 	for(contents  of selected_contents)	{
@@ -1616,6 +1642,9 @@ function remove_track(id,com){
 		console.log("No track selection");
 		return false;
 	}
+	
+		//removes from dragselections as well
+	selection.clearSelection(true, true);
 	
 	var trc = document.getElementsByClassName("track_con")[selected_track_index];
 	

@@ -273,16 +273,37 @@ async function autoHide(){
 	
 }
 
+let autoHideActive = true; 
+
+function disableAutoHide(){
+	autoHideActive = false;
+	
+	
+}
+
+function enableAutoHide(){
+	autoHideActive = true;
+	
+	
+}
 
 function hideHiddenTracks(){
 	var  track_collections = document.getElementsByClassName("track_con");
 		
 
+
+
 	for(tracks of track_collections){
 		//console.log(tracks);		
 		
 		if(tracks.getBoundingClientRect().y - (col_1 - 50) < 0 || tracks.getBoundingClientRect().y - (col_1 - 10) >= col_2){			
-			tracks.classList.add("track_not_in_view");			
+		
+
+			if(autoHideActive == true){
+				tracks.classList.add("track_not_in_view");	
+			}
+
+			
 		}else{
 			//if visible
 			tracks.classList.remove("track_not_in_view");		
