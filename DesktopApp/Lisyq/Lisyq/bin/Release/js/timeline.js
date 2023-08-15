@@ -726,6 +726,8 @@ function set_track_node(){//gets the content block selected
 
 function revoke_selections(elm){		
 	//remove all selection visually
+	
+	
 	for(s_tr = 0; s_tr < document.getElementsByClassName("selected_content").length;s_tr++){	
 	
 		let current_selected_con = selected_contents.indexOf(document.getElementsByClassName("selected_content")[s_tr]);
@@ -737,16 +739,27 @@ function revoke_selections(elm){
 			
 		}
 		
-		if(elm == "force"){
-			try{
-				document.getElementsByClassName("selected_content")[s_tr].classList.remove("selected_content");	
-				selected_contents.length = 0;
-			}catch(e){
-				//--
-			}
-		}
+
 	
 	}
+	
+	if(elm == "force"){
+		try{
+			let sel_block = document.querySelectorAll(".selected_content");	
+			
+			for(selects of sel_block){
+				
+				selects.classList.remove("selected_content");
+				
+			}
+			
+			selected_contents.length = 0;
+		}catch(e){
+			//--
+		}
+	}
+	
+	
 	
 }
 
@@ -1191,10 +1204,14 @@ function clearAllBuffer(){
 
 //Playback
 
-function play(){
+function play(from_player){
 	playing = true;
 	
-	if(_("thisvid").paused){	
+	if(from_player){
+		return true;
+	}
+	
+	if(_("thisvid").paused ){	
 		try{
 			_("thisvid").play();	
 		}catch(e){
@@ -1203,8 +1220,12 @@ function play(){
 	}
 }
 
-function pause(){
+function pause(from_player){
 	playing = false;
+	
+	if(from_player){
+		return true;
+	}
 	
 	if(_("thisvid").paused == false){
 		try{

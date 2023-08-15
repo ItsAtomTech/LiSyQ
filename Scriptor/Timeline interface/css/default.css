@@ -170,10 +170,11 @@ body{
 
 .selected_content{
 	
-	
 	box-shadow:rgba(255,255,255,0.3) 0px 0px 3px 3px;
 	border:solid white 2px;
 	z-index:99;
+	outline:1px dashed white;
+	
 	/* background-color:rgba(120,120,120,0.3); */
 	
 }
@@ -341,6 +342,15 @@ border:solid blue 1px;
 	z-index:2;
 }
 
+
+/* Selections */
+
+.selection-area {
+    background: rgba(0, 200, 80, 0.11);
+    border: 1px solid rgba(0, 200, 80, 0.81);
+    border-radius: 0.1em;
+	
+}
 
 
 

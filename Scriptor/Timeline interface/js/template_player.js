@@ -474,12 +474,13 @@ let manual_template_manager = {
 		
 	}
 
-	
-	
-	
+		
 	
 	
 }
+
+
+Object.seal(template_player);
 
 
 

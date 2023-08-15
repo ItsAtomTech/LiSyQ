@@ -1,3 +1,4 @@
+// Function Helper which the same on logic Click on Select from set_track_node func from timeline.js
 function add_selected_drag() {
     selected_track_indexes.length = 0;
     selected_contents_data.length = 0;
@@ -59,8 +60,8 @@ const selection = new SelectionArea({
             // component that, when crossed by the mouse/touch, trigger the scrolling. Useful for
             // fullscreen containers.
             startScrollMargins: {
-                x: 10,
-                y: 10
+                x: 25,
+                y: 25
             }
         }
     },

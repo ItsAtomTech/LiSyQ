@@ -56,7 +56,7 @@ this_vid.onplay = function(){
  }
  
  if(playing == false){
-  play();
+  play(true);
  }
 
 }
@@ -64,7 +64,7 @@ this_vid.onplay = function(){
 
 this_vid.onpause = function(){
    // console.log(this_vid.currentTime);
- pause();
+ pause(true);
 
 }
 this_vid.oncanplay = function(){

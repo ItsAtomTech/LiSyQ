@@ -51,7 +51,7 @@
 
 
 <script>
-function createSilentAudio (time, freq = 44100){
+function createSilentAudio (time, freq = 3000){
   const length = time * freq;
   const AudioContext = window.AudioContext || window.webkitAudioContext || window.mozAudioContext;
   if(! AudioContext ){
