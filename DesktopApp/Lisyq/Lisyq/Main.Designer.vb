@@ -81,6 +81,7 @@ Partial Class Main
         Me.ToolStripMenuItem17 = New System.Windows.Forms.ToolStripMenuItem()
         Me.ToolStripMenuItem18 = New System.Windows.Forms.ToolStripMenuItem()
         Me.ToolStripMenuItem19 = New System.Windows.Forms.ToolStripMenuItem()
+        Me.SaveFileDialog2 = New System.Windows.Forms.SaveFileDialog()
         CType(Me.WebView21, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.template_menu.SuspendLayout()
         Me.content_menu.SuspendLayout()
@@ -467,7 +468,7 @@ Partial Class Main
         Me.AddNewTrackToolStripMenuItem.BackColor = System.Drawing.Color.DimGray
         Me.AddNewTrackToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlLightLight
         Me.AddNewTrackToolStripMenuItem.Name = "AddNewTrackToolStripMenuItem"
-        Me.AddNewTrackToolStripMenuItem.Size = New System.Drawing.Size(180, 22)
+        Me.AddNewTrackToolStripMenuItem.Size = New System.Drawing.Size(155, 22)
         Me.AddNewTrackToolStripMenuItem.Text = "Add New Track"
         '
         'Panel1
@@ -553,6 +554,11 @@ Partial Class Main
         Me.ToolStripMenuItem19.Size = New System.Drawing.Size(202, 22)
         Me.ToolStripMenuItem19.Text = "Add To Timeline Templ."
         '
+        'SaveFileDialog2
+        '
+        Me.SaveFileDialog2.DefaultExt = "lytemp"
+        Me.SaveFileDialog2.FileName = "Live Template File"
+        '
         'Main
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -634,4 +640,5 @@ Partial Class Main
     Friend WithEvents UseWebEngine2ToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents ClearBuffersToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents ToolStripImportTemplate As ToolStripMenuItem
+    Private WithEvents SaveFileDialog2 As SaveFileDialog
 End Class

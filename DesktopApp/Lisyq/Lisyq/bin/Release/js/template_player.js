@@ -1,3 +1,4 @@
+
 let template_player = {
 	
 	templates:[], //Tempates are loaded into here
@@ -6,6 +7,7 @@ let template_player = {
 	timers: [], //Timer counter array for every playing Que
 	playingQue: [], //Playing Ques data 
 	
+	opened_selected_save_id: null,
 // ================ 	
 
 	playOn:function(){
@@ -447,11 +449,21 @@ let manual_template_manager = {
 		
 		
 	},
-	load: function(){
+	load: function(predata=null){
 		let prm = window.confirm("This will Overwrite current unsaved triggers? Continue");
 		if(!prm){return};
 		
+		
+		
 		let saves = localStorage.getItem("local_save");
+		
+		if(predata){
+			
+			let saved_name = JSON.parse(predata).name || "No name";
+				saves = predata;
+				_("local_save_name").value=saved_name;
+		}
+		
 		try{
 			saves = JSON.parse(saves);
 			
@@ -460,10 +472,10 @@ let manual_template_manager = {
 			template_player.playingQue.length = 0;
 			
 			
-			
 			manual_template_manager.load_triggers();
 			manual_template_manager.load_to_view();
 			
+			destroy_dia();
 		
 		}catch(e){
 			console.log("Problem loading saved");
@@ -472,19 +484,171 @@ let manual_template_manager = {
 		
 		
 		
+	},
+	
+	
+	//Live_player_saves
+	
+
+	generate_save_tab: function(id, name){
+		let frm = "<div class='saved_tab'>"+
+			"<div class='saved_name'> "+ name.toLocaleString() +" </div> "+
+			"<div class='saved_actions small'> "+
+				"<div class='button_box button_xz' onclick=open_saved('"+id+"') > Open </div> "+ 
+				"<div class='button_box button_xz' onclick=remove_saved_liveplayer('"+id+"')> Remove </div> "+
+			"</div>"+
+		"</div>";
+		
+		return frm;
+	},
+	
+	saveToLocal: function(id=null){
+		
+		let save_data = {
+			templates: template_player.templates,
+			playerTabs: template_player.playerTabs,
+			name: _("local_save_name").value,
+		}
+		
+		let tosave =  JSON.stringify(save_data);
+		
+		
+		
+		if(id == undefined || id == null){
+			live_player_saves.saves.push(tosave);
+			localStorage.setItem("localSaves", JSON.stringify(live_player_saves));
+			return;
+		}
+			
+			live_player_saves.saves[id] = tosave;
+			localStorage.setItem("localSaves", JSON.stringify(live_player_saves));
+			return;
+		
 	}
 
+	
+}
+
+var live_player_saves;
+
+function init_saves_live_player(){
+	let saved_items = localStorage.getItem("localSaves");
+	if(saved_items == null || saved_items == undefined){
+		let localSaveTemplate = {'saves': []};
+		localStorage.setItem("localSaves", JSON.stringify(localSaveTemplate));
+		saved_items = localStorage.getItem("localSaves");
+	}
+	live_player_saves = JSON.parse(saved_items);
+}
+
+
+
+Object.seal(template_player);
+
+let custom_form_lls = "<div class='live_player_load_main'> "+
+	"<div class='title_label big'>Load Local Saves </div> "+
+	"<div class='saved_tabs_con' id='saved_local_con'> "+
+	"</div>"+
+ "</div>";
+
+
+//Open the Load List saves
+async function openLocalSaves(refresh=false){
+	if(!refresh){
+		await createDialogue('custom', custom_form_lls);
+	}
+	
+	let saves = live_player_saves.saves;
+	let extId = 0;
+	_("saved_local_con").innerHTML = "";
+	for (item of saves){
 		
+		try{
+		
+		thisname = JSON.parse(item).name || "No name";
+		
+		_("saved_local_con").innerHTML += manual_template_manager
+		.generate_save_tab(extId, thisname);
+		
+		}catch(e){
+			
+			console.log("Live Player-Local save: ", extId, "Seems to be empty, ignored." );
+		}
+		
+		extId++;
+	}
+
+	
+}
+
+
+
+//Open The Selected Save
+function open_saved(id){
+	
+	let saveData = live_player_saves.saves[id];
+	
+	if(saveData){
+		
+		manual_template_manager.load(saveData);
+		template_player.opened_selected_save_id = id; //assign the id ref.
+	}else{
+		createDialogue('error', "<center>There is an error opening saved Data</center>");
+		
+	}
+	
 	
 	
 }
 
 
-Object.seal(template_player);
+//Save the active Live Player to saves
+function saveLocalTemplate(){
+	
+	if(template_player.templates.length <= 0){
+			createDialogue('error', "<center>Live player is empty!</center>");
+		console.log("No data to save!");
+		return;
+	}
+	
+	if(template_player.opened_selected_save_id >= 0){
+		manual_template_manager.saveToLocal(template_player.opened_selected_save_id);
+		
+		createDialogue('info', "<center>Saved!</center>");
+		return
+	}
+	
+	manual_template_manager.saveToLocal();
+	createDialogue('info', "<center>Saved!</center>");
+	return
+	
+}
+
+// The remove Logic for a saves
+function remove_saved_liveplayer(id){
+	if(!id){
+		return false;
+	}
+	
+	let cnf = window.confirm("Are you sure to remove this Save?");
+	if(!cnf){return};
+	
+	live_player_saves.saves.splice(id,1);
+	
+	//removes orphan indexes
+	live_player_saves.saves = live_player_saves.saves.filter(Boolean);
+	localStorage.setItem("localSaves", JSON.stringify(live_player_saves));
+	
+	openLocalSaves(true);
+	return;
+	
+	
+	
+}
 
 
 
-
+init_saves_live_player();
 
 
 //var temp_rail = setInterval(t_rail, 30) //Outputs 33 times a second;
@@ -530,12 +694,90 @@ function activate_player(elm){
 		elm.title = "Player is Active";
 		elm.childNodes[1].innerText = "Active";
 	}
-	
-	
-	
-	
+		
 	
 }
+
+
+
+// Extra End
+// ====
+
+
+//Open an Live Player Template File
+function openLiveFile(){
+		try{				
+			window.chrome.webview.hostObjects.NativeObject.Open_File_LVjs();
+		}catch(e){
+		alert(e);				
+	}
+}
+
+
+
+//Save Live Template Player to File
+function save_LV_to_file(){
+	
+		let save_data = {
+			templates: template_player.templates,
+			playerTabs: template_player.playerTabs,
+			name: _("local_save_name").value,
+		}
+		
+	try{	
+		let to_transfer = JSON.stringify(save_data);	
+		window.chrome.webview.hostObjects.NativeObject.put_data(to_transfer);	
+		
+	}catch(e){
+				
+		
+	}
+	
+	command_save_LV();
+	
+}
+
+
+//JS native interface 
+function load_LV_from_file(file){
+	
+	manual_template_manager.load(file);
+
+}
+
+
+//Helper Function for saving to file
+function command_save_LV(){
+		try{				
+			window.chrome.webview.hostObjects.NativeObject.Save_File_LVjs();
+		}catch(e){
+		alert(e);				
+	}
+
+	
+}
+
+
+
+
+//Legacy content retriever helper
+function retContVarOld(){
+	let oldcon = localStorage.getItem("local_save");
+	if(oldcon){
+		
+			live_player_saves.saves.push(oldcon);
+			localStorage.setItem("localSaves", JSON.stringify(live_player_saves));
+			localStorage.removeItem("local_save");
+			console.log("Old saves loaded to new engine");
+			return;	
+	}
+}
+
+retContVarOld();
+
+
+
+
 
 
 
