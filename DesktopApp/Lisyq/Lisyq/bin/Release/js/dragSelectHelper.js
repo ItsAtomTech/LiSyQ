@@ -88,6 +88,13 @@ selection.on('move', disableAutoHide);
 function getSeleceted() {
     let items = (selection.getSelection());
   
+    if(selected_contents.length <= 0){
+        revoke_selections();
+        push_to_selections(selected_content);
+        selected_content.classList.add("selected_content");
+    }
+  
+  
     multiple_selected = true;
     for (each of items) {
         each.classList.add("selected_content");

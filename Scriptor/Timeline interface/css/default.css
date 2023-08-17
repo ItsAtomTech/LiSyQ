@@ -353,6 +353,14 @@ border:solid blue 1px;
 }
 
 
+.not_available{
+	border:solid red 1px !important;
+	text-decoration: line-through;
+	cursor:not-allowed !important;
+	pointer-events:none;
+	
+}
+
 
 /* Sizes */
 
@@ -367,3 +375,9 @@ border:solid blue 1px;
 
 }
 
+.big{
+	
+	font-size:1.2em !important;
+	
+	
+}

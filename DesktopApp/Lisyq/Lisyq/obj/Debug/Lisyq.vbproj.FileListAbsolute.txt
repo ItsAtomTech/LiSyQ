@@ -21,3 +21,7 @@ D:\Projects\Windows\LiSyq\DesktopApp\Lisyq\Lisyq\obj\Debug\Lisyq.pdb
 D:\Projects\Windows\LiSyq\DesktopApp\Lisyq\Lisyq\obj\Debug\Lisyq.Sample_Send.resources
 D:\Projects\Windows\LiSyq\DesktopApp\Lisyq\Lisyq\obj\Debug\Lisyq.Main.resources
 D:\Projects\Windows\LiSyQ\DesktopApp\Lisyq\Lisyq\obj\Debug\Lisyq.ProgressBar.resources
+\\ATOM2-PC\Projects\Windows\LiSyQ\DesktopApp\Lisyq\Lisyq\obj\Debug\Lisyq.vbproj.AssemblyReference.cache
+\\ATOM2-PC\Projects\Windows\LiSyQ\DesktopApp\Lisyq\Lisyq\obj\Debug\Lisyq.exe
+\\ATOM2-PC\Projects\Windows\LiSyQ\DesktopApp\Lisyq\Lisyq\obj\Debug\Lisyq.xml
+\\ATOM2-PC\Projects\Windows\LiSyQ\DesktopApp\Lisyq\Lisyq\obj\Debug\Lisyq.pdb
