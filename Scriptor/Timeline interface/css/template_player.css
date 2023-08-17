@@ -320,5 +320,94 @@
 	
 }
 
+.name_live_templ{
+	width:100%;
+	max-width:200px;
+	border-bottom:1px dashed gray;
+	padding-left:5px;
+	
+}
+
+
+
+/* Load Record Dia. */
+
+
+.live_player_load_main{
+	width:100%;
+	min-height:200px;
+	padding:10px;
+	
+}
+
+.live_player_load_main > .title_label{
+	width:100%;
+	min-height:30px;
+	/* border:solid red 1px; */
+	font-weight:bold;
+
+}
+
+.live_player_load_main > .saved_tabs_con{
+	width:100%;
+	min-height:180px;
+	/* border:solid red 1px; */
+	/* font-weight:bold; */
+	box-shadow: 0px 0px 2px 2px rgba(10,10,10,0.5) inset;
+	max-height:200px;
+	overflow-y:auto;
+
+}
+
+
+.saved_tabs_con  > .saved_tab{
+	width:100%;
+	min-height:35px;
+	/* border:solid red 1px; */
+	font-weight:bold;
+	background:rgba(0,0,0,0.5);
+	
+	display:flex;
+	align-items:center;
+	justify-content:flex-start;
+	border-bottom:dashed 1px gray;
+	position:relative;
+	padding-right:100px;
+	/* padding:3px; */
+}
+
+.saved_name{
+	padding:5px;
+	
+	
+}
+
+.saved_actions{
+	/* padding:10px; */
+	min-height:30px;
+	min-width:100px;
+	max-width:100px;
+	/* border:solid lime 1px; */
+	position:absolute;
+	
+	right:3px;
+	display:flex;
+	align-items:center;
+	justify-content:center;
+	user-select:none;
+	
+	
+}
+
+.button_xz{
+	padding:4px;
+	border:solid gray 1px;
+	width:45px;
+	cursor:pointer;
+	border-radius:2px;
+}
+
+
+
 
 

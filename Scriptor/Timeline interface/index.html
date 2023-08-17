@@ -139,9 +139,13 @@
 				<div class="search_bar flexed"> 	
 					<div class="activate_button button_box" onclick="activate_player(this)"><span class='active_button_icon'></span><span class='tex'> Off</span></div>
 					
-					<div class="button_box actions" onclick="manual_template_manager.save();"> Save  </div>
-					<div class="button_box actions" onclick="manual_template_manager.load();"> Load  </div>
+					<div class="button_box actions" onclick="saveLocalTemplate();"title="Save to Local"> Save  </div>
+					<div class="button_box actions" onclick="openLocalSaves();"> Load  </div>
+					<input type='text' class="plane_input name_live_templ primary_background primary_color" id="local_save_name" placeholder='No name'>  </input>
 					
+					<div class="button_box actions small" onclick="save_LV_to_file();" title="Write data to file"> Save File  </div>
+					
+					<div class="button_box actions small" onclick="openLiveFile();" title="Open an lytemp File"> Open File  </div>
 				</div>
 				
 				<div class="triggers_con" id="triggers_con"> 
@@ -206,6 +210,9 @@
 
  <!-- Temp -->
 
+
+
+
  
  
  
@@ -241,16 +248,15 @@
  set_delay();
  applyScale(1);
  
-	var g = load_saved();
+	<!-- var g = load_saved(); -->
 	<!-- optimizedData = false; -->
 	<!-- modeSelect('manual'); -->
-	
+	<!-- openLocalSaves(); -->
 	
  </script>
  
  
 
- 
  
  
  </html>

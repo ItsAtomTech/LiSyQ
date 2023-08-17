@@ -5,6 +5,7 @@ Public Class Main
 
     Dim Point As New Point
     Dim SavePath As String = ""
+    Dim SaveLivePlayerPath As String = ""
     Dim relativeLocation = Environment.CurrentDirectory
 
     Private Async Sub Main_Load(sender As Object, e As EventArgs) Handles MyBase.Load
@@ -205,12 +206,30 @@ Public Class Main
 
             Main.Save_File()
 
+        End Function
+        Public Function Save_File_LVjs()
+
+            Main.Save_File_LV()
+
 
         End Function
         Public Function Open_File()
 
             Main.Open_File()
 
+
+        End Function
+        Public Function Open_File_LVjs()
+
+            Main.Open_File_LV()
+
+
+        End Function
+
+        'reset save Path for Live Player
+        Public Function resetPathLV()
+
+            Main.SaveLivePlayerPath = ""
 
         End Function
 
@@ -334,17 +353,38 @@ Public Class Main
 
 
 
+    End Sub
 
 
 
+    Public Sub Save_File_LV()
+
+        If SaveLivePlayerPath = "" Or asNew = True Then
+            SaveFileDialog2.Filter = "Live Player Templates file Files (*.lytemp*)|*.lytemp"
+            If SaveFileDialog2.ShowDialog = Windows.Forms.DialogResult.OK Then
+                My.Computer.FileSystem.WriteAllText(SaveFileDialog2.FileName, data_string, False)
+                SaveLivePlayerPath = SaveFileDialog2.FileName
+                asNew = False
+            Else
+                If SaveLivePlayerPath = "" Then
+                    asNew = True
+                End If
+            End If
+
+
+
+        Else
+            My.Computer.FileSystem.WriteAllText(SaveLivePlayerPath, data_string, False)
+            NotificationManager.Show(Me, "Saving File: " & SaveLivePlayerPath, Color.Green, 2000)
+            'MsgBox("File saved! to " + SaveLivePlayerPath)
+        End If
 
 
 
     End Sub
 
-
     Public Sub Open_File()
-
+        OpenFileDialog1.Filter = "LSYS Files (*.lsys*)|*.lsys"
         If OpenFileDialog1.ShowDialog <> Windows.Forms.DialogResult.Cancel Then
             Dim fileReader As String = My.Computer.FileSystem.ReadAllText(OpenFileDialog1.FileName)
 
@@ -354,6 +394,22 @@ Public Class Main
 
             SavePath = OpenFileDialog1.FileName
 
+            NotificationManager.Show(Me, "File: " & OpenFileDialog1.FileName & "is Now Loading.", Color.Green, 2000)
+
+
+        End If
+
+    End Sub
+
+    Public Sub Open_File_LV()
+        OpenFileDialog1.Filter = "LSYS temp Files (*.lytemp*)|*.lytemp"
+        If OpenFileDialog1.ShowDialog <> Windows.Forms.DialogResult.Cancel Then
+            Dim fileReader As String = My.Computer.FileSystem.ReadAllText(OpenFileDialog1.FileName)
+
+
+
+            WebView21.ExecuteScriptAsync("load_LV_from_file('" + fileReader + "')")
+            SaveLivePlayerPath = OpenFileDialog1.FileName
             NotificationManager.Show(Me, "File: " & OpenFileDialog1.FileName & "is Now Loading.", Color.Green, 2000)
 
 
@@ -506,6 +562,8 @@ Public Class Main
         If confirm_change = DialogResult.Yes Then
             WebView21.CoreWebView2.Navigate("https://lisyq/main.html")
             SavePath = ""
+            SaveLivePlayerPath = ""
+
 
         ElseIf confirm_change = DialogResult.No Then
             'If you want to do something
@@ -524,6 +582,7 @@ Public Class Main
         If confirm_change = DialogResult.Yes Then
             WebView21.CoreWebView2.Navigate("file:///" & relativeLocation & "/main.html")
             SavePath = ""
+            SaveLivePlayerPath = ""
 
         ElseIf confirm_change = DialogResult.No Then
             'If you want to do something

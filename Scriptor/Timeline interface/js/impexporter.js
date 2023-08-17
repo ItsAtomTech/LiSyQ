@@ -65,12 +65,20 @@ const impexp = {
 		_("content_con_import").innerHTML = "";
 		this.selected_items.length = 0;
 		this.all_items.length = 0;
-	
-		let file_load = JSON.parse(ef);
+		let file_load;
+		
+		
+		try{
+			file_load = JSON.parse(ef);
+						// JSON parse after getData and decoded
 			file_load = JSON.parse(decode(file_load.templates));
+		}catch(e){
+						// JSON parse after Decoded then getData
+			file_load = (JSON.parse(decode(ef)).templates);
+		}
+
 	
 			this.all_items = file_load;
-			//console.log(file_load.length);
 			
 		for(plg = 0; plg < file_load.length;plg++){
 			
@@ -99,7 +107,12 @@ const impexp = {
 		
 		for(th of ttmb){
 			
-			th.classList.add("selected");
+			//select only visible (eg. search results only)
+			if(th.checkVisibility()){
+				th.classList.add("selected");
+			}
+			
+			
 		}
 		
 		
@@ -201,4 +214,3 @@ async function openImportTemplates(){
 	
 	
 }
-
