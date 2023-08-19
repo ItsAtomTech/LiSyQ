@@ -68,6 +68,7 @@ Partial Class Main
         Me.PortConfigurationToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.ClearBuffersToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.ToolStripImportTemplate = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ToolStripMenuItem21 = New System.Windows.Forms.ToolStripMenuItem()
         Me.LocalPathToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.UseWebEngine1ToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.UseWebEngine2ToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
@@ -82,6 +83,7 @@ Partial Class Main
         Me.ToolStripMenuItem18 = New System.Windows.Forms.ToolStripMenuItem()
         Me.ToolStripMenuItem19 = New System.Windows.Forms.ToolStripMenuItem()
         Me.SaveFileDialog2 = New System.Windows.Forms.SaveFileDialog()
+        Me.ToolStripMenuItem22 = New System.Windows.Forms.ToolStripMenuItem()
         CType(Me.WebView21, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.template_menu.SuspendLayout()
         Me.content_menu.SuspendLayout()
@@ -397,7 +399,7 @@ Partial Class Main
         'ToolsToolStripMenuItem
         '
         Me.ToolsToolStripMenuItem.BackColor = System.Drawing.Color.FromArgb(CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer))
-        Me.ToolsToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.PortConfigurationToolStripMenuItem, Me.ClearBuffersToolStripMenuItem, Me.ToolStripImportTemplate, Me.LocalPathToolStripMenuItem, Me.UseWebEngine1ToolStripMenuItem, Me.UseWebEngine2ToolStripMenuItem})
+        Me.ToolsToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.PortConfigurationToolStripMenuItem, Me.ClearBuffersToolStripMenuItem, Me.ToolStripImportTemplate, Me.ToolStripMenuItem21, Me.ToolStripMenuItem22, Me.LocalPathToolStripMenuItem, Me.UseWebEngine1ToolStripMenuItem, Me.UseWebEngine2ToolStripMenuItem})
         Me.ToolsToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlLightLight
         Me.ToolsToolStripMenuItem.Name = "ToolsToolStripMenuItem"
         Me.ToolsToolStripMenuItem.Size = New System.Drawing.Size(48, 23)
@@ -430,13 +432,22 @@ Partial Class Main
         Me.ToolStripImportTemplate.Text = "Import Templates"
         Me.ToolStripImportTemplate.ToolTipText = "Import Templates from a file selected"
         '
+        'ToolStripMenuItem21
+        '
+        Me.ToolStripMenuItem21.BackColor = System.Drawing.SystemColors.ControlDarkDark
+        Me.ToolStripMenuItem21.ForeColor = System.Drawing.SystemColors.ControlLightLight
+        Me.ToolStripMenuItem21.Name = "ToolStripMenuItem21"
+        Me.ToolStripMenuItem21.Size = New System.Drawing.Size(216, 22)
+        Me.ToolStripMenuItem21.Text = "Plugin Manager"
+        Me.ToolStripMenuItem21.ToolTipText = "Install and manage Plugins"
+        '
         'LocalPathToolStripMenuItem
         '
         Me.LocalPathToolStripMenuItem.BackColor = System.Drawing.SystemColors.ControlDarkDark
         Me.LocalPathToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlLight
         Me.LocalPathToolStripMenuItem.Name = "LocalPathToolStripMenuItem"
         Me.LocalPathToolStripMenuItem.Size = New System.Drawing.Size(216, 22)
-        Me.LocalPathToolStripMenuItem.Text = "Local Path"
+        Me.LocalPathToolStripMenuItem.Text = "Data Path"
         '
         'UseWebEngine1ToolStripMenuItem
         '
@@ -559,6 +570,14 @@ Partial Class Main
         Me.SaveFileDialog2.DefaultExt = "lytemp"
         Me.SaveFileDialog2.FileName = "Live Template File"
         '
+        'ToolStripMenuItem22
+        '
+        Me.ToolStripMenuItem22.BackColor = System.Drawing.SystemColors.ControlDarkDark
+        Me.ToolStripMenuItem22.ForeColor = System.Drawing.SystemColors.ControlLight
+        Me.ToolStripMenuItem22.Name = "ToolStripMenuItem22"
+        Me.ToolStripMenuItem22.Size = New System.Drawing.Size(216, 22)
+        Me.ToolStripMenuItem22.Text = "Local Path"
+        '
         'Main
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -641,4 +660,6 @@ Partial Class Main
     Friend WithEvents ClearBuffersToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents ToolStripImportTemplate As ToolStripMenuItem
     Private WithEvents SaveFileDialog2 As SaveFileDialog
+    Friend WithEvents ToolStripMenuItem21 As ToolStripMenuItem
+    Friend WithEvents ToolStripMenuItem22 As ToolStripMenuItem
 End Class

@@ -1,4 +1,5 @@
-﻿Imports System.Runtime.InteropServices
+﻿Imports System.IO
+Imports System.Runtime.InteropServices
 Imports Microsoft.Web.WebView2.Core
 
 Public Class Main
@@ -7,15 +8,23 @@ Public Class Main
     Dim SavePath As String = ""
     Dim SaveLivePlayerPath As String = ""
     Dim relativeLocation = Environment.CurrentDirectory
+    Dim locationData As String = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) & "\LiSyQ"
+    Dim settings As My.MySettings
+
+    Dim OpenQuePath As String
+
+
 
     Private Async Sub Main_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 
-        Await WebView21.EnsureCoreWebView2Async
+        Dim env = Await CoreWebView2Environment.CreateAsync(Nothing, locationData)
+        Await WebView21.EnsureCoreWebView2Async(env)
+
         WebView21.CoreWebView2.AddHostObjectToScript("NativeObject", New WebJsObject())
         WebView21.CoreWebView2.SetVirtualHostNameToFolderMapping("lisyq", "", CoreWebView2HostResourceAccessKind.Allow)
+
         WebView21.CoreWebView2.Navigate("https://lisyq/main.html")
         'WebView21.CoreWebView2.Navigate("file:///" & relativeLocation & "/main.html")
-
 
         WebView21.CoreWebView2.Settings.AreDefaultContextMenusEnabled = False
         WebView21.CoreWebView2.Settings.AreHostObjectsAllowed = True
@@ -25,7 +34,10 @@ Public Class Main
         WebView21.CoreWebView2.Settings.IsZoomControlEnabled = False
 
 
+
+
     End Sub
+
 
 
     Public Sub Open_template_menu()
@@ -43,6 +55,8 @@ Public Class Main
     Public Sub Open_track_menu()
         track_options.Show(Point.X, Point.Y)
     End Sub
+
+
 
 
     Private Sub WebView21_MouseUp(sender As Object, e As MouseEventArgs) Handles WebView21.MouseUp
@@ -85,6 +99,13 @@ Public Class Main
 
         Public Function Onready() As String
 
+            'MsgBox("Start")
+
+            If Main.OpenQuePath.Length > 0 Then
+                Main.Open_File_From(Main.OpenQuePath)
+                Main.OpenQuePath = ""
+
+            End If
 
 
             Return Main.df
@@ -264,6 +285,8 @@ Public Class Main
         ' Progress Window End
 
 
+
+
     End Class
 
     Private Sub ToolStripMenuItem1_Click(sender As Object, e As EventArgs) Handles ToolStripMenuItem1.Click
@@ -400,6 +423,42 @@ Public Class Main
         End If
 
     End Sub
+    Public Sub Open_File_From(filepath As String)
+        OpenFileDialog1.Filter = "LSYS Files (*.lsys*)|*.lsys"
+
+
+        If SavePath.Length > 0 Then
+            Dim confirm_loadnew As DialogResult
+
+            confirm_loadnew = MessageBox.Show("You are about to load this file and close currently opened file so save changes first, Continue to Load?", "Open New", MessageBoxButtons.YesNo
+                                         )
+            If confirm_loadnew = DialogResult.Yes Then
+                ProgressBar.Show()
+            Else
+                Return
+            End If
+
+        End If
+
+
+
+        Dim fileReader As String = My.Computer.FileSystem.ReadAllText(filepath)
+        ProgressBar.Show()
+        WebView21.ExecuteScriptAsync("load_from_file('" + fileReader + "')")
+        SavePath = filepath
+        NotificationManager.Show(Me, "File: " & OpenFileDialog1.FileName & "is Now Loading.", Color.Green, 2000)
+
+
+    End Sub
+
+    Public Sub queOpenFrom(filePath As String)
+
+        OpenQuePath = filePath
+
+
+    End Sub
+
+
 
     Public Sub Open_File_LV()
         OpenFileDialog1.Filter = "LSYS temp Files (*.lytemp*)|*.lytemp"
@@ -546,7 +605,7 @@ Public Class Main
     End Sub
 
     Private Sub LocalPathToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles LocalPathToolStripMenuItem.Click
-        MsgBox(relativeLocation)
+        MsgBox(locationData)
     End Sub
 
     Private Sub ToolStripImportTemplate_Click(sender As Object, e As EventArgs) Handles ToolStripImportTemplate.Click
@@ -606,5 +665,41 @@ Public Class Main
 
     End Sub
 
+    Private Sub ToolStripMenuItem21_Click(sender As Object, e As EventArgs) Handles ToolStripMenuItem21.Click
+        MsgBox("Coming Soon...")
+    End Sub
 
+    Private Sub ToolStripMenuItem22_Click(sender As Object, e As EventArgs) Handles ToolStripMenuItem22.Click
+        MsgBox(relativeLocation)
+    End Sub
+
+    Private Sub ToolStripMenuItem23_Click(sender As Object, e As EventArgs)
+        Dim args = My.Application.CommandLineArgs()
+
+        If args.Count() > 0 Then
+
+
+            Dim filePath = args(0).ToString
+
+            Try
+                Dim fileContents As String = File.ReadAllText(filePath)
+                ' Now you have the contents of the file at your disposal.
+                ' Proceed with your cosmic manipulations here.
+                'MsgBox(fileContents)
+                MsgBox(filePath)
+
+            Catch ex As Exception
+                ' Handle any potential errors gracefully.
+                Console.WriteLine("An error occurred while reading the file: " & ex.Message)
+            End Try
+
+
+
+        End If
+
+
+
+
+
+    End Sub
 End Class

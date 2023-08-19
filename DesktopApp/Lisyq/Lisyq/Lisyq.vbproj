@@ -52,6 +52,7 @@
     <OutputPath>bin\Release\</OutputPath>
     <DocumentationFile>Lisyq.xml</DocumentationFile>
     <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
     <OptionExplicit>On</OptionExplicit>
@@ -67,6 +68,12 @@
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>favicon.ico</ApplicationIcon>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationManifest>My Project\app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Web.WebView2.Core, Version=1.0.1293.44, Culture=neutral, PublicKeyToken=2a8ab48044d2601e, processorArchitecture=MSIL">
@@ -103,6 +110,7 @@
     <Import Include="System.Threading.Tasks" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ApplicationEvents.vb" />
     <Compile Include="Cports.vb" />
     <Compile Include="ExtendedControl.vb">
       <SubType>Component</SubType>
@@ -149,6 +157,12 @@
     <Compile Include="Sample_Send.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="SplashScreen_legacy.Designer.vb">
+      <DependentUpon>SplashScreen_legacy.vb</DependentUpon>
+    </Compile>
+    <Compile Include="SplashScreen_legacy.vb">
+      <SubType>Form</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Form1.resx">
@@ -169,8 +183,12 @@
     <EmbeddedResource Include="Sample_Send.resx">
       <DependentUpon>Sample_Send.vb</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="SplashScreen_legacy.resx">
+      <DependentUpon>SplashScreen_legacy.vb</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <None Include="My Project\app.manifest" />
     <None Include="My Project\Application.myapp">
       <Generator>MyApplicationCodeGenerator</Generator>
       <LastGenOutput>Application.Designer.vb</LastGenOutput>
@@ -198,6 +216,11 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="favicon.ico" />
+    <None Include="Resources\Splash Screen.png" />
+    <None Include="Resources\splash_bg.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="bin\Release\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
   <Import Project="packages\Microsoft.Web.WebView2.1.0.1293.44\build\Microsoft.Web.WebView2.targets" Condition="Exists('packages\Microsoft.Web.WebView2.1.0.1293.44\build\Microsoft.Web.WebView2.targets')" />

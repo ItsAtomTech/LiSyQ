@@ -3,9 +3,6 @@ D:\Projects\Windows\LiSyQ\DesktopApp\Lisyq\Lisyq\bin\Release\Lisyq.exe.config
 D:\Projects\Windows\LiSyQ\DesktopApp\Lisyq\Lisyq\bin\Release\Lisyq.exe
 D:\Projects\Windows\LiSyQ\DesktopApp\Lisyq\Lisyq\bin\Release\Lisyq.pdb
 D:\Projects\Windows\LiSyQ\DesktopApp\Lisyq\Lisyq\bin\Release\Lisyq.xml
-D:\Projects\Windows\LiSyQ\DesktopApp\Lisyq\Lisyq\bin\Release\Microsoft.Web.WebView2.Core.dll
-D:\Projects\Windows\LiSyQ\DesktopApp\Lisyq\Lisyq\bin\Release\Microsoft.Web.WebView2.WinForms.dll
-D:\Projects\Windows\LiSyQ\DesktopApp\Lisyq\Lisyq\bin\Release\Microsoft.Web.WebView2.Wpf.dll
 D:\Projects\Windows\LiSyQ\DesktopApp\Lisyq\Lisyq\bin\Release\Microsoft.Web.WebView2.Core.xml
 D:\Projects\Windows\LiSyQ\DesktopApp\Lisyq\Lisyq\bin\Release\Microsoft.Web.WebView2.WinForms.xml
 D:\Projects\Windows\LiSyQ\DesktopApp\Lisyq\Lisyq\bin\Release\Microsoft.Web.WebView2.Wpf.xml
@@ -44,3 +41,7 @@ D:\Projects\Windows\LiSyQ\DesktopApp\Lisyq\Lisyq\obj\Release\Lisyq.ProgressBar.r
 \\ATOM2-PC\Projects\Windows\LiSyQ\DesktopApp\Lisyq\Lisyq\obj\Release\Lisyq.exe
 \\ATOM2-PC\Projects\Windows\LiSyQ\DesktopApp\Lisyq\Lisyq\obj\Release\Lisyq.xml
 \\ATOM2-PC\Projects\Windows\LiSyQ\DesktopApp\Lisyq\Lisyq\obj\Release\Lisyq.pdb
+D:\Projects\Windows\LiSyQ\DesktopApp\Lisyq\Lisyq\obj\Release\Lisyq.SplashScreen_legacy.resources
+D:\Projects\Windows\LiSyQ\DesktopApp\Lisyq\Lisyq\bin\Release\Microsoft.Web.WebView2.Core.dll
+D:\Projects\Windows\LiSyQ\DesktopApp\Lisyq\Lisyq\bin\Release\Microsoft.Web.WebView2.WinForms.dll
+D:\Projects\Windows\LiSyQ\DesktopApp\Lisyq\Lisyq\bin\Release\Microsoft.Web.WebView2.Wpf.dll
