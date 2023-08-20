@@ -43,7 +43,7 @@ The LiSyQ Project is using:
 ## Installation
 
 ##### For Non-Coding users 
-- You can download the Installer at this link:  [Google Drive Folder](https://drive.google.com/drive/folders/1k6coYBn6MqhaBe3tYwqo7ukE8kDKlfG7?usp=sharing) 
+- You can download the Installer at this link:  [Media Fire Folder](https://www.mediafire.com/folder/frpofhcy7vs31/LiSyQ) 
 
 Install the dependencies before running, we included the last version used to build the Project, links would be updated as well.
 
