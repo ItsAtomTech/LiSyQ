@@ -55,7 +55,7 @@ Partial Class ProgressBar
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.AutoValidate = System.Windows.Forms.AutoValidate.EnablePreventFocusChange
+        Me.AutoValidate = System.Windows.Forms.AutoValidate.Disable
         Me.BackColor = System.Drawing.SystemColors.WindowFrame
         Me.ClientSize = New System.Drawing.Size(403, 96)
         Me.Controls.Add(Me.ProgressBar1)

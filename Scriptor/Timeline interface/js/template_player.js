@@ -1,4 +1,4 @@
-
+var active;
 let template_player = {
 	
 	templates:[], //Tempates are loaded into here
@@ -45,10 +45,14 @@ let template_player = {
 						if(output[ports] == undefined){
 							
 							output[ports] = [];
-							
+				  
 						}
 						
-						output[ports][chan] = targets.data[this.timers[index_timer]];
+						if(active){ //only output if active toggle is true
+						
+						  output[ports][chan] = targets.data[this.timers[index_timer]];
+						
+						}
 						
 						}catch(e){
 							
@@ -658,7 +662,7 @@ init_saves_live_player();
 
 
 //var temp_rail = setInterval(t_rail, 30) //Outputs 33 times a second;
-var active;
+
 let hasSentLast = false;
 async function t_rail(){
 	

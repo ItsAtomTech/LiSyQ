@@ -270,7 +270,10 @@ Public Class Main
             ProgressBar.ShowProgress()
 
             If ProgressBar.Visible = False Then
-                ProgressBar.ShowDialog()
+                ProgressBar.Show(Me)
+                ProgressBar.BringToFront()
+
+
 
             End If
 
@@ -433,7 +436,7 @@ Public Class Main
             confirm_loadnew = MessageBox.Show("You are about to load this file and close currently opened file so save changes first, Continue to Load?", "Open New", MessageBoxButtons.YesNo
                                          )
             If confirm_loadnew = DialogResult.Yes Then
-                ProgressBar.Show()
+                ProgressBar.Show(Me)
             Else
                 Return
             End If
@@ -443,7 +446,8 @@ Public Class Main
 
 
         Dim fileReader As String = My.Computer.FileSystem.ReadAllText(filepath)
-        ProgressBar.Show()
+        ProgressBar.Show(Me)
+        ProgressBar.BringToFront()
         WebView21.ExecuteScriptAsync("load_from_file('" + fileReader + "')")
         SavePath = filepath
         NotificationManager.Show(Me, "File: " & OpenFileDialog1.FileName & "is Now Loading.", Color.Green, 2000)

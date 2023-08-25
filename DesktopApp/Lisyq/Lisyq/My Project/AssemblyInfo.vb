@@ -1,4 +1,5 @@
-﻿Imports System
+﻿Imports System.Resources
+Imports System
 Imports System.Reflection
 Imports System.Runtime.InteropServices
 
@@ -9,10 +10,10 @@ Imports System.Runtime.InteropServices
 ' Review the values of the assembly attributes
 
 <Assembly: AssemblyTitle("Lisyq")>
-<Assembly: AssemblyDescription("")>
-<Assembly: AssemblyCompany("Microsoft")>
+<Assembly: AssemblyDescription("Light System Sequencer")>
+<Assembly: AssemblyCompany("Atomtech")>
 <Assembly: AssemblyProduct("Lisyq")>
-<Assembly: AssemblyCopyright("Copyright © Microsoft 2022")>
+<Assembly: AssemblyCopyright("Copyright © Atomtech 2023")>
 <Assembly: AssemblyTrademark("")>
 
 <Assembly: ComVisible(False)>
@@ -31,5 +32,6 @@ Imports System.Runtime.InteropServices
 ' by using the '*' as shown below:
 ' <Assembly: AssemblyVersion("1.0.*")>
 
-<Assembly: AssemblyVersion("1.0.0.0")>
-<Assembly: AssemblyFileVersion("1.0.0.0")>
+<Assembly: AssemblyVersion("1.0.0")>
+<Assembly: AssemblyFileVersion("1.0.0")>
+<Assembly: NeutralResourcesLanguage("en-US")>
