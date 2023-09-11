@@ -1,5 +1,6 @@
 
 document.body.addEventListener("keypress", shortcuts);
+document.body.addEventListener("keyup", shortcuts_keyup);
 
 var editing_shortcuts = true;
 
@@ -24,16 +25,10 @@ function shortcuts(e){
 		e.preventDefault()
 		
 	}else{
-		//this will prevent the shorcuts from activating when on input aside from what is on top of this block
+		//this will prevent the shorcuts from activating when on input aside from what is on top of this code block
 		if(e.target.getAttribute('noauto')){
 			
-			
 		
-			
-			
-			
-			
-			
 			
 			
 			
@@ -165,7 +160,37 @@ function shortcuts(e){
 }
 
 	
+function shortcuts_keyup(e){
+		
+	//For Hot keys on Manual Player (keyup)
+	if(e.target.tagName == "INPUT"){
+
+		return;
+		
+	}
 	
+	
+	
+		try{
+			if(e.ctrlKey == false){
+				
+				let keypress = (e.key.toUpperCase());
+				
+				manual_template_manager.playOnKey(keypress, true);
+				
+				
+				
+			}
+			
+			
+		}catch(er){
+			
+			console.log(e.key.toUpperCase())
+			
+		}
+	
+	
+}	
 	
 	
 

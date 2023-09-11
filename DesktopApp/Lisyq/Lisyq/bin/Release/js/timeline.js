@@ -1869,6 +1869,8 @@ function paste_content(){
 		return false;
 	}else if(copies.length > 0){
 		
+		let last_selected_index = selected_track_index;
+		
 		let start_at_track = decople_data(selected_track_index);
 		
 		revoke_selections('force');
@@ -1911,12 +1913,12 @@ function paste_content(){
 			}
 			
 				selected_track_indexes[extId] = selected_track_index;
+				
+				//remove the extra data from normalized copies
 				delete pasting_copies[extId].start_distance;
 				delete pasting_copies[extId].track_distance;
 			
 					add_sub_tracks(pasting_copies[extId], 'multiple');
-				
-				
 				
 				
 				let this_track = document.querySelector('[tracks_id="'+selected_track_index+'"]').querySelector('[content_id="'+selected_contents_indexes[extId]+'"]')
@@ -1930,16 +1932,13 @@ function paste_content(){
 				extId++;
 		}
 		
-		// console.log(selected_contents_indexes);
-		
 				
 		prev_content = null;
 		
-		// console.log(pasting_copies);
 		
 		push_undo("subtrack", "add", selected_track_indexes,decople_data(pasting_copies), selected_contents_indexes);
 	
-		
+		selected_track_index = last_selected_index; //revert selected track after pasting into previus before pasting
 		
 		return true;
 	}

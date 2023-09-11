@@ -8,6 +8,7 @@ function createDialogue(type,data){
 		dia.setAttribute('id','dai_con');
 		
 		
+		
 	var decor_con = document.createElement("div");
 		decor_con.className = "decor_card_ secondary_background";
 	var decor_1 = document.createElement("div");
@@ -57,11 +58,17 @@ function createDialogue(type,data){
 		
 
 				
-		case "del_enrollment":
+		case "confirmRemove":
+			
+			
+			let dataID = data.tabID;
+			let message = data.message;
+		
 	
-			dia.innerHTML = "<div class='dialogue_box primary_background'><span class='close_dia primary_color' onclick='destroy_dia()'>&times;</span> <span class='dia_title primary_color'>"+"</span> <hr class='line_2'>"+ 
-			"<div>The Form would be Deleted, Continue?</div>"
-			+"<button class='del_button primary_color_button_warn primary_color_text' onclick='remove_form(\""+data+"\")'> Delete </button>"
+			dia.innerHTML = "<div class='dialogue_box primary_background'><span class='close_dia primary_color' onclick='destroy_dia()'>&times;</span> <span class='dai_title primary_color'>"+ "Confirm Remove" +"</span> <hr class='line_2'>"+ 
+			"<div class='confirm_message_info'>"+message+"</div>"
+			+"<div class='confirm_buttons_box'> <button class='button_box button_xz warn_background primary_color' onkeypress='manual_template_manager.remove(\""+dataID+"\", 1);destroy_dia();' onclick='manual_template_manager.remove(\""+dataID+"\", 1);destroy_dia();' selected> Delete </button>"
+			+"<button class='button_box button_xz primary_background primary_color' onclick='destroy_dia()'> Cancel </button> </div>"
 			
 			+" </div>";		
 			created = true;
