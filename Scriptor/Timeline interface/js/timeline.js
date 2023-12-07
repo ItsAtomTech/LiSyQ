@@ -35,6 +35,7 @@ var can_move_track = true;
 var click_on_track;
 var follow_playhead = false;
 var context_menu = false;
+var left_margin = 0;
 
 
 //Play States
@@ -168,6 +169,97 @@ function locateNode(parentID, childID){
 	
 }
 
+if(typeof make !== 'function'){
+   window.make = function(elm){ return document.createElement(elm);};
+}
+
+//create the track bound info bar 
+function createTrackBound(data){
+	let track_port;
+	let channel;
+		
+		
+	if(timeline_data[data.track_id] != undefined){
+		let track_data_ = timeline_data[data.track_id];
+		try{
+			track_port = track_data_.port_channel;
+			channel = track_data_.target_channel;
+		}catch(e){
+			//-
+		}
+		
+	}
+	
+	
+	
+let trackInfo = make('div');
+	trackInfo.setAttribute('class', 'track_info_bound');
+	trackInfo.setAttribute('tabindex',1);
+	trackInfo.setAttribute('parent_track',data.track_id);
+	trackInfo.setAttribute('title',"Channel: "+ channel + "\n Port: "+track_port);
+	
+		var trackInfo_SPAN = make('span');
+		trackInfo_SPAN.setAttribute('class', 'info_con');
+
+			var trackInfo_SPAN_SPAN = make('span');
+			trackInfo_SPAN_SPAN.setAttribute('class', 'track_num');
+			trackInfo_SPAN_SPAN.innerText = data.track_id;
+		trackInfo_SPAN.appendChild(trackInfo_SPAN_SPAN);
+
+	trackInfo.appendChild(trackInfo_SPAN);
+
+		var trackInfo_SPAN = make('span');
+		trackInfo_SPAN.setAttribute('class', 'options_con_');
+
+			var trackInfo_SPAN_SPAN = make('span');
+			trackInfo_SPAN_SPAN.setAttribute('class', 'data_icon button_box mute_icon');
+			trackInfo_SPAN_SPAN.setAttribute('onclick', 'mute_track('+data.track_id+')');
+			trackInfo_SPAN_SPAN.setAttribute('title', 'Mute track output');
+
+		trackInfo_SPAN.appendChild(trackInfo_SPAN_SPAN);
+
+			var trackInfo_SPAN_SPAN = make('span');
+			trackInfo_SPAN_SPAN.setAttribute('class', 'data_icon button_box solo_icon');
+			trackInfo_SPAN_SPAN.setAttribute('onclick', 'solo_track('+data.track_id+')');
+			trackInfo_SPAN_SPAN.setAttribute('title', 'Solo track output');
+
+		trackInfo_SPAN.appendChild(trackInfo_SPAN_SPAN);
+		trackInfo.appendChild(trackInfo_SPAN);
+
+		return trackInfo;
+	
+}
+
+//Update all track info bound, index = specify one track or pass nothing for all
+function updateTrackBounds(index=undefined){
+let all_bounds = document.querySelectorAll('.track_info_bound');
+
+	function update_this_tub(bd, data){
+		bd.outerHTML = createTrackBound({'track_id':data.track_id}).outerHTML;
+		
+		if(data.muted == true){
+			parentTrack(data.track_id).classList.add('muted');
+			parentTrack(data.track_id).setAttribute('title','Track is Muted');
+		}		
+		if(data.solo == true){
+			parentTrack(data.track_id).classList.add('solo');
+		}
+
+		
+	}
+	if(index == undefined){
+		for(tb=0;tb < all_bounds.length;tb++){
+			let this_bound = all_bounds[tb];
+			let track_of = (this_bound.parentNode.getAttribute('tracks_id'));
+
+			update_this_tub(this_bound,timeline_data[track_of]);
+		}		
+	}else{
+		let track_of = (all_bounds[index].parentNode.getAttribute('tracks_id'));
+		update_this_tub(all_bounds[index],timeline_data[track_of]);
+	}
+}
+
 
 //Utilities End
 
@@ -196,8 +288,8 @@ function see_event(){//clicked on track ?
 	if((click_on_track == true && event.shiftKey == true && event.buttons == 1) || playing == false){
 	
 		
-		play_head((event.clientX+scrolled - 2 ) / zoom_scale);
-		time = ((event.clientX - 10)+scrolled ) / zoom_scale;
+		play_head((event.clientX+scrolled - (2 + left_margin)) / zoom_scale);
+		time = ((event.clientX - (10 + left_margin))+scrolled ) / zoom_scale;
 		_("thisvid").currentTime = ((time-2)/33.333);
 		player_seeked = true;
 		
@@ -276,7 +368,10 @@ function add_track(data,com,mode){
 		"port_channel": 0
 	}	
 	
+		
 	
+		
+		
 	
 		
 		//something more here
@@ -284,6 +379,7 @@ function add_track(data,com,mode){
 		if(data == undefined || data == null){
 			
 			timeline_data[tracks_len] = track_data;
+
 			_("timeline_").appendChild(track);
 			
 			
@@ -363,7 +459,7 @@ function add_track(data,com,mode){
 		
 		}
 		tracks_id = timeline_data.length;
-		
+	track.appendChild(createTrackBound({'track_id':tracks_len}));
 	autoHide();
 	
 	return capInput(parseInt(data,0,timeline_data.length));
@@ -1017,14 +1113,16 @@ if(playing == true){
 				ch_track = tr;
 			}
 
-			//Puts Default Value from track if no content at current time index
-			try{			
-				output[port_chan][ch_track] = timeline_data[tr].default_value;			
-			}catch(e){
-				output[port_chan] = [];
-				output[port_chan][ch_track] = timeline_data[tr].default_value;	
+			//Puts Default Value from track if no content at current time index and not muted
+			if(timeline_data[tr].muted != true){
+				try{	
+					output[port_chan][ch_track] = timeline_data[tr].default_value;			
+				}catch(e){
+					output[port_chan] = [];
+					output[port_chan][ch_track] = timeline_data[tr].default_value;	}
 			}
-			
+		
+
 			for(str = 0;str < timeline_data[tr].sub_tracks.length;str++){
 					var subtracks = timeline_data[tr].sub_tracks[str];
 				
@@ -1036,7 +1134,7 @@ if(playing == true){
 						// console.log("Track #"+ tr +", content block #"+ str +" : "+ time + "\n content_index: " + (time - subtracks.start_at));
 
 						
-						to_output(ch_track,port_chan,timeline_data[tr].sub_tracks[str].data[parseInt((timeFixed -  time_delay) - subtracks.start_at)],timeline_data[tr].default_value);
+						to_output(ch_track,port_chan,timeline_data[tr].sub_tracks[str].data[parseInt((timeFixed -  time_delay) - subtracks.start_at)],timeline_data[tr].default_value,tr);
 						
 						not_empty = true;
 
@@ -1073,7 +1171,7 @@ if(playing == true){
 
 
 
-function to_output(tr,chp,df,def){
+function to_output(tr,chp,df,def,tr_id){
 	
 	
 	//chp is for channel_port for port selected for track
@@ -1085,6 +1183,14 @@ function to_output(tr,chp,df,def){
 		if(output[channel_port] == undefined){
 			output[channel_port] = [];		
 		}
+		
+		if(tr_id != undefined){
+			if(timeline_data[tr_id].muted == true){
+				return;
+			}
+		}
+
+		
 		
 		if(df == undefined || df ==  ""){
 			//set to default value if no data
@@ -1399,7 +1505,9 @@ function save_port_conf(){
 	timeline_data[selected_track_index].target_channel = cha_val;
 	
 	optimizedData = false;
-
+	updateTrackBounds(selected_track_index);
+	
+	
 	destroy_dia();
 	
 }
@@ -1513,17 +1621,19 @@ function move_ruler(){
 function click_on_ruler(){
 	
 	if(follow_playhead == true){
-		play_head((event.clientX - 2 + _("timeline_container").scrollLeft) / zoom_scale);
-		time = (event.clientX - 10 + _("timeline_container").scrollLeft) / zoom_scale;
+		play_head((event.clientX - ( 2 + left_margin) + _("timeline_container").scrollLeft) / zoom_scale);
+		time = (event.clientX - (10+ left_margin) + _("timeline_container").scrollLeft) / zoom_scale;
+		
 	
+		
 		_("thisvid").currentTime = ((time-2)/33.333);
 		player_seeked = true;
 		
 		play_on_current();
 	
 	}else if(follow_playhead == false && playing == false){
-		play_head((event.clientX - 2 + _("timeline_container").scrollLeft)/ zoom_scale);
-		time = (event.clientX - 10 + _("timeline_container").scrollLeft ) / zoom_scale;
+		play_head((event.clientX - (2 + left_margin) + _("timeline_container").scrollLeft)/ zoom_scale);
+		time = (event.clientX - (10 + left_margin) + _("timeline_container").scrollLeft ) / zoom_scale;
 	
 		
 		_("thisvid").currentTime = (((time-2)/33.333));
@@ -1693,8 +1803,10 @@ function remove_track(id,com){
 		timeline_data[stad].track_id = stad;
 		_("timeline_").getElementsByClassName("track_con")[stad].setAttribute("tracks_id",stad);
 		
+		
 	}
 	
+	updateTrackBounds();
 	
 	selected_track_index = null;
 	_("track_disp").value = 0;
@@ -1995,6 +2107,8 @@ function duplicate_track(index,destination){
 	//Push an Undo Entry for this duplication
 	push_undo("track", "add", insert_at, timeline_data[insert_at], '');
 	
+	updateTrackBounds();
+	
 	return insert_at;
 	
 }
@@ -2004,6 +2118,76 @@ function duplicate_track(index,destination){
 function duplicateTrack(destination_option){
 	return duplicate_track(selected_track_index, destination_option);
 }
+
+// ===============
+// Muting And Solo Track Logic
+// ===============
+
+// To-Do: Just do it
+
+function mute_track(id,toggle=true,unmute=false){
+	if(timeline_data[id] == undefined){
+		return;
+	}
+	let trselect = timeline_data[id];
+
+	if(trselect.muted && toggle == true){
+		trselect.muted = false;
+		parentTrack(id).classList.remove("muted");
+		parentTrack(id).setAttribute("title", '');
+		
+		
+	}else if(unmute){
+		trselect.muted = false;
+		parentTrack(id).classList.remove("muted");
+		parentTrack(id).setAttribute("title", '');
+		
+	}else{
+		trselect.muted = true;
+		parentTrack(id).classList.add("muted");
+		parentTrack(id).setAttribute("title", 'Track is Muted');
+		trselect.solo = false;
+		parentTrack(id).classList.remove("solo");
+	}
+	
+	
+	optimizedData = false;
+	
+}
+
+
+function solo_track(id){
+	function mute_all(unmute){
+		for(trs = 0; trs <= timeline_data.length; trs++){
+			if(trs == id){
+				mute_track(id,false,true);
+				continue;
+			}
+			mute_track(trs,false,unmute);
+			
+		}
+		
+	}
+	
+	let trselect = timeline_data[id];
+
+	if(trselect.solo){
+		trselect.solo = false;
+		parentTrack(id).classList.remove("solo");
+		mute_all(true);
+	}else{
+		trselect.solo = true;
+		parentTrack(id).classList.add("solo");
+		mute_all(false);
+	}
+	
+}
+
+
+// ===============
+// Muting And Solo Track Logic End
+// ===============
+
 
 
 //Load From Datas
@@ -2056,6 +2240,7 @@ function load_saved(data){
 	load_all_templates();
 	
 	scanOptimized();
+	updateTrackBounds();
 	
 }
 
@@ -2104,7 +2289,7 @@ async function load_from_file(df){
 		for(dtracks = 0;dtracks < timeline_data_.length;dtracks++){
 			
 			
-			//To-Do: Try Loading Display Logic here...
+			// Loading Display Logic here...
 			
 			show_loading(timeline_data_.length, dtracks+1, "Loading tracks");
 			
@@ -2150,29 +2335,28 @@ async function load_from_file(df){
 	
 	scanOptimized();	
 	finish_loading();
+	updateTrackBounds();
 	return;
 	
 }
 
 
 function refresh_track(tr_id){
-	
 	if(tr_id >= timeline_data.length || tr_id == null){
 		
 		console.warn("Track id out of bound!");
-		
 		return false;
 	}
 	
 	loaded_from_data = true;
 	parentTrack(tr_id).innerHTML = "";
+	parentTrack(tr_id).appendChild(createTrackBound({'track_id':tr_id}));
+	
 	selected_track_index = tr_id;
 	
 		for(dft = 0;dft < timeline_data[tr_id].sub_tracks.length;dft++){
 			sub_data_id = dft;
 			add_sub_tracks(timeline_data[tr_id].sub_tracks[dft]);
-			
-			
 		}
 	
 	loaded_from_data = false;

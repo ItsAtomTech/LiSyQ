@@ -94,8 +94,9 @@ not_empty = false;
 			
 			try{			
 				//output[port_chan][tr] = timeline_data[tr].default_value;			
-				
-				to_consolidator(ch_track,port_chan,timeline_data[tr].default_value,timeline_data[tr].default_value, time_index);
+				if(timeline_data[tr].muted != true){
+					to_consolidator(ch_track,port_chan,timeline_data[tr].default_value,timeline_data[tr].default_value, time_index,tr);				
+				}
 				
 			}catch(e){
 				//output[port_chan] = [];
@@ -109,8 +110,10 @@ not_empty = false;
 					if(subtracks.start_at <= time_index && time_index <= subtracks.end_at){
 						
 						// console.log("Track #"+ tr +", content block #"+ str +" : "+ time + "\n content_index: " + (time - subtracks.start_at));
-						
-	to_consolidator(ch_track,port_chan,timeline_data[tr].sub_tracks[str].data[parseInt(time_index - subtracks.start_at)],timeline_data[tr].default_value, time_index);
+						if(timeline_data[tr].muted != true){
+										
+			to_consolidator(ch_track,port_chan,timeline_data[tr].sub_tracks[str].data[parseInt(time_index - subtracks.start_at)],timeline_data[tr].default_value, time_index,tr);
+							}
 						
 						not_empty = true;
 
@@ -148,7 +151,7 @@ not_empty = false;
 var scanned_data = [[[]],[[]]];
 
 
-function to_consolidator(track,chport,data_f,def,time_index){
+function to_consolidator(track,chport,data_f,def,time_index,tr_id){
 	
 		not_empty = true;
 		
@@ -163,6 +166,10 @@ function to_consolidator(track,chport,data_f,def,time_index){
 			scanned_data[channel_port][track] = [];		
 		}
 		
+		
+		if(timeline_data[tr_id].muted == true){
+			return;
+		}
 		
 		
 		if(data_f == undefined || data_f ==  ""){

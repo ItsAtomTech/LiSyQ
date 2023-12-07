@@ -7,7 +7,8 @@ Public Class Main
     Dim Point As New Point
     Dim SavePath As String = ""
     Dim SaveLivePlayerPath As String = ""
-    Dim relativeLocation = Environment.CurrentDirectory
+    Dim relativeLocation = My.Application.Info.DirectoryPath
+
     Dim locationData As String = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) & "\LiSyQ"
     Dim settings As My.MySettings
 
@@ -643,6 +644,7 @@ Public Class Main
                                          )
 
         If confirm_change = DialogResult.Yes Then
+
             WebView21.CoreWebView2.Navigate("file:///" & relativeLocation & "/main.html")
             SavePath = ""
             SaveLivePlayerPath = ""
