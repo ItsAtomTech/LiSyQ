@@ -224,6 +224,13 @@ let trackInfo = make('div');
 			trackInfo_SPAN_SPAN.setAttribute('title', 'Solo track output');
 
 		trackInfo_SPAN.appendChild(trackInfo_SPAN_SPAN);
+		
+			var trackInfo_SPAN_SPAN = make('span');
+			trackInfo_SPAN_SPAN.setAttribute('class', 'data_icon button_box resize_icon');
+			trackInfo_SPAN_SPAN.setAttribute('onclick', 'minimize_track('+data.track_id+')');
+			trackInfo_SPAN_SPAN.setAttribute('title', 'Minimize Track View');
+
+		trackInfo_SPAN.appendChild(trackInfo_SPAN_SPAN);
 		trackInfo.appendChild(trackInfo_SPAN);
 
 		return trackInfo;
@@ -243,6 +250,9 @@ let all_bounds = document.querySelectorAll('.track_info_bound');
 		}		
 		if(data.solo == true){
 			parentTrack(data.track_id).classList.add('solo');
+		}		
+		if(data.minimize == true){
+			parentTrack(data.track_id).classList.add('minimize');
 		}
 
 		
@@ -284,55 +294,51 @@ var ds;
 
 function see_event(){//clicked on track ?
 	var scrolled = _("timeline_container").scrollLeft;
-	// console.log(event.clientX+scrolled);
-	if((click_on_track == true && event.shiftKey == true && event.buttons == 1) || playing == false){
 	
-		
-		play_head((event.clientX+scrolled - (2 + left_margin)) / zoom_scale);
-		time = ((event.clientX - (10 + left_margin))+scrolled ) / zoom_scale;
-		_("thisvid").currentTime = ((time-2)/33.333);
-		player_seeked = true;
-		
+	let on_tracks = (event.srcElement.classList.contains("track_con") || event.srcElement.classList.contains("sub_track"));
+	
+	
+	if((click_on_track == true && event.shiftKey == true && event.buttons == 1) || playing == false){
+		if(on_tracks){
+			play_head((event.clientX+scrolled - (2 + left_margin)) / zoom_scale);
+			time = ((event.clientX - (10 + left_margin))+scrolled ) / zoom_scale;
+			_("thisvid").currentTime = ((time-2)/33.333);
+			player_seeked = true;
+		}
 		if(playing == true){
 			_("thisvid").play();
 		}
 	}
-	
-	
-		try{
-			if(event.ctrlKey){
-				selection.enable();
-			}else if(event.ctrlKey == false){
-				selection.disable();				
-				
-				enableAutoHide();
-				
-			}
-	
-		}catch(e){
-			//--
+	try{
+		if(event.ctrlKey){
+			selection.enable();
+		}else if(event.ctrlKey == false){
+			selection.disable();				
+			enableAutoHide();
 		}
-	
-	
+	}catch(e){
+		//--
+	}
 	
 	
 	play_on_current();
-	
 	selected_track_index = parseInt(this.getAttribute("tracks_id"));
 	
 	_("track_disp").value = selected_track_index;
 	_("total_tracks").innerHTML = timeline_data.length;
 	
-	follow_playhead = false;
+	if(on_tracks){
+		follow_playhead = false;
+	}
+	
+
 	limitThreshold = 2;
 	_("ruler_view").style.opacity = 0.75;
 	_("ruler_view").title = "";
 	click_on_track = true;
 	
 	for(s_tr = 0; s_tr < timeline_data.length;s_tr++){
-		
 		this.parentNode.getElementsByClassName("track_con")[s_tr].classList.remove("selected_track");
-		
 	}
 	
 	this.classList.add("selected_track");
@@ -2107,7 +2113,7 @@ function duplicate_track(index,destination){
 	//Push an Undo Entry for this duplication
 	push_undo("track", "add", insert_at, timeline_data[insert_at], '');
 	
-	updateTrackBounds();
+	
 	
 	return insert_at;
 	
@@ -2123,7 +2129,7 @@ function duplicateTrack(destination_option){
 // Muting And Solo Track Logic
 // ===============
 
-// To-Do: Just do it
+// To-Do: Just do it (Done)
 
 function mute_track(id,toggle=true,unmute=false){
 	if(timeline_data[id] == undefined){
@@ -2180,6 +2186,29 @@ function solo_track(id){
 		parentTrack(id).classList.add("solo");
 		mute_all(false);
 	}
+	
+}
+
+
+// Other Similar Functions
+
+function minimize_track(id){
+	if(timeline_data[id] == undefined){
+		return;
+	}
+	let trselect = timeline_data[id];
+
+	if(trselect.minimize){
+		trselect.minimize = false;
+		parentTrack(id).classList.remove("minimize");
+		
+	}else{
+		trselect.minimize = true;
+		parentTrack(id).classList.add("minimize");
+
+	}
+	
+	autoHide();
 	
 }
 
@@ -2360,6 +2389,7 @@ function refresh_track(tr_id){
 		}
 	
 	loaded_from_data = false;
+	updateTrackBounds();
 }
 
 

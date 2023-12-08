@@ -119,6 +119,19 @@ body{
 	
 }
 
+.track_con.minimize{
+	max-height:30px;
+	min-height:30px;
+}
+.track_con.minimize > .sub_track{
+	max-height:30px;
+	min-height:30px;
+}
+.track_con.minimize > .track_info_bound:not(focus){
+	max-height:30px;
+	min-height:30px;
+}
+
 
 .selected_track{
 	box-shadow:rgba(250,250,250,0.3) 0px 0px 3px 3px;
@@ -152,7 +165,8 @@ body{
 	width:100px;
 	transform:translateX(0px);
 	opacity:1;
-	
+	min-height:50px !important;
+	z-index:99;
 }
 
 
@@ -216,6 +230,11 @@ body{
 	border:dashed 1px white;
 }
 
+.minimize > .track_info_bound > .options_con_ >.resize_icon{
+	opacity:1;
+	border:dashed 1px white;
+}
+
 
 /* =========== */
 /* Icons */
@@ -227,6 +246,10 @@ body{
 
 .solo_icon{
 	background-image:url(../images/solo.png);
+}
+
+.resize_icon{
+	background-image:url(../images/resize.png);
 }
 
 
