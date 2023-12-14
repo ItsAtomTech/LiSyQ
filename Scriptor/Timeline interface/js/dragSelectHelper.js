@@ -90,8 +90,13 @@ function getSeleceted() {
   
     if(selected_contents.length <= 0){
         revoke_selections();
-        push_to_selections(selected_content);
-        selected_content.classList.add("selected_content");
+        
+        if(selected_content != null || selected_content != undefined){
+            push_to_selections(selected_content);
+            selected_content.classList.add("selected_content");
+        }
+        
+
     }
   
   

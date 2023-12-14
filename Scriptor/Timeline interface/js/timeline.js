@@ -2365,6 +2365,7 @@ async function load_from_file(df){
 	scanOptimized();	
 	finish_loading();
 	updateTrackBounds();
+	selected_content = null; //remove selection for the newly loaded timeline
 	return;
 	
 }
