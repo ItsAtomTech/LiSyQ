@@ -1044,6 +1044,16 @@ function layoutChange(){
 }
 
 
+//Helper Function for changing layout of the whole live panel
+let isLiveFullScreen = false;
+function layoutLiveFull(){
+	
+	isLiveFullScreen = _("v_con_2").classList.toggle("full_view_live");
+	
+	
+}
+
+
 //Generate info strip for data passed
 function genInfoStrip(data){
 	

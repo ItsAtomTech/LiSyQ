@@ -54,7 +54,7 @@ var output = [[],[]];
 
 //Save_type
 var include_data = settings.get('includeData');
-
+let fileOptions = {};
 
 //Animating and playing
 
@@ -2223,6 +2223,7 @@ function minimize_track(id){
 
 var dummy_data = localStorage.getItem("data_dummy");
 var dummy_templates = localStorage.getItem("data_templates");
+var dummy_options = localStorage.getItem("options");
 
 function load_saved(data){
 	
@@ -2231,6 +2232,12 @@ function load_saved(data){
 	data = dummy_data;
 	
 	data = JSON.parse(data);
+	fileOptions = {};
+	try{
+		fileOptions = JSON.parse(dummy_options);
+	}catch(e){
+		//-
+	}
 	
 	
 	//_("timeline_").innerHTML = "";
@@ -2255,14 +2262,10 @@ function load_saved(data){
 			
 			
 		}
-		
-		
 	}
 	
 	templates = JSON.parse(dummy_templates);
 		
-	
-	
 	timeline_data = data;
 	loaded_from_data = false;	
 	regen_empty_data();	
@@ -2303,9 +2306,15 @@ async function load_from_file(df){
 	
 	load_all_templates();	
 	var timeline_data_ = JSON.parse(decode(project_data.timeline));
+	
+	try{
+		fileOptions = {};
+		fileOptions = JSON.parse(decode(project_data.options));
+	}catch(e){
+		//-
+	}
+	
 			
-	
-	
 	
 	// _("timeline_").innerHTML = "";
 	
@@ -2365,6 +2374,14 @@ async function load_from_file(df){
 	scanOptimized();	
 	finish_loading();
 	updateTrackBounds();
+	
+	try{		
+		loadLinkedMedia(fileOptions); //Try to load any linked media to this file
+	}catch(e){
+		//-
+	}
+	
+	
 	selected_content = null; //remove selection for the newly loaded timeline
 	return;
 	
@@ -2437,6 +2454,7 @@ function save_dummy(){
 	var templates_ = JSON.stringify(templates);
 	localStorage.setItem("data_dummy",datas);	
 	localStorage.setItem("data_templates",templates_);	
+	localStorage.setItem("options",JSON.stringify(fileOptions));	
 }
 
 
@@ -2470,11 +2488,10 @@ function comulate_timeline(){
 
 function save_to_file(){
 	
-	
-	
 	var rec_project = {
 		"templates":encode(JSON.stringify(templates)),
-		"timeline":encode(JSON.stringify(comulate_timeline()))	
+		"timeline":encode(JSON.stringify(comulate_timeline())),	
+		"options": encode(JSON.stringify(fileOptions)),
 	}
 	
 	try{	
@@ -2482,12 +2499,9 @@ function save_to_file(){
 		window.chrome.webview.hostObjects.NativeObject.put_data(to_transfer);	
 		
 	}catch(e){
-				
-		
+		//-
 	}
-	
 	command_save();
-	
 }
 
 function command_save(){

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html> 
+<head> 
+	<title>LiSyQ - Nest.in Player</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, user-scalable=0">
+	<!-- <link rel="stylesheet" href="font-awesome/css/solid.min.css"> -->
+	<!-- <link rel="stylesheet" href="font-awesome/css/fontawesome.min.css"> -->
+		<link rel="stylesheet" href="../css/default.css">
+		<link rel="stylesheet" href="../css/nestview.css">
+		<link rel="stylesheet" id="color" href="../css/coloring.css">
+		<link rel="stylesheet" href="../css/dailoge.css">
+		<link rel="stylesheet" href="../css/bottom_bar.css">
+		<link rel="stylesheet" href="../css/template_player.css">
+		<link rel="icon" type="image/png" href="../images/favicon.ico"/>
+	
+	<style id='dyna_scaler'>
+		:root {
+			--scale: 1;
+		}
+	</style>
+				
+</head>
+
+<body>
+
+
+
+<div class="nest_player_main" id="nest_player_sep_container" style=''>	
+		<div class="v_con_1 container_bound" id="v_con_1">		
+			
+			<!-- Nested Player Group -->
+			<div class="h_con_1 horizontal_bounds" id="h2_con_1">		
+				<!-- Nested Player Media Group Goes here -->
+				<div class="v_con_1 container_bound" id="v2_con_1">
+					
+				</div>	
+					
+								
+				<div class="v_slide_bar" id="v_rez2" 
+				onmousedown="vResizer2.pickSlider(this)" 
+				onmousemove="vResizer2.resize(this)" 
+				onmouseleave="vResizer2.dropSlider(this)"
+				onmouseup="vResizer2.dropSlider(this)"
+				
+				ontouchstart="vResizer2.pickSlider(this)" 
+				ontouchmove="vResizer2.resize(this)" 
+				ontouchend="vResizer2.dropSlider(this)"
+				ontouchcancel="vResizer2.dropSlider(this)"
+				
+				> || </div>
+					
+				<div class="v_con_2 primary_color primary_background container_bound" id="v2_con_2">	
+
+				</div>			
+			
+			
+			</div>
+				
+				<div class="h_slide_bar primary_color" id="h_rez2" 
+				onmousedown="hResizer2.pickSlider(this)" 
+				onmousemove="hResizer2.resize(this)" 
+				onmouseleave="hResizer2.dropSlider(this)"
+				onmouseup="hResizer2.dropSlider(this)"
+				
+				ontouchstart="hResizer2.pickSlider(this)" 
+				ontouchmove="hResizer2.resize(this)" 
+				ontouchend="hResizer2.dropSlider(this)"
+				ontouchcancel="hResizer2.dropSlider(this)"
+				
+				> = </div>
+			
+			
+			<div class="h_con_2 primary_color horizontal_bounds primary_background" id="h2_con_2">
+				<!-- Nested Player Timeline Goes here -->
+
+			</div>
+	
+		
+		</div>
+			
+			<div class="v_slide_bar primary_color" id="v_rez1" 
+			onmousedown="vertical_resizer.pickSlider(this)" 
+			onmousemove="vertical_resizer.resize(this)" 
+			onmouseleave="vertical_resizer.dropSlider(this)"
+			onmouseup="vertical_resizer.dropSlider(this)"
+			
+			ontouchstart="vertical_resizer.pickSlider(this)" 
+			ontouchmove="vertical_resizer.resize(this)" 
+			ontouchend="vertical_resizer.dropSlider(this)"
+			ontouchcancel="vertical_resizer.dropSlider(this)"
+			
+			> || </div>
+		
+		
+		<div class="v_con_2 primary_color primary_background container_bound" id="v_con_2">
+			
+			<!-- List Player Group -->
+			<div class="h_con_1" id="h_con_1">		
+		
+		
+			
+			</div>
+				
+				<div class="h_slide_bar" id="h_rez1" 
+				onmousedown="horizontal_resizer.pickSlider(this)" 
+				onmousemove="horizontal_resizer.resize(this)" 
+				onmouseleave="horizontal_resizer.dropSlider(this)"
+				onmouseup="horizontal_resizer.dropSlider(this)"
+				
+				ontouchstart="horizontal_resizer.pickSlider(this)" 
+				ontouchmove="horizontal_resizer.resize(this)" 
+				ontouchend="horizontal_resizer.dropSlider(this)"
+				ontouchcancel="horizontal_resizer.dropSlider(this)"
+				
+				> = </div>
+			
+			
+			<div class="h_con_2 primary_color primary_background" id="h_con_2">
+				
+					
+
+			</div>
+
+		</div>
+			
+</div>
+
+
+<script src="../js/unified.js"></script>
+<script src="../js/vertical_resizer.js"></script>
+<script src="../js/horizontal_resizer.js"></script>
+<script src="../js/nest_main.js"></script>
+
+</body>
+</html>

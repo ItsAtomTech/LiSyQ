@@ -67,7 +67,8 @@
 		<div class="media_player_con">
 			<div class="media_bar_options">
 
-				<div class="load_button" onclick="load_media()" title="Load Media Sampling File"> </div>
+				<div class="load_button button_box" onclick="load_media()" title="Load Media Sampling File"> </div>
+				<div class="load_link_button button_box " onclick="select_link()" title="Load and Link a media to this lsys file."> </div>
 
 			</div>
 		
@@ -136,6 +137,11 @@
 			onmouseleave="vertical_resizer.dropSlider(this)"
 			onmouseup="vertical_resizer.dropSlider(this)"
 			
+			ontouchstart="vertical_resizer.pickSlider(this)" 
+			ontouchmove="vertical_resizer.resize(this)" 
+			ontouchend="vertical_resizer.dropSlider(this)"
+			ontouchcancel="vertical_resizer.dropSlider(this)"
+			
 			> || </div>
 			
 			
@@ -150,7 +156,10 @@
 					<div class="button_box actions small" onclick="save_LV_to_file();" title="Write data to file"> Save File  </div>
 					
 					<div class="button_box actions small" onclick="openLiveFile();" title="Open an lytemp File"> Open File  </div>
-					<div class="button_box actions small layout_view" onclick="layoutChange();" title="Change Layout: Simple or Expanded(Default)">  </div>
+					
+					<div class="button_box actions small layout_view" onclick="layoutChange();" title="Change Layout: Simple or Expanded(Default)">  </div>			
+					
+					<div class="button_box actions small layout_full_view" onclick="layoutLiveFull();" title="Toggle to cover entire Window with this panel">  </div>
 				</div>
 				
 				<div class="triggers_con" id="triggers_con"> 
@@ -221,6 +230,7 @@
  
  
  </body>
+	<script src="js/unified.js"></script>
 	<script src="js/settings.js"></script>
 	<script src="js/timeline.js"></script>
 	<script src="js/play_optimized.js"></script>

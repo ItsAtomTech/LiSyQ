@@ -69,6 +69,7 @@ Partial Class Main
         Me.ClearBuffersToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.ToolStripImportTemplate = New System.Windows.Forms.ToolStripMenuItem()
         Me.ToolStripMenuItem21 = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ToolStripMenuItem22 = New System.Windows.Forms.ToolStripMenuItem()
         Me.LocalPathToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.UseWebEngine1ToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.UseWebEngine2ToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
@@ -83,7 +84,7 @@ Partial Class Main
         Me.ToolStripMenuItem18 = New System.Windows.Forms.ToolStripMenuItem()
         Me.ToolStripMenuItem19 = New System.Windows.Forms.ToolStripMenuItem()
         Me.SaveFileDialog2 = New System.Windows.Forms.SaveFileDialog()
-        Me.ToolStripMenuItem22 = New System.Windows.Forms.ToolStripMenuItem()
+        Me.directoryPicker = New System.Windows.Forms.OpenFileDialog()
         CType(Me.WebView21, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.template_menu.SuspendLayout()
         Me.content_menu.SuspendLayout()
@@ -441,6 +442,14 @@ Partial Class Main
         Me.ToolStripMenuItem21.Text = "Plugin Manager"
         Me.ToolStripMenuItem21.ToolTipText = "Install and manage Plugins"
         '
+        'ToolStripMenuItem22
+        '
+        Me.ToolStripMenuItem22.BackColor = System.Drawing.SystemColors.ControlDarkDark
+        Me.ToolStripMenuItem22.ForeColor = System.Drawing.SystemColors.ControlLight
+        Me.ToolStripMenuItem22.Name = "ToolStripMenuItem22"
+        Me.ToolStripMenuItem22.Size = New System.Drawing.Size(216, 22)
+        Me.ToolStripMenuItem22.Text = "Local Path"
+        '
         'LocalPathToolStripMenuItem
         '
         Me.LocalPathToolStripMenuItem.BackColor = System.Drawing.SystemColors.ControlDarkDark
@@ -479,7 +488,7 @@ Partial Class Main
         Me.AddNewTrackToolStripMenuItem.BackColor = System.Drawing.Color.DimGray
         Me.AddNewTrackToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlLightLight
         Me.AddNewTrackToolStripMenuItem.Name = "AddNewTrackToolStripMenuItem"
-        Me.AddNewTrackToolStripMenuItem.Size = New System.Drawing.Size(155, 22)
+        Me.AddNewTrackToolStripMenuItem.Size = New System.Drawing.Size(180, 22)
         Me.AddNewTrackToolStripMenuItem.Text = "Add New Track"
         '
         'Panel1
@@ -570,13 +579,9 @@ Partial Class Main
         Me.SaveFileDialog2.DefaultExt = "lytemp"
         Me.SaveFileDialog2.FileName = "Live Template File"
         '
-        'ToolStripMenuItem22
+        'directoryPicker
         '
-        Me.ToolStripMenuItem22.BackColor = System.Drawing.SystemColors.ControlDarkDark
-        Me.ToolStripMenuItem22.ForeColor = System.Drawing.SystemColors.ControlLight
-        Me.ToolStripMenuItem22.Name = "ToolStripMenuItem22"
-        Me.ToolStripMenuItem22.Size = New System.Drawing.Size(216, 22)
-        Me.ToolStripMenuItem22.Text = "Local Path"
+        Me.directoryPicker.Title = "Directory Picker"
         '
         'Main
         '
@@ -662,4 +667,5 @@ Partial Class Main
     Private WithEvents SaveFileDialog2 As SaveFileDialog
     Friend WithEvents ToolStripMenuItem21 As ToolStripMenuItem
     Friend WithEvents ToolStripMenuItem22 As ToolStripMenuItem
+    Friend WithEvents directoryPicker As OpenFileDialog
 End Class

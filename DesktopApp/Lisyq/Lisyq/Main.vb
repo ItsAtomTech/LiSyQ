@@ -1,11 +1,15 @@
 ﻿Imports System.IO
 Imports System.Runtime.InteropServices
 Imports Microsoft.Web.WebView2.Core
+Imports System.Text.RegularExpressions
+
+
 
 Public Class Main
 
     Dim Point As New Point
     Dim SavePath As String = ""
+    Dim dirPath As String = ""
     Dim SaveLivePlayerPath As String = ""
     Dim relativeLocation = My.Application.Info.DirectoryPath
 
@@ -18,14 +22,16 @@ Public Class Main
 
     Private Async Sub Main_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 
-        Dim env = Await CoreWebView2Environment.CreateAsync(Nothing, locationData)
+        Dim opts = New CoreWebView2EnvironmentOptions(additionalBrowserArguments:="--allow-file-access-from-files")
+        Dim env = Await CoreWebView2Environment.CreateAsync(Nothing, locationData, opts)
+
         Await WebView21.EnsureCoreWebView2Async(env)
 
         WebView21.CoreWebView2.AddHostObjectToScript("NativeObject", New WebJsObject())
         WebView21.CoreWebView2.SetVirtualHostNameToFolderMapping("lisyq", "", CoreWebView2HostResourceAccessKind.Allow)
 
-        WebView21.CoreWebView2.Navigate("https://lisyq/main.html")
-        'WebView21.CoreWebView2.Navigate("file:///" & relativeLocation & "/main.html")
+        'WebView21.CoreWebView2.Navigate("https://lisyq/main.html")
+        WebView21.CoreWebView2.Navigate("file:///" & relativeLocation & "/main.html")
 
         WebView21.CoreWebView2.Settings.AreDefaultContextMenusEnabled = False
         WebView21.CoreWebView2.Settings.AreHostObjectsAllowed = True
@@ -33,6 +39,7 @@ Public Class Main
         WebView21.CoreWebView2.Settings.AreBrowserAcceleratorKeysEnabled = True
         WebView21.CoreWebView2.Settings.IsPinchZoomEnabled = False
         WebView21.CoreWebView2.Settings.IsZoomControlEnabled = False
+
 
 
 
@@ -88,7 +95,10 @@ Public Class Main
     Public data_string As String
     Dim df As String
 
-
+    Public Shared Function AutoEscapeString(filePath As String) As String
+        ' Use Regex to escape special characters in the file path
+        Return Regex.Escape(filePath)
+    End Function
 
 
     <ClassInterface(ClassInterfaceType.None)>
@@ -181,6 +191,7 @@ Public Class Main
 
         End Function
 
+        'Open the Port Configurator Panel
         Public Function OpenPorts() As String
 
             Form1.Show()
@@ -288,7 +299,10 @@ Public Class Main
 
         ' Progress Window End
 
-
+        Public Function Open_FileDirectory()
+            Main.Open_FileDirectory_Native()
+            Return True
+        End Function
 
 
     End Class
@@ -410,6 +424,20 @@ Public Class Main
 
     End Sub
 
+    Public Async Sub Open_FileDirectory_Native()
+        ' directoryPicker.Filter = "LSYS Files (*.lsys*)|*.lsys"
+        If directoryPicker.ShowDialog <> Windows.Forms.DialogResult.Cancel Then
+
+            dirPath = AutoEscapeString(directoryPicker.FileName)
+            Await WebView21.ExecuteScriptAsync("setMediaPath(""" & dirPath & """)")
+
+
+            NotificationManager.Show(Me, "File: " & directoryPicker.FileName & " have been selected.", Color.Green, 2000)
+
+
+        End If
+
+    End Sub
     Public Sub Open_File()
         OpenFileDialog1.Filter = "LSYS Files (*.lsys*)|*.lsys"
         If OpenFileDialog1.ShowDialog <> Windows.Forms.DialogResult.Cancel Then
@@ -434,7 +462,7 @@ Public Class Main
         If SavePath.Length > 0 Then
             Dim confirm_loadnew As DialogResult
 
-            confirm_loadnew = MessageBox.Show("You are about to load this file and close currently opened file so save changes first, Continue to Load?", "Open New", MessageBoxButtons.YesNo
+            confirm_loadnew = MessageBox.Show("You are about to load this file and close currently open file so save changes first, Continue to Load?", "Open New", MessageBoxButtons.YesNo
                                          )
             If confirm_loadnew = DialogResult.Yes Then
                 ProgressBar.Show(Me)
@@ -620,7 +648,7 @@ Public Class Main
     Private Sub UseWebEngine1ToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles UseWebEngine1ToolStripMenuItem.Click
 
         Dim confirm_change As DialogResult
-        confirm_change = MessageBox.Show("Switch to Webview Virtual Host (Default), this will refresh the whole interface.", "Host Change", MessageBoxButtons.YesNo
+        confirm_change = MessageBox.Show("Switch to Webview Virtual Host (Some Features might not work properly), this will refresh the whole interface.", "Host Change", MessageBoxButtons.YesNo
                                          )
 
         If confirm_change = DialogResult.Yes Then

@@ -1,0 +1,64 @@
+<html>
+<head>
+<title>BeatDetektor Mic Test</title>
+<script src="beatdetektor.js" type='text/javascript'></script>
+<script type='text/javascript'>
+
+bd_med = new BeatDetektor(85, 280);
+
+let audioContext;
+let analyser;
+let micStream;
+let prevBpm;
+
+function initMic() {
+  audioContext = new (window.AudioContext || window.webkitAudioContext)();
+  analyser = audioContext.createAnalyser();
+
+  navigator.mediaDevices.getUserMedia({ audio: true })
+    .then(stream => {
+      micStream = audioContext.createMediaStreamSource(stream);
+	  
+	let filters = micStream.context.createBiquadFilter();
+	micStream.connect(filters);
+      micStream.connect(analyser);
+
+      const dataArray = new Uint8Array(analyser.frequencyBinCount);
+
+      function handleMicInput() {
+        analyser.getByteFrequencyData(dataArray);
+
+        // Process mic input and get BPM
+        bd_med.process(audioContext.currentTime, dataArray);
+
+
+        
+        if(prevBpm != bd_med.win_bpm_int / 10.0){
+          prevBpm = bd_med.win_bpm_int / 10.0;
+          
+                  // Output BPM to console
+        console.log("Current BPM: " + (bd_med.win_bpm_int / 10.0) + " BPM",((bd_med.win_bpm_int / 10.0) / 60).toFixed(2) + " BPs");
+        }
+        
+        
+		<!-- console.log(dataArray); -->
+        <!-- requestAnimationFrame(handleMicInput); -->
+      }
+
+      // Start handling mic input
+      setInterval(handleMicInput, 16);
+    })
+    .catch(error => console.error('Mic access denied:', error));
+}
+
+// Ensure audio context is started after a user gesture
+document.addEventListener('click', initMic);
+
+</script>
+</head>
+<body>
+
+Click Somewhere
+
+</body>
+</html>

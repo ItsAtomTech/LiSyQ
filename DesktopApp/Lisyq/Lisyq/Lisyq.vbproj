@@ -75,6 +75,20 @@
   <PropertyGroup>
     <ApplicationManifest>My Project\app.manifest</ApplicationManifest>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release32|AnyCPU'">
+    <DefineTrace>true</DefineTrace>
+    <OutputPath>bin\Release32\</OutputPath>
+    <DocumentationFile>Lisyq.xml</DocumentationFile>
+    <Optimize>true</Optimize>
+    <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release32|Win32'">
+    <OutputPath>bin\Win32\Release32\</OutputPath>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Web.WebView2.Core, Version=1.0.1293.44, Culture=neutral, PublicKeyToken=2a8ab48044d2601e, processorArchitecture=MSIL">
       <HintPath>packages\Microsoft.Web.WebView2.1.0.1293.44\lib\net45\Microsoft.Web.WebView2.Core.dll</HintPath>

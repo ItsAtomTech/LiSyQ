@@ -31,10 +31,12 @@ Partial Class SplashScreen_legacy
         '
         'splashDisplay
         '
+        Me.splashDisplay.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+            Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
         Me.splashDisplay.AutoSize = True
         Me.splashDisplay.BackColor = System.Drawing.Color.White
         Me.splashDisplay.ForeColor = System.Drawing.SystemColors.ActiveCaptionText
-        Me.splashDisplay.Location = New System.Drawing.Point(79, 418)
+        Me.splashDisplay.Location = New System.Drawing.Point(81, 409)
         Me.splashDisplay.Name = "splashDisplay"
         Me.splashDisplay.Size = New System.Drawing.Size(236, 17)
         Me.splashDisplay.TabIndex = 1
@@ -46,7 +48,7 @@ Partial Class SplashScreen_legacy
         Me.Label1.AutoSize = True
         Me.Label1.BackColor = System.Drawing.Color.FromArgb(CType(CType(30, Byte), Integer), CType(CType(30, Byte), Integer), CType(CType(30, Byte), Integer))
         Me.Label1.ForeColor = System.Drawing.SystemColors.ControlLightLight
-        Me.Label1.Location = New System.Drawing.Point(82, 93)
+        Me.Label1.Location = New System.Drawing.Point(91, 93)
         Me.Label1.MaximumSize = New System.Drawing.Size(150, 0)
         Me.Label1.Name = "Label1"
         Me.Label1.Size = New System.Drawing.Size(150, 156)
@@ -59,6 +61,7 @@ Partial Class SplashScreen_legacy
         '
         Me.PictureBox1.BackColor = System.Drawing.Color.Transparent
         Me.PictureBox1.BackgroundImage = CType(resources.GetObject("PictureBox1.BackgroundImage"), System.Drawing.Image)
+        Me.PictureBox1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch
         Me.PictureBox1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.PictureBox1.Location = New System.Drawing.Point(0, 0)
         Me.PictureBox1.Name = "PictureBox1"
