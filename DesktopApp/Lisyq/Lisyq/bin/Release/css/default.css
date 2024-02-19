@@ -7,6 +7,24 @@
     src: url('comfortaa_regular.ttf');
     }
 	
+	
+ @font-face {
+	font-family: 'Ten';
+	font-style: normal;
+	font-weight: normal;
+	src: local('Ten'), url('ten.ttf') format('ttf');
+	src: url('ten.ttf') format('ttf');
+	src: url('ten.ttf');
+}	
+ @font-face {
+	font-family: 'Lcd';
+	font-style: normal;
+	font-weight: normal;
+	src: local('Lcd'), url('lcd.ttf') format('ttf');
+	src: url('lcd.ttf') format('ttf');
+	src: url('lcd.ttf');
+}
+	
 *{
 	box-sizing:border-box;
 }

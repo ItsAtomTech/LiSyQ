@@ -437,6 +437,30 @@ function stopPL(){
 }
 
 
+
+function set_delay(val){	
+	let local = localStorage.getItem('play_delay_plyls');	
+	if(val == undefined||val == null){
+		_("delay_disp").value = parseInt(local);
+		let set = parseInt(local);					
+			if(set.toString() == "NaN"){				
+				set = 0;				
+			}		
+		delay = (set*0.001)*33.333;		
+		optimizedData = false;		
+		return;
+	}else{				
+		localStorage.setItem('play_delay_plyls',val);		
+		if((val == "" || val == null) || val.length == 0){				
+			localStorage.setItem('play_delay_plyls',0);			
+		}			
+		let set = parseInt(localStorage.getItem('play_delay_plyls'));		
+		delay = (set*0.001)*33.333;		
+		optimizedData = false;			
+	}
+}
+
+
 function playPLItem(index=undefined){
 	if(index==undefined){
 		return false;
@@ -528,12 +552,16 @@ function rails(){
 		
 		player_seeked = false;
 		
+		try{
+			let plEnd = playlistData[currentPlayingIndex].maxTime;
+			if(time > plEnd){
+				plprocessonend();
+			}
 		
-		let plEnd = playlistData[currentPlayingIndex].maxTime;
-		if(time > plEnd){
-			plprocessonend();
+		}catch(e){
+			//--
 		}
-		
+
 	}
 	
 }

@@ -87,9 +87,19 @@
 	display:flex;
 	align-items:center;
 	justify-content:center;
-		
+	
 }
 
+
+.bit8{
+	font-family:Ten;
+
+}
+
+.lcd{
+	font-family:Lcd;
+	font-size:0.8em;
+}
 
 
 /* Buttons View */
@@ -115,6 +125,31 @@
 	
 }
 
+.grad_dark_button{
+/* Gradiant_button */
+	border-radius:5px;
+	background-color: rgba(50,50,50,0.8);
+	backdrop-filter:blur(2px);
+	border:solid rgba(58,58,58,0.9) 1px;
+	border-top:solid rgba(158,158,158,0.4) 1px;
+	border-left:solid rgba(158,158,158,0.4) 1px;
+	background-clip:border-box;
+
+	box-shadow:rgba(54,54,54,0.4) 0px 0px 3px 3px;
+}
+
+
+
+.play_button_grad{
+	background-image:url('../images/play_bare.png');
+}
+.pause_button_grad{
+	background-image:url('../images/pause_bare.png');
+}
+
+.stop_button_grad{
+	background-image:url('../images/stop_bare.png');
+}
 
 .play_button{
 	background-image:url('../images/play.png');
@@ -132,6 +167,7 @@
 	opacity:0.9;
 	
 }
+
 
 .go_to_button{
 	
