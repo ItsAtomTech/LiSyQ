@@ -25,3 +25,5 @@ D:\Projects\Windows\LiSyQ\DesktopApp\Lisyq\Lisyq\obj\Debug\Lisyq.ProgressBar.res
 \\ATOM2-PC\Projects\Windows\LiSyQ\DesktopApp\Lisyq\Lisyq\obj\Debug\Lisyq.exe
 \\ATOM2-PC\Projects\Windows\LiSyQ\DesktopApp\Lisyq\Lisyq\obj\Debug\Lisyq.xml
 \\ATOM2-PC\Projects\Windows\LiSyQ\DesktopApp\Lisyq\Lisyq\obj\Debug\Lisyq.pdb
+D:\Projects\Windows\LiSyQ\DesktopApp\Lisyq\Lisyq\obj\Debug\Lisyq.NestMain.resources
+D:\Projects\Windows\LiSyQ\DesktopApp\Lisyq\Lisyq\obj\Debug\Lisyq.SplashScreen_legacy.resources

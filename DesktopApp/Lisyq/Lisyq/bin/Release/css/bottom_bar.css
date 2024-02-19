@@ -23,6 +23,31 @@
 	user-select:none;
 }
 
+.bottom_bar_main_pl{
+		
+	position:absolute;
+	bottom:0;
+	left:0;
+	right:0;
+	
+	min-width:300px;
+	/* border:solid white 1px; */
+	padding:4px;
+	z-index:2;
+	min-height:40px;
+	height:40px;
+	background:var(--primary_background);
+	box-shadow:0px -2px 3px 3px rgba(0,0,0,0.5);
+	color:inherit;
+	overflow:hidden;
+	white-space:nowrap;
+	display:flex;
+	align-items:flex-start;
+	justify-content:flex-start;
+	font-family:Arial;
+	user-select:none;
+}
+
 
 .timer_con{
 	min-width:200px;

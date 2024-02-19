@@ -324,11 +324,24 @@ body{
 	bottom:0;
 	top:0;
 	border:solid white 1px;
-	
-	
+
+}
+
+
+
+
+
+
+.center_all_banner{
+	font-family:Comfortaa;
+	align-items:center;
+	justify-content:center;
 	
 }
 
+.faded {
+	opacity:0.7;
+}
 
 
 /* Playhead */
@@ -527,6 +540,13 @@ border:solid blue 1px;
 .big{
 	
 	font-size:1.2em !important;
+	
+	
+}
+
+.huge{
+	
+	font-size:2.2em !important;
 	
 	
 }

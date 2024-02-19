@@ -48,9 +48,6 @@ var delay = 0;
 var playMode = 'timeline'; //values: timeline, manual, both
 
 
-//Generated Outputs
-var output = [[],[]];
-
 
 //Save_type
 var include_data = settings.get('includeData');
@@ -70,54 +67,15 @@ let limitThreshold = 2;
 
 var copied;
 var copies = [];
-//Encode and Decoder
-var for_rep = ["'",'"',",","/","\\","<","\n"];
-var to_rep = ["&#39;","&#34;","&#44;","&#47;","&#92;","&lt;","&#13;"];
-//Encode and Decoder end
+
 
 //Utilities
 function _(elm){
 	return document.getElementById(elm);
 }
 
-var timeFormat = function(raw_time){
-	if(raw_time < 60){
-		return parseInt(raw_time)+"s"
-	}
-	else if(raw_time >= 60 && raw_time < 3600){
-			if(raw_time%60 < 10){
-				zero = "0";
-			}else{
-				zero = "";
-			}
-		return parseInt(raw_time/60)+":"+zero+parseInt(raw_time%60)+"";
-	}else if(raw_time >= 3600){
-		
-		return parseInt((raw_time/60/60)%60) +":"+add_zero(parseInt((raw_time/60)%60))+":"+add_zero(parseInt(raw_time%60))+"";
-		
-	}
-	
-	
-};
-
-function add_zero(num){
-	if(parseInt(num) < 10){	
-		return "0"+num;
-	}else{
-		return num;
-	}
-}
-
- 
-function decople_data(data){
-	var decopled = JSON.parse(JSON.stringify(data));
-	
-	 return decopled;
-}
 
 
-
-function encode(st){var torep = st;torep = torep.replace(/'/gi, to_rep[0]);torep = torep.replace(/"/gi, to_rep[1]);torep = torep.replace(/,/gi, to_rep[2]);torep = torep.replace(/\n/gi, to_rep[6]);torep = torep.replace(/\//gi, to_rep[3]);torep = torep.replace(/\\/gi, to_rep[4]);torep = torep.replace(/\</gi, to_rep[5]);return torep;}function decode(sty){try{var torep = sty;torep = torep.replace(/&#39;/gi, for_rep[0]);torep = torep.replace(/&#34;/gi, for_rep[1]);torep = torep.replace(/&#44;/gi, for_rep[2]);torep = torep.replace(/&#47;/gi, for_rep[3]);torep = torep.replace(/&#92;/gi, for_rep[4]);torep = torep.replace(/&lt;/gi, for_rep[5]);torep = torep.replace(/&#13;/gi, for_rep[6]);return torep;}catch(e){return '';}}
 
 
  function get_size(elm){ //getting the size of an element	
@@ -1081,212 +1039,6 @@ function remove_onmove(){
 
 
 
-
-var time_delay = 0;
-var not_empty = false;
-
-
-function play_on_current(){//Plays through all track and content blocks at current time
-not_empty = false;
-
-
-let timeFixed = parseInt(time);
-
-if(playing == true){	
-	time_delay = parseInt(delay);
-	// console.log(delay);
-}else{
-	time_delay = 0;
-}
-
-
-	//Loop through tracks
-	for(tr = 0;tr < timeline_data.length;tr++){
-		try{
-			var port_chan = 0;
-			
-			if(timeline_data[tr].port_channel != undefined){
-				port_chan = timeline_data[tr].port_channel;
-				
-			}
-			
-	
-			let ch_track;
-			
-			if(timeline_data[tr].target_channel != undefined){
-				ch_track = timeline_data[tr].target_channel;
-			}else{	
-				ch_track = tr;
-			}
-
-			//Puts Default Value from track if no content at current time index and not muted
-			if(timeline_data[tr].muted != true){
-				try{	
-					output[port_chan][ch_track] = timeline_data[tr].default_value;			
-				}catch(e){
-					output[port_chan] = [];
-					output[port_chan][ch_track] = timeline_data[tr].default_value;	}
-			}
-		
-
-			for(str = 0;str < timeline_data[tr].sub_tracks.length;str++){
-					var subtracks = timeline_data[tr].sub_tracks[str];
-				
-
-				
-				try{
-					if(subtracks.start_at  + time_delay <= time && time <= subtracks.end_at  + time_delay){
-						
-						// console.log("Track #"+ tr +", content block #"+ str +" : "+ time + "\n content_index: " + (time - subtracks.start_at));
-
-						
-						to_output(ch_track,port_chan,timeline_data[tr].sub_tracks[str].data[parseInt((timeFixed -  time_delay) - subtracks.start_at)],timeline_data[tr].default_value,tr);
-						
-						not_empty = true;
-
-						
-					}else{
-						
-						// Somthing in the future
-						
-					}
-				}catch(e){
-					console.log(e);
-				}
-				
-			}
-		
-	
-		
-	}catch(e){
-
-	}	
-		
-		
-	}
-
-	if(not_empty == false){
-		
-		send_to_port();
-		
-	}else{
-		send_to_port();
-	}
-	
-}
-
-
-
-function to_output(tr,chp,df,def,tr_id){
-	
-	
-	//chp is for channel_port for port selected for track
-	not_empty = true;
-		
-		var channel_port = validate_number(chp);
-		
-		//provide index for the port_channel array if not present
-		if(output[channel_port] == undefined){
-			output[channel_port] = [];		
-		}
-		
-		if(tr_id != undefined){
-			if(timeline_data[tr_id].muted == true){
-				return;
-			}
-		}
-
-		
-		
-		if(df == undefined || df ==  ""){
-			//set to default value if no data
-			
-			output[chp][tr] = def;			
-		}else{
-			//set to value 
-			output[chp][tr] = df;	
-		}
-	
-
-	
-}
-
-function send_to_port(){//This should send the output to the configured port to Arduino
-
-	 
-		try{
-			//Separate each port channel by " | "
-			sendPort(0,output.join("|").toString());
-		}catch(e){
-			
-			
-		} 
-		
-		//console.log(output.length);
-		
-		output.length = 0;	
-	
-}
-	
-let SeeDataFlow;
-	
-function sendPort(pch,str){
-
-
-	try{
-		window.chrome.webview.hostObjects.NativeObject.set_values(pch, str);
-		window.chrome.webview.hostObjects.NativeObject.outputs();
-	}catch(e){
-	//
-	}
-	
-	if(SeeDataFlow){
-		console.log(str);
-	}
-	
-	
-	//Clear output buffer array after sending to all ports
-	try{
-		output[pch].length = 0;
-	}catch(e){
-		//
-		
-	}
-}
-		
-async function show_loading(total,current,info){
-
-	if(info == undefined || info == null){
-		info = "";
-	}
-	
-	let pr = parseInt(((current/total) * 100));
-		
-		console.log("Progress: ", pr);
-		
-	try{
-		window.chrome.webview.hostObjects.NativeObject.set_progress(pr, info);
-		window.chrome.webview.hostObjects.NativeObject.show_progress();
-	}catch(e){
-	//
-	
-	
-	
-	}
-
-}
-			
-//Hides the Progress window if shown			
-function finish_loading(){
-
-	try{
-		window.chrome.webview.hostObjects.NativeObject.set_progress(100, "Done");
-		window.chrome.webview.hostObjects.NativeObject.close_progress();
-	}catch(e){
-	//
-	}
-
-}
 	
 
 //Clear all Pending Buffers on Com Ports etc.
@@ -2282,9 +2034,6 @@ function test_(df){
 }
 
 
-function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
 
 
 
@@ -2439,10 +2188,6 @@ function regen_empty_data(){
 		
 		
 	}
-	
-	
-	
-	
 	
 }
 

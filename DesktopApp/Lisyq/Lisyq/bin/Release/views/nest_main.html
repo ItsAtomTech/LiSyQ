@@ -70,9 +70,11 @@
 				> = </div>
 			
 			
-			<div class="h_con_2 primary_color horizontal_bounds primary_background" id="h2_con_2">
+			<div class="h_con_2 primary_color horizontal_bounds primary_background center_all_banner faded" id="h2_con_2">
 				<!-- Nested Player Timeline Goes here -->
-
+				
+				<span class="huge" >Coming Soon... </span>
+				
 			</div>
 	
 		
@@ -95,9 +97,17 @@
 		<div class="v_con_2 primary_color primary_background container_bound" id="v_con_2">
 			
 			<!-- List Player Group -->
-			<div class="h_con_1" id="h_con_1">		
+			<div class="h_con_1 media_pl_con" id="h_con_1">		
 		
-		
+				<div class="media_bar_options padded_left">
+					<div class="load_button button_box" onclick="load_media()" title="Load Media Sampling File"> </div>
+					<!-- <div class="load_link_button button_box " onclick="select_link()" title="Load and Link a media to this lsys file."> </div> -->
+				</div>
+			
+				<div class="video_media_con">
+						<video id="thisvidpl" class="media_player" controls controlsList="nodownload noplaybackrate noplay"></video>
+						<input type="file" class="hidden_button" id="media_link" accept="video/*,audio/*"/>
+				</div>
 			
 			</div>
 				
@@ -116,9 +126,49 @@
 			
 			
 			<div class="h_con_2 primary_color primary_background" id="h_con_2">
+				<div class="search_bar flexed"> 	
+					<div class="button_box actions" onclick="openLsysFilePL();" title="Load an Lysis File to List" > Load  </div>
+					<input type='text' class="plane_input name_live_templ primary_background primary_color" id="pl_save_name" placeholder='No name'>  </input>
+					
+					<div class="button_box actions small" onclick="save_pl_to_file();" title="Write Playlist data to file"> Save File  </div>
+					
+					<div class="button_box actions small" onclick="OpenFilePL();" title="Open a playlist File"> Open File  </div>
+					
+					<!-- <div class="button_box actions small layout_view" onclick="layoutChange();" title="Change Layout: Simple or Expanded(Default)">  </div>			 -->
+					
+					<!-- <div class="button_box actions small layout_full_view" onclick="layoutLiveFull();" title="Toggle to cover entire Window with this panel">  </div> -->
+				</div>
+					
+				<div class="playlistMainCon" id="playlistView">
+
+					
+				</div>
 				
+				<div class="bottom_bar_main_pl">
+					<div class="timer_con">
+
+						<div id="time_display_pl" class="timer_display_">
+						0:00:00:00
+						</div>
+
+					</div>
+					<div class="media_cont">
+						<div class="button_box play_button" onclick="playPL()"> </div>
+						<div class="button_box pause_button" onclick="pausePL()"> </div>
+						<div class="button_box stop_button" onclick="stopPL()"> </div>
+					</div>
 					
 
+					
+					<div class="delay_setter">
+						<div class=" track_number_con" title='Apply Delay to Timeline play sequence'><span class='tiny'>Play Delay (ms): </span> <input type='number' onchange='set_delay(this.value)'  class='plane_input track_input primary_color small' min='0' max='1000' value=0 id='delay_disp' /></div>
+					
+					</div>
+					
+					
+				
+				
+				</div>
 			</div>
 
 		</div>
@@ -130,6 +180,23 @@
 <script src="../js/vertical_resizer.js"></script>
 <script src="../js/horizontal_resizer.js"></script>
 <script src="../js/nest_main.js"></script>
+<script src="../js/block_contents.js"></script>
+<script src="../js/media_player.js"></script>
+<script defer src="../js/bottom_bar.js"></script>
+
+
+
+<script>
+	<!-- dummyData for Dev, to be removed -->
+
+	generatePListView();
+
+
+</script>
+
+
+
+
 
 </body>
 </html>

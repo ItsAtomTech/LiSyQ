@@ -46,6 +46,11 @@ Public Class Main
 
     End Sub
 
+    Private Sub Main_Close(sender As Object, e As EventArgs) Handles MyBase.Closing
+        Form1.Close()
+
+    End Sub
+
 
 
     Public Sub Open_template_menu()
@@ -93,7 +98,7 @@ Public Class Main
 
 
     Public data_string As String
-    Dim df As String
+    Public df As String
 
     Public Shared Function AutoEscapeString(filePath As String) As String
         ' Use Regex to escape special characters in the file path
@@ -188,6 +193,13 @@ Public Class Main
 
             phc = port
             Main.df = Data
+
+        End Function
+
+        Public Function get_values() As String
+
+            Return Main.df
+
 
         End Function
 
@@ -733,6 +745,18 @@ Public Class Main
 
 
 
+
+
+    End Sub
+
+    Private Sub openNest_Click_1(sender As Object, e As EventArgs) Handles openNest.Click
+
+
+
+        NestMain.Show()
+        NestMain.WindowState = FormWindowState.Normal
+
+        Me.WindowState = FormWindowState.Minimized
 
 
     End Sub

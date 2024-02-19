@@ -26,7 +26,6 @@ Partial Class Main
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(Main))
         Me.WebView21 = New Microsoft.Web.WebView2.WinForms.WebView2()
         Me.template_menu = New System.Windows.Forms.ContextMenuStrip(Me.components)
-        Me.ToolStripMenuItem1 = New System.Windows.Forms.ToolStripMenuItem()
         Me.ToolStripMenuItem2 = New System.Windows.Forms.ToolStripMenuItem()
         Me.CancelToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.ToolStripMenuItem20 = New System.Windows.Forms.ToolStripMenuItem()
@@ -79,12 +78,14 @@ Partial Class Main
         Me.timeline_ = New System.Windows.Forms.Button()
         Me.manual_ = New System.Windows.Forms.Button()
         Me.template_menu_manual = New System.Windows.Forms.ContextMenuStrip(Me.components)
-        Me.ToolStripMenuItem16 = New System.Windows.Forms.ToolStripMenuItem()
         Me.ToolStripMenuItem17 = New System.Windows.Forms.ToolStripMenuItem()
         Me.ToolStripMenuItem18 = New System.Windows.Forms.ToolStripMenuItem()
         Me.ToolStripMenuItem19 = New System.Windows.Forms.ToolStripMenuItem()
         Me.SaveFileDialog2 = New System.Windows.Forms.SaveFileDialog()
         Me.directoryPicker = New System.Windows.Forms.OpenFileDialog()
+        Me.ToolStripMenuItem1 = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ToolStripMenuItem16 = New System.Windows.Forms.ToolStripMenuItem()
+        Me.openNest = New System.Windows.Forms.Button()
         CType(Me.WebView21, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.template_menu.SuspendLayout()
         Me.content_menu.SuspendLayout()
@@ -119,14 +120,6 @@ Partial Class Main
         Me.template_menu.RenderMode = System.Windows.Forms.ToolStripRenderMode.System
         Me.template_menu.Size = New System.Drawing.Size(198, 92)
         Me.template_menu.Text = "Template Options"
-        '
-        'ToolStripMenuItem1
-        '
-        Me.ToolStripMenuItem1.ForeColor = System.Drawing.SystemColors.ControlLight
-        Me.ToolStripMenuItem1.Image = Global.Lisyq.My.Resources.Resources.edit1
-        Me.ToolStripMenuItem1.Name = "ToolStripMenuItem1"
-        Me.ToolStripMenuItem1.Size = New System.Drawing.Size(197, 22)
-        Me.ToolStripMenuItem1.Text = "Edit Template"
         '
         'ToolStripMenuItem2
         '
@@ -488,7 +481,7 @@ Partial Class Main
         Me.AddNewTrackToolStripMenuItem.BackColor = System.Drawing.Color.DimGray
         Me.AddNewTrackToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlLightLight
         Me.AddNewTrackToolStripMenuItem.Name = "AddNewTrackToolStripMenuItem"
-        Me.AddNewTrackToolStripMenuItem.Size = New System.Drawing.Size(180, 22)
+        Me.AddNewTrackToolStripMenuItem.Size = New System.Drawing.Size(155, 22)
         Me.AddNewTrackToolStripMenuItem.Text = "Add New Track"
         '
         'Panel1
@@ -496,6 +489,7 @@ Partial Class Main
         Me.Panel1.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.Panel1.BackColor = System.Drawing.Color.DimGray
+        Me.Panel1.Controls.Add(Me.openNest)
         Me.Panel1.Controls.Add(Me.timeline_)
         Me.Panel1.Controls.Add(Me.manual_)
         Me.Panel1.Controls.Add(Me.MenuStrip1)
@@ -545,14 +539,6 @@ Partial Class Main
         Me.template_menu_manual.Size = New System.Drawing.Size(203, 92)
         Me.template_menu_manual.Text = "Template Options"
         '
-        'ToolStripMenuItem16
-        '
-        Me.ToolStripMenuItem16.ForeColor = System.Drawing.SystemColors.ControlLight
-        Me.ToolStripMenuItem16.Image = Global.Lisyq.My.Resources.Resources.edit1
-        Me.ToolStripMenuItem16.Name = "ToolStripMenuItem16"
-        Me.ToolStripMenuItem16.Size = New System.Drawing.Size(202, 22)
-        Me.ToolStripMenuItem16.Text = "Edit Template"
-        '
         'ToolStripMenuItem17
         '
         Me.ToolStripMenuItem17.ForeColor = System.Drawing.SystemColors.ControlLight
@@ -582,6 +568,38 @@ Partial Class Main
         'directoryPicker
         '
         Me.directoryPicker.Title = "Directory Picker"
+        '
+        'ToolStripMenuItem1
+        '
+        Me.ToolStripMenuItem1.ForeColor = System.Drawing.SystemColors.ControlLight
+        Me.ToolStripMenuItem1.Image = Global.Lisyq.My.Resources.Resources.edit1
+        Me.ToolStripMenuItem1.Name = "ToolStripMenuItem1"
+        Me.ToolStripMenuItem1.Size = New System.Drawing.Size(197, 22)
+        Me.ToolStripMenuItem1.Text = "Edit Template"
+        '
+        'ToolStripMenuItem16
+        '
+        Me.ToolStripMenuItem16.ForeColor = System.Drawing.SystemColors.ControlLight
+        Me.ToolStripMenuItem16.Image = Global.Lisyq.My.Resources.Resources.edit1
+        Me.ToolStripMenuItem16.Name = "ToolStripMenuItem16"
+        Me.ToolStripMenuItem16.Size = New System.Drawing.Size(202, 22)
+        Me.ToolStripMenuItem16.Text = "Edit Template"
+        '
+        'openNest
+        '
+        Me.openNest.BackColor = System.Drawing.Color.DimGray
+        Me.openNest.Cursor = System.Windows.Forms.Cursors.Hand
+        Me.openNest.Dock = System.Windows.Forms.DockStyle.Right
+        Me.openNest.FlatAppearance.BorderSize = 0
+        Me.openNest.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer))
+        Me.openNest.FlatStyle = System.Windows.Forms.FlatStyle.Flat
+        Me.openNest.ForeColor = System.Drawing.SystemColors.ButtonFace
+        Me.openNest.Location = New System.Drawing.Point(523, 0)
+        Me.openNest.Name = "openNest"
+        Me.openNest.Size = New System.Drawing.Size(92, 27)
+        Me.openNest.TabIndex = 7
+        Me.openNest.Text = "Nest.in Player"
+        Me.openNest.UseVisualStyleBackColor = False
         '
         'Main
         '
@@ -668,4 +686,5 @@ Partial Class Main
     Friend WithEvents ToolStripMenuItem21 As ToolStripMenuItem
     Friend WithEvents ToolStripMenuItem22 As ToolStripMenuItem
     Friend WithEvents directoryPicker As OpenFileDialog
+    Friend WithEvents openNest As Button
 End Class

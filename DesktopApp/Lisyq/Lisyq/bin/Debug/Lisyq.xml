@@ -32,6 +32,16 @@ Lisyq
   Looks up a localized resource of type System.Drawing.Bitmap.
 </summary>
 </member>
+<member name="P:Lisyq.My.Resources.Resources.favicon">
+<summary>
+  Looks up a localized resource of type System.Drawing.Bitmap.
+</summary>
+</member>
+<member name="P:Lisyq.My.Resources.Resources.Splash_Screen">
+<summary>
+  Looks up a localized resource of type System.Drawing.Bitmap.
+</summary>
+</member>
 <member name="P:Lisyq.ExtendedControl.IsTransparent">
  <summary>
  Gets or sets the transparency of the control.

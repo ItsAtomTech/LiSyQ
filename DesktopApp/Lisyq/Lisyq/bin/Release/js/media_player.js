@@ -11,7 +11,7 @@ let mediaPath = undefined;
 		if (canPlay === '') canPlay = 'no'
 		var isError = canPlay === 'no';
 		var path = (window.URL || window.webkitURL).createObjectURL(file);
-		console.log('path', path);
+		// console.log('path', path);
 		if (isError) {
 			return
 		}
@@ -19,39 +19,56 @@ let mediaPath = undefined;
 		videoNode.src = fileURL
 	}
 	var inputNode = _("media_link");
-	inputNode.addEventListener('change', playSelectedFile, false)
+	
+	try{
+		inputNode.addEventListener('change', playSelectedFile, false)
+	}catch(e){
+		//-
+	}
+	
+	
 })();
 
 var this_vid = _("thisvid");
-this_vid.onseeking = function() {
-	//console.log(this_vid.currentTime);
-	player_seeked = true;
-	if (playing == false) {
-		time = parseInt(this_vid.currentTime * 33.33);
+
+if(this_vid != null){
+	//Prevent errors if media player of this type is not present
+		
+		
+	this_vid.onseeking = function() {
+		//console.log(this_vid.currentTime);
+		player_seeked = true;
+		if (playing == false) {
+			time = parseInt(this_vid.currentTime * 33.33);
+		}
 	}
+
+	this_vid.onplay = function() {
+		// console.log(this_vid.paused);
+		if (is_preview) {
+			playing = false;
+			is_preview = false;
+			return;
+		}
+		if (playing == false) {
+			play(true);
+		}
+	}
+
+	this_vid.onpause = function() {
+		// console.log(this_vid.currentTime);
+		pause(true);
+	}
+
+	this_vid.oncanplay = function() {
+		// console.log(this_vid.currentTime);
+		nomedia = false;
+	}
+		
+	
 }
 
-this_vid.onplay = function() {
-	// console.log(this_vid.paused);
-	if (is_preview) {
-		playing = false;
-		is_preview = false;
-		return;
-	}
-	if (playing == false) {
-		play(true);
-	}
-}
 
-this_vid.onpause = function() {
-	// console.log(this_vid.currentTime);
-	pause(true);
-}
-
-this_vid.oncanplay = function() {
-	// console.log(this_vid.currentTime);
-	nomedia = false;
-}
 
 function load_media() {
 	_("media_link").click();
@@ -80,7 +97,11 @@ function select_link(){
 
 //helper for Automatic media linked loading
 function loadLinkedMedia(data){
-	let pth = data.link_file
+	let pth = data.link_file;
+	if(pth == undefined){
+		return console.log('No Loaded media');
+	}
+	
 	loadMediaFromPath(pth);
 }
 
