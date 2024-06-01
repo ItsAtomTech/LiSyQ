@@ -12,6 +12,9 @@ var loop = false;
 var is_preview = false;
 var delay = 0;
 
+var zoom_scale = 1;
+
+
 var timeline_data = [];
 
 var player_start = setInterval(rails, time_per_pexil);
@@ -64,6 +67,27 @@ function inits(){
 inits();
 
 
+function get_size(elm){ //getting the size of an element	
+	var refh = elm;
+	var size = ['',''];
+
+try{
+	if(refh.offsetHeight){
+		
+		size[1] = refh.offsetHeight;
+		size[0] = refh.offsetWidth;
+		
+	}else if(refh.style.pixelHeight){
+		size[1] = refh.style.pixelHeight
+		size[0] = refh.style.pixelWidth
+		
+	}
+	
+	}catch(e){
+		console.log("Invalid Element");
+	}
+	return size;
+}
 
 async function loadToPlaylist(){
 	
@@ -574,3 +598,61 @@ function plprocessonend(){
 		nextPL();
 	}
 }
+
+
+
+
+// Timeline Logic
+
+var prev_wi = 0;
+
+function gen_ruler(){
+	var width_ref = parseInt((_("timeline_container").scrollWidth)/((1000/30) ));
+	var  rv = _("ruler_view");
+	     // rv.addEventListener("mousedown",click_on_ruler);
+	
+	rv.style.width = (_("timeline_container").scrollWidth)+"px";
+	
+	_("timeline_container").addEventListener("scroll",move_ruler);
+	
+	try{
+		rulerWidth = get_size(document.body)[0];
+		canvas.setAttribute("width", rulerWidth);
+		clear_ruler();
+		paint_ruler();
+	}catch(e){
+		//--
+		
+	}
+	
+
+	if(prev_wi == width_ref){
+		return;
+	}
+	
+	prev_wi = width_ref;
+
+	
+}
+
+var prev_scroll;
+function move_ruler(){
+	//var  rv = _("ruler_view");
+	//rv.style.transform = "translateX(-"++"px)";
+	
+	zeroScaleLinePosX = (_("timeline_container").scrollLeft) * -1;
+	clear_ruler();paint_ruler();
+	
+	var scr = _("timeline_container").scrollLeft;
+	
+	
+	if(prev_scroll != _("timeline_container").scrollTop){
+		// Do Something here
+	}
+	
+	prev_scroll = _("timeline_container").scrollTop;
+	
+}
+
+
+var fRuler = gen_ruler()//init the Ruler 

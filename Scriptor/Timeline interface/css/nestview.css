@@ -9,6 +9,8 @@
     right: 0;
     /* padding-top: 20px; */
     display: flex;
+	-webkit-overscroll-behavior: none;
+	overscroll-behavior: none;
 }
 
 .container_bound{
@@ -184,6 +186,43 @@
 	padding-left:20px;
 	
 }
+
+
+
+/* Nest Player Styles */
+.column_flex{
+	flex-direction:column;
+	
+}
+
+.padded_top{
+	padding-top:1rem;
+	position:relative;
+	overflow-x:hidden;
+	overscroll-behavior-y: none;
+}
+
+.offset_top{
+	margin-top:1rem;
+	position:relative;
+}
+
+.nst_main{
+	width:100%;
+	min-height:100px;
+	/* border:solid red 1px; */
+	position:relative;
+	overflow-y:auto;
+	
+	
+}
+
+
+
+
+
+
+/* Nest Player Styles End*/
 
 
 

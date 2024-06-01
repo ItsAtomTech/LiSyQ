@@ -21,10 +21,12 @@ String fxbin; //Cached store of string values from lisyq channel
 
 
 #define NUM_LEDS_MAX 1000
-#define NUM_LEDS    24
+#define NUM_LEDS    50
+#define NUM_LEDS_3    50
 #define BRIGHTNESS  128
 #define LED_TYPE    WS2811
 #define COLOR_ORDER GRB
+#define COLOR_ORDER_2 RGB
 CRGB leds[3][NUM_LEDS_MAX];
 
 
@@ -75,7 +77,7 @@ void setup() {
     delay( 3000 ); // power-up safety delay
     FastLED.addLeds<LED_TYPE, LED_PIN, COLOR_ORDER>(leds[0], NUM_LEDS).setCorrection( TypicalLEDStrip );
     FastLED.addLeds<LED_TYPE, LED_PIN_2, COLOR_ORDER>(leds[1], NUM_LEDS).setCorrection( TypicalLEDStrip );
-    FastLED.addLeds<LED_TYPE, LED_PIN_3, COLOR_ORDER>(leds[2], NUM_LEDS).setCorrection( TypicalLEDStrip );
+    FastLED.addLeds<LED_TYPE, LED_PIN_3, COLOR_ORDER_2>(leds[2], NUM_LEDS).setCorrection( TypicalLEDStrip );
     FastLED.setBrightness(  BRIGHTNESS );
     
     Serial.begin(115200);

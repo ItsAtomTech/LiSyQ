@@ -120,7 +120,7 @@ function paint_ruler() {
   ctx.moveTo(0, rulerHeight - 0.5);
   ctx.lineTo(ctx.canvas.width, rulerHeight - 0.5);
   
-  scaledFactor = scaleFactor * zoom_scale;//zoom_scale is located on timeline js
+  scaledFactor = scaleFactor * zoom_scale;//zoom_scale is located on timeline js and nest_main
 
   addFullScaleLineX({
     ctx: ctx,

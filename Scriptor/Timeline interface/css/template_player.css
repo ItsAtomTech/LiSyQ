@@ -527,6 +527,8 @@
 	user-select:none;
 	font-family:Comfortaa;
 	
+	
+	
 }
 
 .name_live_templ{
@@ -537,7 +539,12 @@
 	
 }
 
-
+.auto_width{
+	width:auto !important;
+	padding-left:10px;
+	padding-right:10px;
+	
+}
 
 /* Load Record Dia. */
 

@@ -349,13 +349,13 @@ function sendPort(pch,str){
 	}
 }
 
-
+//get the output array from native side, (egx: like cross processing for multiple window)
 let outputValues;
 async function getOutputValues(){
 	try{
 		window.chrome.webview.hostObjects.NativeObject.get_values()	
 		.then(resultx => {
-			// Do your enchanting magic with the resultx here
+			// Process the result
 			
 		let splits = resultx.split('|');
 		let multiDimensionalArray = [];
@@ -368,7 +368,7 @@ async function getOutputValues(){
 		})
 		.catch(error => {
 			console.log(error);
-			// Handle any storms or troubles here
+			// Handle any problems here
 		});
 			
 	}catch(e){

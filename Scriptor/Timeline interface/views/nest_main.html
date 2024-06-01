@@ -31,7 +31,10 @@
 			<!-- Nested Player Group -->
 			<div class="h_con_1 horizontal_bounds" id="h2_con_1">		
 				<!-- Nested Player Media Group Goes here -->
-				<div class="v_con_1 container_bound" id="v2_con_1">
+				<div class="v_con_1 container_bound center_all_banner" id="v2_con_1">
+					
+					<span class="huge primary_color faded"> Scripts Pane </span>
+					
 					
 				</div>	
 					
@@ -49,7 +52,10 @@
 				
 				> || </div>
 					
-				<div class="v_con_2 primary_color primary_background container_bound" id="v2_con_2">	
+				<div class="v_con_2 primary_color primary_background container_bound center_all_banner" id="v2_con_2">	
+					
+					<span class="huge primary_color faded"> Media Pl. Plane </span>
+					
 
 				</div>			
 			
@@ -70,10 +76,18 @@
 				> = </div>
 			
 			
-			<div class="h_con_2 primary_color horizontal_bounds primary_background center_all_banner faded" id="h2_con_2">
+			<div class="h_con_2 primary_color horizontal_bounds primary_background faded column_flex padded_top" id="h2_con_2">
 				<!-- Nested Player Timeline Goes here -->
+				<!-- To-Do: Implement adding contents to time track -->
+				<div class="time_ruler secondary_background offset_top" id="ruler_view">
+					<canvas id="canvas_ruler"></canvas>
+				</div>	
 				
-				<span class="huge" >Coming Soon... </span>
+				<div class="nst_main" id="timeline_container">					
+					<div class="track_con selected_track" id="timeline_track">
+					
+					</div>
+				</div>
 				
 			</div>
 	
@@ -84,11 +98,11 @@
 			onmousedown="vertical_resizer.pickSlider(this)" 
 			onmousemove="vertical_resizer.resize(this)" 
 			onmouseleave="vertical_resizer.dropSlider(this)"
-			onmouseup="vertical_resizer.dropSlider(this)"
+			onmouseup="vertical_resizer.dropSlider(this); gen_ruler();"
 			
 			ontouchstart="vertical_resizer.pickSlider(this)" 
 			ontouchmove="vertical_resizer.resize(this)" 
-			ontouchend="vertical_resizer.dropSlider(this)"
+			ontouchend="vertical_resizer.dropSlider(this);gen_ruler();v "
 			ontouchcancel="vertical_resizer.dropSlider(this)"
 			
 			> || </div>
@@ -127,12 +141,12 @@
 			
 			<div class="h_con_2 primary_color primary_background" id="h_con_2">
 				<div class="search_bar flexed"> 	
-					<div class="button_box actions" onclick="openLsysFilePL();" title="Load an Lysis File to List" > Load  </div>
+					<div class="button_box actions grad_dark_button auto_width" onclick="openLsysFilePL();" title="Load an Lysis File to List" > Load  </div>
 					<input type='text' class="plane_input name_live_templ primary_background primary_color" id="pl_save_name" placeholder='No name'>  </input>
 					
-					<div class="button_box actions small" onclick="save_pl_to_file();" title="Write Playlist data to file"> Save File  </div>
+					<div class="button_box actions small grad_dark_button auto_width" onclick="save_pl_to_file();" title="Write Playlist data to file"> Save File  </div>
 					
-					<div class="button_box actions small" onclick="OpenFilePL();" title="Open a playlist File"> Open File  </div>
+					<div class="button_box actions small grad_dark_button auto_width" onclick="OpenFilePL();" title="Open a playlist File"> Open File  </div>
 					
 					<!-- <div class="button_box actions small layout_view" onclick="layoutChange();" title="Change Layout: Simple or Expanded(Default)">  </div>			 -->
 					
@@ -182,6 +196,7 @@
 <script src="../js/nest_main.js"></script>
 <script src="../js/block_contents.js"></script>
 <script src="../js/media_player.js"></script>
+	<script src="../js/canvas_ruler.js"></script>
 <script defer src="../js/bottom_bar.js"></script>
 
 
