@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html> 
 <head> 
-	<title>LiSyQ - Nest.in Player</title>
+	<title>LiSyQ - Nest.In Player</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, user-scalable=0">
 	<!-- <link rel="stylesheet" href="font-awesome/css/solid.min.css"> -->
 	<!-- <link rel="stylesheet" href="font-awesome/css/fontawesome.min.css"> -->
@@ -32,48 +32,70 @@
 			<div class="h_con_1 horizontal_bounds" id="h2_con_1">		
 				<!-- Nested Player Media Group Goes here -->
 				<div class="v_con_1 container_bound" id="v2_con_1">
+				<div class="search_bar time_templates_search row_flex flexed primary_color"> 				
+						<div class="button_box actions grad_dark_button auto_width" onclick="openLsysFileNS();" title="Load an Lysis File to List" > Add  </div>
+						
+						<input type="search"  class='search_input primary_background primary_color' placeholder='Search...'id='_ttemp' onchange="decup(event)" oninput="indexer.timeline_nested_scripts(this)" />
+						
+						
+				</div>	
+			
+					<div class="scripts_container" id="script_main">
 					
+					</div>
+											
 				</div>	
 					
-								
-				<div class="v_slide_bar" id="v_rez2" 
-				onmousedown="vResizer2.pickSlider(this)" 
-				onmousemove="vResizer2.resize(this)" 
-				onmouseleave="vResizer2.dropSlider(this)"
-				onmouseup="vResizer2.dropSlider(this)"
-				
-				ontouchstart="vResizer2.pickSlider(this)" 
-				ontouchmove="vResizer2.resize(this)" 
-				ontouchend="vResizer2.dropSlider(this)"
-				ontouchcancel="vResizer2.dropSlider(this)"
-				
-				> || </div>
+							
+			<div class="v_slide_bar" id="v_rez2" 
+			onmousedown="vResizer2.pickSlider(this)" 
+			onmousemove="vResizer2.resize(this)" 
+			onmouseleave="vResizer2.dropSlider(this)"
+			onmouseup="vResizer2.dropSlider(this)"
+			
+			ontouchstart="vResizer2.pickSlider(this)" 
+			ontouchmove="vResizer2.resize(this)" 
+			ontouchend="vResizer2.dropSlider(this)"
+			ontouchcancel="vResizer2.dropSlider(this)"
+			
+			> || </div>
 					
-				<div class="v_con_2 primary_color primary_background container_bound" id="v2_con_2">	
+				<div class="v_con_2 primary_color primary_background container_bound center_all_banner" id="v2_con_2">	
+					
+					<span class="huge primary_color faded"> Media Pl. Pane </span>
+					
 
 				</div>			
 			
 			
 			</div>
 				
-				<div class="h_slide_bar primary_color" id="h_rez2" 
-				onmousedown="hResizer2.pickSlider(this)" 
-				onmousemove="hResizer2.resize(this)" 
-				onmouseleave="hResizer2.dropSlider(this)"
-				onmouseup="hResizer2.dropSlider(this)"
-				
-				ontouchstart="hResizer2.pickSlider(this)" 
-				ontouchmove="hResizer2.resize(this)" 
-				ontouchend="hResizer2.dropSlider(this)"
-				ontouchcancel="hResizer2.dropSlider(this)"
-				
-				> = </div>
+			<div class="h_slide_bar primary_color" id="h_rez2" 
+			onmousedown="hResizer2.pickSlider(this)" 
+			onmousemove="hResizer2.resize(this)" 
+			onmouseleave="hResizer2.dropSlider(this)"
+			onmouseup="hResizer2.dropSlider(this)"
+			
+			ontouchstart="hResizer2.pickSlider(this)" 
+			ontouchmove="hResizer2.resize(this)" 
+			ontouchend="hResizer2.dropSlider(this)"
+			ontouchcancel="hResizer2.dropSlider(this)"
+			
+			> = </div>
 			
 			
-			<div class="h_con_2 primary_color horizontal_bounds primary_background center_all_banner faded" id="h2_con_2">
+			<div class="h_con_2 primary_color horizontal_bounds primary_background faded column_flex padded_top" id="h2_con_2">
 				<!-- Nested Player Timeline Goes here -->
+				<!-- To-Do: Implement adding contents to time track -->
+				<div class="time_ruler secondary_background offset_top" id="ruler_view">
+					<canvas id="canvas_ruler"></canvas>
+				</div>	
 				
-				<span class="huge" >Coming Soon... </span>
+				<div class="nst_main" id="timeline_container">					
+					<div class="track_con selected_track larger_track" id="timeline_track">
+					
+					</div>
+				</div>
 				
 			</div>
 	
@@ -82,13 +104,13 @@
 			
 			<div class="v_slide_bar primary_color" id="v_rez1" 
 			onmousedown="vertical_resizer.pickSlider(this)" 
-			onmousemove="vertical_resizer.resize(this)" 
+			onmousemove="vertical_resizer.resize(this,true)" 
 			onmouseleave="vertical_resizer.dropSlider(this)"
-			onmouseup="vertical_resizer.dropSlider(this)"
+			onmouseup="vertical_resizer.dropSlider(this); gen_ruler();"
 			
 			ontouchstart="vertical_resizer.pickSlider(this)" 
-			ontouchmove="vertical_resizer.resize(this)" 
-			ontouchend="vertical_resizer.dropSlider(this)"
+			ontouchmove="vertical_resizer.resize(this, true)" 
+			ontouchend="vertical_resizer.dropSlider(this);gen_ruler();v "
 			ontouchcancel="vertical_resizer.dropSlider(this)"
 			
 			> || </div>
@@ -127,12 +149,12 @@
 			
 			<div class="h_con_2 primary_color primary_background" id="h_con_2">
 				<div class="search_bar flexed"> 	
-					<div class="button_box actions" onclick="openLsysFilePL();" title="Load an Lysis File to List" > Load  </div>
+					<div class="button_box actions grad_dark_button auto_width" onclick="openLsysFilePL();" title="Load an Lysis File to List" > Load  </div>
 					<input type='text' class="plane_input name_live_templ primary_background primary_color" id="pl_save_name" placeholder='No name'>  </input>
 					
-					<div class="button_box actions small" onclick="save_pl_to_file();" title="Write Playlist data to file"> Save File  </div>
+					<div class="button_box actions small grad_dark_button auto_width" onclick="save_pl_to_file();" title="Write Playlist data to file"> Save File  </div>
 					
-					<div class="button_box actions small" onclick="OpenFilePL();" title="Open a playlist File"> Open File  </div>
+					<div class="button_box actions small grad_dark_button auto_width" onclick="OpenFilePL();" title="Open a playlist File"> Open File  </div>
 					
 					<!-- <div class="button_box actions small layout_view" onclick="layoutChange();" title="Change Layout: Simple or Expanded(Default)">  </div>			 -->
 					
@@ -179,17 +201,24 @@
 <script src="../js/unified.js"></script>
 <script src="../js/vertical_resizer.js"></script>
 <script src="../js/horizontal_resizer.js"></script>
+<script src="../js/indexer.js"></script>
 <script src="../js/nest_main.js"></script>
 <script src="../js/block_contents.js"></script>
 <script src="../js/media_player.js"></script>
+	<script src="../js/canvas_ruler.js"></script>
 <script defer src="../js/bottom_bar.js"></script>
 
 
 
 <script>
-	<!-- dummyData for Dev, to be removed -->
+	
+	//Setup ruler scalling for nested timeline, would be 50px per 10 second
+	scaleFactor = 0.50;
+	timeFormatDevider = 10;
+	gen_ruler();
 
-	generatePListView();
+
+
 
 
 </script>

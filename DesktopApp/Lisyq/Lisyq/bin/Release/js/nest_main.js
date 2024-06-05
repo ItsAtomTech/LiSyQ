@@ -12,6 +12,9 @@ var loop = false;
 var is_preview = false;
 var delay = 0;
 
+var zoom_scale = 1;
+
+
 var timeline_data = [];
 
 var player_start = setInterval(rails, time_per_pexil);
@@ -33,6 +36,14 @@ let playlistList = {
 let currentPlayingIndex = null;
 
 let plnomedia = true;
+
+
+
+// Timeline Vars
+let TimelineData = [];
+
+
+
 
 function inits(){
 	
@@ -64,6 +75,27 @@ function inits(){
 inits();
 
 
+function get_size(elm){ //getting the size of an element	
+	var refh = elm;
+	var size = ['',''];
+
+try{
+	if(refh.offsetHeight){
+		
+		size[1] = refh.offsetHeight;
+		size[0] = refh.offsetWidth;
+		
+	}else if(refh.style.pixelHeight){
+		size[1] = refh.style.pixelHeight
+		size[0] = refh.style.pixelWidth
+		
+	}
+	
+	}catch(e){
+		console.log("Invalid Element");
+	}
+	return size;
+}
 
 async function loadToPlaylist(){
 	
@@ -237,15 +269,23 @@ function load_from_file(fileData, filePath){
 			console.log(e);
 		}
 
-	}else{
+	}else if(loadFilemode == "timeline"){
 		//Load it to Somewhere
+		try{
+			loadToNestTimeline();
+		}catch(e){
+			console.log(e);
+		}
+
+		
+		
 	}
 	
 }
 
 
 // Load Lsys to playlist helper function
-let loadmode;
+let loadmode; //indicate if only loading one sequence file
 function openLsysFilePL(){
 	loadmode = 'single';
 	loadFilemode = "playlist";
@@ -499,7 +539,12 @@ function removePLItem(index){
 	}	
 	playlistData.splice(index,1);
 	if(index == currentPlayingIndex){
-		playPLItem(index);
+		try{
+			playPLItem(index);
+		}catch(e){
+			//-
+		}
+		
 	}
 
 	generatePListView();
@@ -574,3 +619,160 @@ function plprocessonend(){
 		nextPL();
 	}
 }
+
+
+
+// ===================================
+// Timeline Logic ======
+// ===================================
+
+
+var prev_wi = 0;
+
+//Generate Ruler with its params and sizing config
+function gen_ruler(){
+	var width_ref = parseInt((_("timeline_container").scrollWidth)/((1000/30) ));
+	var  rv = _("ruler_view");
+	     // rv.addEventListener("mousedown",click_on_ruler);
+	
+	rv.style.width = (_("timeline_container").scrollWidth)+"px";
+	
+	_("timeline_container").addEventListener("scroll",move_ruler);
+	
+	try{
+		rulerWidth = get_size(document.body)[0];
+		canvas.setAttribute("width", rulerWidth);
+		clear_ruler();
+		paint_ruler();
+	}catch(e){
+		//--
+		
+	}
+
+	if(prev_wi == width_ref){
+		return;
+	}
+	
+	prev_wi = width_ref;
+
+	
+}
+
+var prev_scroll;
+function move_ruler(){
+	//var  rv = _("ruler_view");
+	//rv.style.transform = "translateX(-"++"px)";
+	zeroScaleLinePosX = (_("timeline_container").scrollLeft) * -1;
+	clear_ruler();paint_ruler();
+	var scr = _("timeline_container").scrollLeft;
+
+	if(prev_scroll != _("timeline_container").scrollTop){
+		// Do Something here
+	}
+	prev_scroll = _("timeline_container").scrollTop;
+}
+
+
+
+// Load Lsys to playlist helper function
+function openLsysFileNS(){
+	loadmode = 'single';
+	loadFilemode = "timeline";
+	openFile();
+	
+}
+
+
+
+var fRuler = gen_ruler()//init the Ruler 
+
+
+
+async function loadToNestTimeline(){
+	
+	let decodedData = JSON.parse(loadedFile);
+	let timelineData = JSON.parse(decode(decodedData.timeline));
+	let timelineOptions = decodedData.options ? JSON.parse(decode(decodedData.options)) : {};
+	let maxEnd = undefined;
+		
+	if(loadmode == 'single'){
+		maxEnd = regen_empty_data(timelineData);
+	}
+
+	
+	let playitem = {
+		'timeline': timelineData,
+		'options': timelineOptions,
+		'filePath': loadedFilePath,
+		
+	}
+	
+
+	
+	TimelineData.push(playitem.clone());
+	
+	//refresh scripts list
+	generateTimelineListView();
+	loadmode = "";	
+}
+
+
+function generateTimelineListView(){
+		//Generate Timeline list view and data here
+
+	let extId = 0;
+		_("script_main").innerHTML = "";
+	for(each of TimelineData){
+		let fileName = replaceBackslashes(each.filePath).split("/");
+			fileName = fileName[fileName.length - 1];
+			
+			let config = {
+				'name': fileName,
+				'config': {'color': '#fafafa'},
+				
+			}
+			
+			
+		// To-Do: Generate List view of loaded scripts	
+			
+			
+		let item = genNSTItem(config, extId);
+		
+		// if(currentPlayingIndex == extId){
+			// item.classList.add('currentPlaying');
+		// }
+		
+		 _("script_main").appendChild(item);
+		extId++;
+	}
+	
+
+	
+}
+
+
+
+//generate Nest Item list
+function genNSTItem(tl_data,id){
+
+	var template_thumb = document.createElement("div");
+		template_thumb.classList.add("template_thumb");
+		template_thumb.style.backgroundColor = tl_data.config.color+"d5";
+		// template_thumb.title = tl_data.name + "\nType:" + tl_data.type ;
+		template_thumb.setAttribute("template_id",id);
+		template_thumb.setAttribute("onclick","add_to_nesttimeline("+id+")");
+		template_thumb.setAttribute("title",tl_data.name);
+		
+	var template_thumb_name = document.createElement("div");
+		template_thumb_name.classList.add("plug_thumb_name");
+		template_thumb_name.innerHTML = tl_data.name;
+		template_thumb.appendChild(template_thumb_name);
+		
+	
+	return template_thumb;
+	
+}
+
+
+
+

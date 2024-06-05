@@ -97,6 +97,10 @@
 	height:30px;
 }
 
+.v_slide_bar:active{
+	width:30px;
+}
+
 
 
 

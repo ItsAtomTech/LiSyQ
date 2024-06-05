@@ -442,15 +442,13 @@ border:solid blue 1px;
 
 .media_player_con{
 	position:relative;
-	width:40%;
+	width: 100%;
 	/* border:solid lime 1px; */
 	border:solid rgba(20,20,20,0.6) 2px;
 	min-height:100px;
 	height:inherit;
 	padding:4px;
-	
-	
-	
+	transition: width 0.3s;
 }
 
 

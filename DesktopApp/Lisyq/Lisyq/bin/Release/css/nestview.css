@@ -9,6 +9,8 @@
     right: 0;
     /* padding-top: 20px; */
     display: flex;
+	-webkit-overscroll-behavior: none;
+	overscroll-behavior: none;
 }
 
 .container_bound{
@@ -16,6 +18,8 @@
 	padding-top:0px !important;
 	padding-left:0px !important;
 	padding-right:1px !important;
+	-webkit-transition:opacity 0.3s;
+	transition:opacity 0.3s;
 }
 
 .h_con_1, .h_con_2{
@@ -93,6 +97,10 @@
 
 .h_slide_bar:active{
 	height:30px;
+}
+
+.v_slide_bar:active{
+	width:30px;
 }
 
 
@@ -184,6 +192,90 @@
 	padding-left:20px;
 	
 }
+
+
+
+/* Nest Player Styles */
+.column_flex{
+	flex-direction:column;
+	
+}
+
+.padded_top{
+	padding-top:1rem;
+	position:relative;
+	overflow-x:hidden;
+	overscroll-behavior-y: none;
+}
+
+.offset_top{
+	margin-top:1rem;
+	position:relative;
+}
+
+.nst_main{
+	width:100%;
+	min-height:100px;
+	/* border:solid red 1px; */
+	position:relative;
+	overflow-y:auto;
+	padding-bottom:25px;
+	
+}
+
+.larger_track{
+	height:110px;
+	background-size: calc(var(--scale)*50px) auto;
+	
+}
+
+
+
+.template_thumb{
+	width:100%;
+	min-width:80px;
+	max-width:120px;
+	border:solid rgba(255,255,255,0.7) 2px;
+	height:60px;
+	border-radius:8px;
+	font-family:Comfortaa;
+	cursor:pointer;
+	margin-bottom:10px;
+	display:inline-block;
+	align-items:center;
+	justify-content:center;
+	overflow:hidden;
+	position:relative;
+	margin:5px;
+	color:var(--primary_color);
+}
+
+
+
+
+.plug_thumb_name{
+	background:rgba(0,0,0,0.6);
+	min-height:35px;
+	max-height:35px;
+	width:100%;
+	color:inherit;
+	font-family:inherit;
+	
+	font-size:0.6em;
+	white-space:nowrap;
+	position:absolute;
+	font-weight:bold;
+	text-align:left;
+	top:0;
+	left:0;
+	padding:10px;
+	pointer-events:none;
+	
+}
+
+
+
+/* Nest Player Styles End*/
 
 
 
