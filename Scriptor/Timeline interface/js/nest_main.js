@@ -37,6 +37,17 @@ let currentPlayingIndex = null;
 
 let plnomedia = true;
 
+
+
+// Timeline Vars
+let TimelineData = [];//Timeline Templates
+let TimelineSequence = [];//Timeline Sequences 
+
+let click_on_track;
+var pl = _("playhead");
+
+let timeline_time = 0; //Time index for nested timeline
+
 function inits(){
 	
 	vResizer1.min = 50;
@@ -205,7 +216,7 @@ async function generatePLSave() {
 
 // Regeneration Handler
 function regen_empty_data(input_timeline_data=undefined) {
-  let used_timeline_data = input_timeline_data || timeline_data;
+  let used_timeline_data = input_timeline_data || timeline_data; //use default if timeline object is not passed
   let max_time = 0;
 
   for (let tmsd = 0; tmsd < used_timeline_data.length; tmsd++) {
@@ -239,9 +250,6 @@ function regen_empty_data(input_timeline_data=undefined) {
 
 
 
-
-
-
 // Loading Files Logic Start
 
 let loadedFile = "";
@@ -261,15 +269,23 @@ function load_from_file(fileData, filePath){
 			console.log(e);
 		}
 
-	}else{
+	}else if(loadFilemode == "timeline"){
 		//Load it to Somewhere
+		try{
+			loadToNestTimeline();
+		}catch(e){
+			console.log(e);
+		}
+
+		
+		
 	}
 	
 }
 
 
 // Load Lsys to playlist helper function
-let loadmode;
+let loadmode; //indicate if only loading one sequence file
 function openLsysFilePL(){
 	loadmode = 'single';
 	loadFilemode = "playlist";
@@ -523,7 +539,12 @@ function removePLItem(index){
 	}	
 	playlistData.splice(index,1);
 	if(index == currentPlayingIndex){
-		playPLItem(index);
+		try{
+			playPLItem(index);
+		}catch(e){
+			//-
+		}
+		
 	}
 
 	generatePListView();
@@ -550,12 +571,10 @@ let repeatPL = false;
 let offsets = 0;
 function rails(){
 	
-
 	
 	// for Plalist Playing rail
 	if(PLplaying == true){
 		play_on_current();
-		
 	
 		time++;
 		
@@ -601,11 +620,14 @@ function plprocessonend(){
 
 
 
+// ===================================
+// Timeline Logic  ===================
+// ===================================
 
-// Timeline Logic
 
 var prev_wi = 0;
 
+//Generate Ruler with its params and sizing config
 function gen_ruler(){
 	var width_ref = parseInt((_("timeline_container").scrollWidth)/((1000/30) ));
 	var  rv = _("ruler_view");
@@ -624,7 +646,6 @@ function gen_ruler(){
 		//--
 		
 	}
-	
 
 	if(prev_wi == width_ref){
 		return;
@@ -639,20 +660,296 @@ var prev_scroll;
 function move_ruler(){
 	//var  rv = _("ruler_view");
 	//rv.style.transform = "translateX(-"++"px)";
-	
 	zeroScaleLinePosX = (_("timeline_container").scrollLeft) * -1;
 	clear_ruler();paint_ruler();
-	
 	var scr = _("timeline_container").scrollLeft;
-	
-	
+
 	if(prev_scroll != _("timeline_container").scrollTop){
 		// Do Something here
 	}
-	
 	prev_scroll = _("timeline_container").scrollTop;
+}
+
+
+
+// Load Lsys to playlist helper function
+function openLsysFileNS(){
+	loadmode = 'single';
+	loadFilemode = "timeline";
+	openFile();
+	
+}
+var fRuler = gen_ruler()//init the Ruler 
+
+
+
+async function loadToNestTimeline(){
+	
+	let decodedData = JSON.parse(loadedFile);
+	let timelineData = JSON.parse(decode(decodedData.timeline));
+	let timelineOptions = decodedData.options ? JSON.parse(decode(decodedData.options)) : {};
+	let maxEnd = undefined;
+	let uid = crypto.randomUUID();	
+	if(loadmode == 'single'){
+		maxEnd = regen_empty_data(timelineData);
+	}
+	
+	
+	let playitem = {
+		'timeline': timelineData,
+		'options': timelineOptions,
+		'filePath': loadedFilePath,
+		'id':uid,
+		'max': maxEnd,
+		
+	}
+	
+
+	
+	TimelineData.push(playitem.clone());
+	
+	//refresh scripts list
+	generateTimelineListView();
+	loadmode = "";	
+}
+
+
+function generateTimelineListView(){
+		//Generate Timeline list view and data here
+	let extId = 0;
+		_("script_main").innerHTML = "";
+	for(each of TimelineData){
+		let fileName = replaceBackslashes(each.filePath).split("/");
+			fileName = fileName[fileName.length - 1];
+			
+			let config = {
+				'name': fileName,
+				'config': {'color': '#fafafa'},
+				
+			}
+			
+		let item = genNSTItem(config, extId, each.id);
+		
+		 _("script_main").appendChild(item);
+		extId++;
+	}
+	
 	
 }
 
 
-var fRuler = gen_ruler()//init the Ruler 
+
+//generate Nest Item list
+function genNSTItem(tl_data,id,uuid){
+
+	var template_thumb = document.createElement("div");
+		template_thumb.classList.add("template_thumb");
+		template_thumb.style.backgroundColor = tl_data.config.color+"d5";
+		// template_thumb.title = tl_data.name + "\nType:" + tl_data.type ;
+		template_thumb.setAttribute("template_id",id);
+		template_thumb.setAttribute("onclick","add_to_nesttimeline('"+uuid+"')");
+		template_thumb.setAttribute("title",tl_data.name);
+		
+	var template_thumb_name = document.createElement("div");
+		template_thumb_name.classList.add("plug_thumb_name");
+		template_thumb_name.innerHTML = tl_data.name;
+		template_thumb.appendChild(template_thumb_name);
+		
+	
+	return template_thumb;
+	
+}
+
+
+let _lastUID = "";
+let _lastFoundId;
+function findIndexByUUID(uuid) {
+	//optimized for repeated search
+	if(_lastUID == uuid){
+		if(TimelineData[_lastFoundId].id == uuid){
+				return _lastFoundId;
+		}
+	}
+	
+	
+    for (let i = 0; i < TimelineData.length; i++) {
+        if (TimelineData[i].id === uuid) {
+			_lastFoundId = i;
+			_lastUID = uuid;
+            return i;
+        }
+    }
+
+    return -1; // Return -1 if the UUID is not found
+}
+
+
+
+//Function to add a script template into the nest timeline
+function add_to_nesttimeline(id){
+	let foundIdex = findIndexByUUID(id);
+	if(foundIdex <= -1){
+		return console.warn("ID: ", id, "Not found on loaded script list");
+	}
+	
+	let contentData = {
+		uid: id, //uuid of the lysis content  
+		length: TimelineData[foundIdex].max,//length of the content derived from the content
+		offset: parseInt(timeline_time),   //location of this content as offset. 
+	}
+
+	TimelineSequence.push(contentData);
+	console.log(TimelineSequence);
+	
+	loadTimeline();
+	
+}
+
+
+//generate Timeline view and events
+function loadTimeline(){
+	let timeline_tracks = _("timeline_container").getElementsByClassName("track_con");
+	
+	// console.log(timeline_tracks);
+	
+	for(z = 0; z < timeline_tracks.length;z++){
+		timeline_tracks[z].innerHTML = "";
+		timeline_tracks[z].addEventListener("mousedown",timeline_click_event);
+		nestLoadTracksContents(z, timeline_tracks[z]);
+	}
+
+	
+}
+
+
+//Load all contents of a nest timeline track
+function nestLoadTracksContents(id = undefined, targettrack){
+	if(id == undefined){
+		return false;
+	}
+	
+	for(i = 0; i < TimelineSequence.length;i++){
+		
+		//To-do: Render All timeline track contents views
+		//       and add timeline functions
+		
+		
+		TimelineSequence[i].content_id = i;
+		
+		let strack = generateTMcontentblock(TimelineSequence[i]);
+		targettrack.appendChild(strack);
+
+		
+		
+	}
+	
+}
+
+
+function generateTMcontentblock(data){
+		console.log(data);
+				//Visualy create the content to the timeline as an element
+
+		var sub_track = document.createElement("div");
+			sub_track.classList.add("sub_track","larger_subtrack");
+			// sub_track.addEventListener("mousedown",set_track_node);
+			sub_track.setAttribute("content_id", data.content_id);
+			
+		var calculated_offset = (data.offset / (20 / 3));	
+		var calculated_lentime = (data.length / (20 / 3));	
+			
+			sub_track.style.left = "calc(var(--scale) *"+ (calculated_offset)+"px)";
+			sub_track.style.width = "calc(var(--scale) *"+ calculated_lentime +"px)";
+			
+			
+			sub_track.style.backgroundColor = "#afafaf"+"50";
+			// sub_track.addEventListener("contextmenu", function (e){}, false);
+		
+			
+		var div_details = document.createElement("div");
+			div_details.classList.add("content_details_inline");
+			div_details.innerHTML = "Name text";
+			
+			sub_track.title = "";
+			sub_track.appendChild(div_details);
+		
+		return sub_track;
+}
+
+
+
+function timeline_click_event(){//clicked on timeline track
+		var scrolled = _("timeline_container").scrollLeft;
+	
+	let on_tracks = (event.srcElement.classList.contains("track_con") || event.srcElement.classList.contains("sub_track"));
+	
+	
+	if((click_on_track == true && event.shiftKey == true && event.buttons == 1) || playing == false){
+		if(on_tracks){
+			play_head((event.clientX+scrolled - (2)) / zoom_scale);
+			event_time = ((event.clientX - (10))+scrolled ) / zoom_scale;
+		
+			timeline_time = (event_time * 20 / 3);
+			
+			// _("thisvid").currentTime = ((time-2)/33.333); 
+			
+			player_seeked = true;
+		}
+		if(playing == true){
+			// _("thisvid").play();
+		}
+	}
+	
+	
+	// play_on_current();
+	selected_track_index = parseInt(this.getAttribute("tracks_id"));
+	
+
+	
+	if(on_tracks){
+		follow_playhead = false;
+	}
+	
+
+	limitThreshold = 2;
+	_("ruler_view").style.opacity = 0.75;
+	_("ruler_view").title = "";
+	click_on_track = true;
+	
+	for(s_tr = 0; s_tr < timeline_data.length;s_tr++){
+		this.parentNode.getElementsByClassName("track_con")[s_tr].classList.remove("selected_track");
+	}
+	
+	this.classList.add("selected_track");
+	this.classList.remove("track_not_in_view");
+	
+	var my_selected_track_ = document.getElementsByClassName("track_con")[selected_track_index];
+	my_selected_track_.style.width = _("timeline_container").scrollWidth - 10 + "px";	//resizes the track width after mouse user click
+	
+	
+	
+
+}
+
+
+function play_head(time){
+		time_ex = time * zoom_scale;
+	
+	if(time <= _("timeline_container").scrollWidth / zoom_scale){
+		//pl.style.left = (time)+"px";
+		//pl.style.transform =  "translateX("+time+"px)";		
+		window.requestAnimationFrame(pl_trans);
+		
+	}
+	
+		
+		
+		
+	function pl_trans(){
+		pl.style.transform =  "translateX("+time_ex+"px)";
+	}
+		
+	// setTimeDisplay(time);
+	
+}
+

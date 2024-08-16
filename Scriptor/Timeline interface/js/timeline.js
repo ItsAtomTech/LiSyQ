@@ -1179,9 +1179,7 @@ function play_head(time){
 
 
 function pl_trans(){
-	
 	pl.style.transform =  "translateX("+time_ex+"px)";
-	
 }
 
 

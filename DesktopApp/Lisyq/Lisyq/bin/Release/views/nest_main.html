@@ -33,9 +33,12 @@
 				<!-- Nested Player Media Group Goes here -->
 				<div class="v_con_1 container_bound" id="v2_con_1">
 				<div class="search_bar time_templates_search row_flex flexed primary_color"> 				
-						<div class="button_box actions grad_dark_button auto_width" onclick="openLsysFileNS();" title="Load an Lysis File to List" > Add  </div>
+			
+						<div class="flexed">
+							<input type="search"  class='search_input primary_background primary_color' placeholder='Search...'id='_ttemp' onchange="decup(event)" oninput="indexer.timeline_nested_scripts(this)" />
+						</div>
 						
-						<input type="search"  class='search_input primary_background primary_color' placeholder='Search...'id='_ttemp' onchange="decup(event)" oninput="indexer.timeline_nested_scripts(this)" />
+						<div class="button_box actions grad_dark_button auto_width" onclick="openLsysFileNS();" title="Load an Lysis File to List" > Add  </div>
 						
 						
 				</div>	
@@ -218,9 +221,137 @@
 	gen_ruler();
 
 
+//Dummy Data
+TimelineData = [
+    {
+        "timeline": [
+            {
+                "track_id": 0,
+                "sub_tracks": [
+                    {
+                        "start_at": 96,
+                        "content_length": 34,
+                        "end_at": 130,
+                        "type": "ambient",
+                        "name": "Black to red",
+                        "color": "#ff0000",
+                        "misc": {
+                            "raw_data_points": "[{\"start_at\":\"0.00\",\"end_at\":\"1\",\"color_start\":\"000000\",\"color_end\":\"ff0000\",\"bypass_global_effect\":false,\"keyframe_ambient_effect\":\"none\",\"keyframe_ambient_effect_len\":3.3000000000000003}]",
+                            "seconds_length": 1,
+                            "effect": "none",
+                            "effect_len": 1
+                        },
+                        "data": [
+                            "000000",
+                            "070000",
+                            "0f0000",
+                            "170000",
+                            "1e0000",
+                            "260000",
+                            "2e0000",
+                            "360000",
+                            "3d0000",
+                            "450000",
+                            "4d0000",
+                            "550000",
+                            "5c0000",
+                            "640000",
+                            "6c0000",
+                            "730000",
+                            "7b0000",
+                            "830000",
+                            "8b0000",
+                            "920000",
+                            "9a0000",
+                            "a20000",
+                            "aa0000",
+                            "b10000",
+                            "b90000",
+                            "c10000",
+                            "c80000",
+                            "d00000",
+                            "d80000",
+                            "e00000",
+                            "e70000",
+                            "ef0000",
+                            "f70000",
+                            "ff0000"
+                        ]
+                    }
+                ],
+                "default_value": "000000",
+                "port_channel": 0
+            }
+        ],
+        "options": {},
+        "filePath": "F:\\Projects\\Others\\LiSyQ Showcase\\Light Sequence.lsys"
+    },
+    {
+        "timeline": [
+            {
+                "track_id": 0,
+                "sub_tracks": [
+                    {
+                        "start_at": 96,
+                        "content_length": 34,
+                        "end_at": 130,
+                        "type": "ambient",
+                        "name": "Black to red",
+                        "color": "#ff0000",
+                        "misc": {
+                            "raw_data_points": "[{\"start_at\":\"0.00\",\"end_at\":\"1\",\"color_start\":\"000000\",\"color_end\":\"ff0000\",\"bypass_global_effect\":false,\"keyframe_ambient_effect\":\"none\",\"keyframe_ambient_effect_len\":3.3000000000000003}]",
+                            "seconds_length": 1,
+                            "effect": "none",
+                            "effect_len": 1
+                        },
+                        "data": [
+                            "000000",
+                            "070000",
+                            "0f0000",
+                            "170000",
+                            "1e0000",
+                            "260000",
+                            "2e0000",
+                            "360000",
+                            "3d0000",
+                            "450000",
+                            "4d0000",
+                            "550000",
+                            "5c0000",
+                            "640000",
+                            "6c0000",
+                            "730000",
+                            "7b0000",
+                            "830000",
+                            "8b0000",
+                            "920000",
+                            "9a0000",
+                            "a20000",
+                            "aa0000",
+                            "b10000",
+                            "b90000",
+                            "c10000",
+                            "c80000",
+                            "d00000",
+                            "d80000",
+                            "e00000",
+                            "e70000",
+                            "ef0000",
+                            "f70000",
+                            "ff0000"
+                        ]
+                    }
+                ],
+                "default_value": "000000",
+                "port_channel": 0
+            }
+        ],
+        "options": {},
+        "filePath": "F:\\Projects\\Others\\LiSyQ Showcase\\Light Sequence.lsys"
+    }
+]
 
-
-
+generateTimelineListView();
 </script>
 
 
