@@ -48,6 +48,15 @@ var pl = _("playhead");
 
 let timeline_time = 0; //Time index for nested timeline
 
+var origin_sub;
+var origin_sub_pos = [];
+var can_move_track = true;
+var follow_playhead = false;
+var context_menu = false;
+
+let multiple_selected;
+
+
 function inits(){
 	
 	vResizer1.min = 50;
@@ -721,6 +730,7 @@ function generateTimelineListView(){
 	for(each of TimelineData){
 		let fileName = replaceBackslashes(each.filePath).split("/");
 			fileName = fileName[fileName.length - 1];
+			each.name = fileName;
 			
 			let config = {
 				'name': fileName,
@@ -801,6 +811,7 @@ function add_to_nesttimeline(id){
 	TimelineSequence.push(contentData);
 	console.log(TimelineSequence);
 	
+	revoke_selections();
 	loadTimeline();
 	
 }
@@ -829,17 +840,11 @@ function nestLoadTracksContents(id = undefined, targettrack){
 	}
 	
 	for(i = 0; i < TimelineSequence.length;i++){
-		
-		//To-do: Render All timeline track contents views
-		//       and add timeline functions
-		
-		
-		TimelineSequence[i].content_id = i;
-		
-		let strack = generateTMcontentblock(TimelineSequence[i]);
-		targettrack.appendChild(strack);
 
 		
+		TimelineSequence[i].content_id = i;
+		let strack = generateTMcontentblock(TimelineSequence[i]);
+		targettrack.appendChild(strack);
 		
 	}
 	
@@ -847,12 +852,11 @@ function nestLoadTracksContents(id = undefined, targettrack){
 
 
 function generateTMcontentblock(data){
-		console.log(data);
-				//Visualy create the content to the timeline as an element
+		//Visualy create the content to the timeline as an element
 
 		var sub_track = document.createElement("div");
 			sub_track.classList.add("sub_track","larger_subtrack");
-			// sub_track.addEventListener("mousedown",set_track_node);
+			sub_track.addEventListener("mousedown",set_track_node);
 			sub_track.setAttribute("content_id", data.content_id);
 			
 		var calculated_offset = (data.offset / (20 / 3));	
@@ -861,14 +865,22 @@ function generateTMcontentblock(data){
 			sub_track.style.left = "calc(var(--scale) *"+ (calculated_offset)+"px)";
 			sub_track.style.width = "calc(var(--scale) *"+ calculated_lentime +"px)";
 			
+		let content_data = TimelineData[findIndexByUUID(data.uid)];
+		let colorCode = "#afafaf"; //default gray	
 			
-			sub_track.style.backgroundColor = "#afafaf"+"50";
+			if(content_data.options.color != undefined){
+				colorCode = content_data.options.color;
+			}
+			
+			
+			sub_track.style.backgroundColor = colorCode+"50";
 			// sub_track.addEventListener("contextmenu", function (e){}, false);
 		
-			
+			console.log(content_data);
+		
 		var div_details = document.createElement("div");
 			div_details.classList.add("content_details_inline");
-			div_details.innerHTML = "Name text";
+			div_details.innerText = content_data.name;
 			
 			sub_track.title = "";
 			sub_track.appendChild(div_details);
@@ -926,12 +938,224 @@ function timeline_click_event(){//clicked on timeline track
 	var my_selected_track_ = document.getElementsByClassName("track_con")[selected_track_index];
 	my_selected_track_.style.width = _("timeline_container").scrollWidth - 10 + "px";	//resizes the track width after mouse user click
 	
+}
+
+
+//subtracks Function
+let content_id_block;
+let prev_content;
+let selected_content;
+let selected_contents = [];
+
+function set_track_node(){//gets the content block selected
 	
+	if(prev_content == selected_content){
+		sameSelection = true;
+	}else{
+		sameSelection = false;
+	}
 	
+	click_on_track = false;
+	follow_playhead = false;
+	limitThreshold = 2;
+	has_moved = false;
+	
+	_("ruler_view").style.opacity = 0.75;
+	_("ruler_view").title = "";
+	
+	//set_coords_context(event.screenX,event.screenY); //for context menu location
+	
+	var e = event;
+	// console.log(e);	
+	movement = 0;
+	this.parentNode.addEventListener("mousemove", reposition_subtrack);
+	this.parentNode.addEventListener("mouseup", remove_onmove);
+	this.parentNode.addEventListener("mouseleave", remove_onmove);
+	
+	content_id_block = this;
+	initial_pos_sub_track = [e.clientX, e.clientY];		
+	selected_content = this;
+
+	revoke_selections("force");
+	this.classList.add("selected_content");
+		
+	
+	//If the selected object was clicked again
+	if(prev_content == selected_content){
+		// console.log("same");
+		revoke_selections("force");
+		this.classList.add("selected_content");
+		selected_contents.length = 0;
+	}
+	prev_content = selected_content;
+	
+	if(this.style.left.length > 0){
+		origin_sub = this.style.left.replace(/[^\d.]/gi, "");
+		ds = this;
+	}else{
+		origin_sub = this.getBoundingClientRect().x;
+	}
+}
+
+
+
+//draging a sub_tracks to mouse postion
+function reposition_subtrack(){
+		
+		if(can_move_track == false || event.buttons >= 2){
+			// set_coords_context(event.screenX,event.screenY);
+			return;
+		}		
+				
+
+		//For Multiple Selections 
+		// if(selected_contents.length > 1){
+			// prev_content = null;
+			// multiple_moves();
+			// return;
+		// }
+		
+		
+		try{
+			selection.disable();	
+			enableAutoHide();			
+		}catch(e){
+			//--
+		}
+		
+		
+		
+	try{
+		var selected_item = selected_content.getAttribute('content_id');
+	
+		if(movement <= 0){
+			// push_undo("subtrack", "edit", selected_track_index, decople_data(timeline_data[selected_track_index].sub_tracks[selected_item]), selected_item);
+		}
+	
+		var the_element = content_id_block;
+		var current_position = event.clientX;
+		var scrolled_c = _("timeline_container").scrollLeft;
+		
+		var changes = (current_position - initial_pos_sub_track[0]);	
+		var calculated_position = (parseInt(origin_sub)+(changes) / zoom_scale);
+		var content_ids = the_element.getAttribute("content_id");
+		
+		if(calculated_position <= 0){		
+			content_id_block.style.left = 0;
+			
+		}else{
+			content_id_block.style.left = "calc(var(--scale) *" + calculated_position+"px)";
+		}
+
+		var content_lengths = TimelineSequence[content_ids].length;
+
+		TimelineSequence[content_ids].offset = calculated_position * (20 / 3);
+		
+		TimelineSequence[content_ids].end_at = (calculated_position * (20 / 3))+content_lengths;
+		
+		// set_coords_context(event.screenX,event.screenY);
+		
+		//This pushes to undo when user is done moving selected elm
+	
+		event.target.onmouseup = (function(){
+					
+			// push_undo("subtrack", "edit", selected_track_index, decople_data(timeline_data[selected_track_index].sub_tracks[selected_item]), selected_item);
+		
+		});	
+		event.target.onmouseleave = (function(){
+					
+			// push_undo("subtrack", "edit", selected_track_index, decople_data(timeline_data[selected_track_index].sub_tracks[selected_item]), selected_item);
+		
+		});
+	
+		
+		if(movement <= 0 || movement%6 == 0){
+			//
+		}
+		
+		has_moved = true;
+		select_count = 0;
+		
+		movement++;
+	}catch(e){
+		
+		//
+	}
 
 }
 
 
+
+
+function remove_onmove(){
+	can_move_track = true;	
+	var my_selected_track_ = document.getElementsByClassName("track_con")[selected_track_index];
+	my_selected_track_.style.width = _("timeline_container").scrollWidth - 10 + "px";	//resizes the track width after mouse user click
+	this.removeEventListener("mousemove",reposition_subtrack);	
+
+	gen_ruler();
+	
+}
+
+
+function revoke_selections(elm){		
+	//remove all selection visually
+	
+	
+	for(s_tr = 0; s_tr < document.getElementsByClassName("selected_content").length;s_tr++){	
+	
+		let current_selected_con = selected_contents.indexOf(document.getElementsByClassName("selected_content")[s_tr]);
+	
+		if(!multiple_selected && (current_selected_con <= -1)){
+			
+			document.getElementsByClassName("selected_content")[s_tr].classList.remove("selected_content");	
+			selected_contents.length = 0;
+			
+		}
+	
+	}
+	
+	if(elm == "force"){
+		try{
+			let sel_block = document.querySelectorAll(".selected_content");	
+			
+			for(selects of sel_block){
+				
+				selects.classList.remove("selected_content");
+				
+			}
+			
+			selected_contents.length = 0;
+		}catch(e){
+			//--
+		}
+	}
+	
+}
+
+
+function remove_subtrack(id=undefined){
+	let subtrack_id = id;
+	if(id == undefined && selected_content != undefined){
+		subtrack_id = parseInt(selected_content.getAttribute('content_id'));
+	}
+	
+	if(subtrack_id == undefined){
+		return false;
+	};
+	
+	let confirms = confirm("Are you sure you want remove this content?");
+	if(!confirms){
+		return false;
+	}
+	
+	let removedElement = TimelineSequence.splice(subtrack_id, 1);
+	loadTimeline();
+	return removedElement;
+}
+
+
+//Playhead Function
 function play_head(time){
 		time_ex = time * zoom_scale;
 	
@@ -939,11 +1163,9 @@ function play_head(time){
 		//pl.style.left = (time)+"px";
 		//pl.style.transform =  "translateX("+time+"px)";		
 		window.requestAnimationFrame(pl_trans);
-		
 	}
 	
-		
-		
+	
 		
 	function pl_trans(){
 		pl.style.transform =  "translateX("+time_ex+"px)";
