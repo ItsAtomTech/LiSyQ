@@ -109,6 +109,8 @@ try{
 	return size;
 }
 
+
+
 async function loadToPlaylist(){
 	
 	let decodedData = JSON.parse(loadedFile);
@@ -435,6 +437,8 @@ plvid.onended = function() {
 }
 
 
+//To-Do: impelement media player logic for Nest Timeline
+//====
 
 
 
@@ -478,7 +482,6 @@ function stopPL(){
 	time = 0;
 	
 	//clearAllBuffer();
-	
 	
 	plvid.currentTime = 0;
 	plvid.pause();

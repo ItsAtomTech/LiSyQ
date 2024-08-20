@@ -64,9 +64,20 @@
 			> || </div>
 					
 				<div class="v_con_2 primary_color primary_background container_bound center_all_banner" id="v2_con_2">	
+
 					
-					<span class="huge primary_color faded"> Media Pl. Pane </span>
+							
+				<div class="media_bar_options padded_left">
+					<div class="load_button button_box" onclick="load_media_tm()" title="Load Media Sampling File for timeline"> </div>
+					<!-- <div class="load_link_button button_box " onclick="select_link()" title="Load and Link a media to this lsys file."> </div> -->
+				</div>
+			
+				<div class="video_media_con">
+						<video id="thisvidtm" class="media_player" controls controlsList="nodownload noplaybackrate noplay"></video>
+						<input type="file" class="hidden_button" id="media_link_tm" accept="video/*,audio/*"/>
+				</div>
 					
+
 
 				</div>			
 			
@@ -221,7 +232,11 @@
 	scaleFactor = 0.50;
 	timeFormatDevider = 10;
 	gen_ruler();
-
+	
+	//media player setup
+	localFileVideoPlayer('media_link', 'thisvidpl');
+	localFileVideoPlayer('media_link_tm', 'thisvidtm');
+	
 
 //Dummy Data
 TimelineData = [
