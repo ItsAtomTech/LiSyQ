@@ -178,10 +178,11 @@ var time_delay = 0;
 var not_empty = false;
 
 
-function play_on_current(customTime=undefined){//Plays through all track and content blocks at current time
+function play_on_current(customTime=undefined,customTimeline=undefined){//Plays through all track and content blocks at current time
 	not_empty = false;
 
 	let timeDelta = (typeof customTime !== 'undefined') ? customTime : time;
+	let playing_data = (typeof customTime !== 'undefined') ? customTimeline : timeline_data;
 
 	let timeFixed = parseInt(timeDelta);
 
@@ -194,36 +195,36 @@ function play_on_current(customTime=undefined){//Plays through all track and con
 
 
 	//Loop through tracks
-	for(tr = 0;tr < timeline_data.length;tr++){
+	for(tr = 0;tr < playing_data.length;tr++){
 		try{
 			var port_chan = 0;
 			
-			if(timeline_data[tr].port_channel != undefined){
-				port_chan = timeline_data[tr].port_channel;
+			if(playing_data[tr].port_channel != undefined){
+				port_chan = playing_data[tr].port_channel;
 				
 			}
 			
 	
 			let ch_track;
 			
-			if(timeline_data[tr].target_channel != undefined){
-				ch_track = timeline_data[tr].target_channel;
+			if(playing_data[tr].target_channel != undefined){
+				ch_track = playing_data[tr].target_channel;
 			}else{	
 				ch_track = tr;
 			}
 
 			//Puts Default Value from track if no content at current time index and not muted
-			if(timeline_data[tr].muted != true){
+			if(playing_data[tr].muted != true){
 				try{	
-					output[port_chan][ch_track] = timeline_data[tr].default_value;			
+					output[port_chan][ch_track] = playing_data[tr].default_value;			
 				}catch(e){
 					output[port_chan] = [];
-					output[port_chan][ch_track] = timeline_data[tr].default_value;	}
+					output[port_chan][ch_track] = playing_data[tr].default_value;	}
 			}
 		
 
-			for(str = 0;str < timeline_data[tr].sub_tracks.length;str++){
-					var subtracks = timeline_data[tr].sub_tracks[str];
+			for(str = 0;str < playing_data[tr].sub_tracks.length;str++){
+					var subtracks = playing_data[tr].sub_tracks[str];
 				
 
 				
@@ -231,9 +232,11 @@ function play_on_current(customTime=undefined){//Plays through all track and con
 					if(subtracks.start_at  + time_delay <= timeDelta && timeDelta <= subtracks.end_at  + time_delay){
 						
 						// console.log("Track #"+ tr +", content block #"+ str +" : "+ time + "\n content_index: " + (time - subtracks.start_at));
-
 						
-						to_output(ch_track,port_chan,timeline_data[tr].sub_tracks[str].data[parseInt((timeFixed -  time_delay) - subtracks.start_at)],timeline_data[tr].default_value,tr);
+						let muted = timeline_data[tr_id].muted
+						
+						
+						to_output(ch_track,port_chan,playing_data[tr].sub_tracks[str].data[parseInt((timeFixed -  time_delay) - subtracks.start_at)],playing_data[tr].default_value,tr,muted);
 						
 						not_empty = true;
 
@@ -270,7 +273,7 @@ function play_on_current(customTime=undefined){//Plays through all track and con
 
 
 
-function to_output(tr,chp,df,def,tr_id){
+function to_output(tr,chp,df,def,tr_id,muted=false){
 	
 	
 	//chp is for channel_port for port selected for track
@@ -283,10 +286,8 @@ function to_output(tr,chp,df,def,tr_id){
 			output[channel_port] = [];		
 		}
 		
-		if(tr_id != undefined){
-			if(timeline_data[tr_id].muted == true){
-				return;
-			}
+		if(muted){
+			return;
 		}
 
 		

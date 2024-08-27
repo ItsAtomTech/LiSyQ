@@ -281,6 +281,31 @@
 }
 
 
+.autofit_aspect{
+	width:100%;
+	aspect-ratio: 1/1;
+	
+}
+
+.big_timer_display_{
+	
+	width:100%;
+	min-height:200px;
+	border:solid red 1px;
+	padding:5px;
+	display:flex;
+	align-items:center;
+	justify-content:center;
+}
+
+.timer_con_big{
+	width:100%;
+	text-align:center;
+	
+	
+}
+
+
 
 /* Nest Player Styles End*/
 

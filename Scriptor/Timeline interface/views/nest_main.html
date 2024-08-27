@@ -72,8 +72,8 @@
 					<!-- <div class="load_link_button button_box " onclick="select_link()" title="Load and Link a media to this lsys file."> </div> -->
 				</div>
 			
-				<div class="video_media_con">
-						<video id="thisvidtm" class="media_player" controls controlsList="nodownload noplaybackrate noplay"></video>
+				<div class="video_media_con padded_left">
+						<video id="thisvidtm" class="media_player autofit_aspect" controls controlsList="nodownload noplaybackrate noplay"></video>
 						<input type="file" class="hidden_button" id="media_link_tm" accept="video/*,audio/*"/>
 				</div>
 					
@@ -100,7 +100,6 @@
 			
 			<div class="h_con_2 primary_color horizontal_bounds primary_background faded column_flex padded_top" id="h2_con_2">
 				<!-- Nested Player Timeline Goes here -->
-				<!-- To-Do: Implement adding contents to time track -->
 				<div class="time_ruler secondary_background offset_top" id="ruler_view">
 					<canvas id="canvas_ruler"></canvas>
 				</div>	
@@ -112,6 +111,36 @@
 					</div>
 						
 				</div>
+				
+				<div class="big_timer_display_">
+					
+					<div class="timer_con_big lcd huge" id="time_display_tl"> 0:00:00:00 </div>
+				
+				</div>
+				
+				
+								
+				<div class="bottom_bar_main_pl">
+
+					<div class="media_cont">
+						<div class="button_box grad_dark_button play_button_grad" onclick="playTL()"> </div>
+						<div class="button_box grad_dark_button pause_button_grad" onclick="pauseTL()"> </div>
+						<div class="button_box grad_dark_button stop_button_grad" onclick="stopTL()"> </div>
+					</div>
+					
+
+					
+					<div class="delay_setter">
+						<div class=" track_number_con" title='Apply Delay to Timeline play sequence'><span class='tiny'>Play Delay (ms): </span> <input type='number' onchange='set_delay_timeline(this.value)'  class='plane_input track_input primary_color small' min='0' max='1000' value=0 id='delay_disp_tl' /></div>
+					
+					</div>
+					
+					
+				
+				
+				</div>
+				
+				
 				
 			</div>
 	

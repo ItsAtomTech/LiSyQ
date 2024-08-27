@@ -36,7 +36,7 @@ let playlistList = {
 let currentPlayingIndex = null;
 
 let plnomedia = true;
-
+let tlnomedia = true;
 
 
 // Timeline Vars
@@ -47,6 +47,8 @@ let click_on_track;
 var pl = _("playhead");
 
 let timeline_time = 0; //Time index for nested timeline
+let tm_playing = false;
+let TLplaying = false;
 
 var origin_sub;
 var origin_sub_pos = [];
@@ -437,7 +439,61 @@ plvid.onended = function() {
 }
 
 
-//To-Do: impelement media player logic for Nest Timeline
+
+//=================================
+// Timeline Media Player Logic
+// Binding Functions
+
+
+let tlvid = _("thisvidtm");
+
+
+tlvid.oncanplay = function() {
+	// console.log(this_vid.currentTime);
+	tlnomedia = false;
+}
+
+tlvid.onerror = function() {
+	// console.log(this_vid.currentTime);
+	tlnomedia = true;
+}
+
+
+tlvid.onseeking = function() {
+	//console.log(this_vid.currentTime);
+	tm_player_seeked = true;
+	if (tm_playing == false) {
+		timeline_time = parseInt(tlvid.currentTime * 33.33);
+		console.log(timeline_time);
+		
+		setTimeDisplay(timeline_time+10, 'time_display_tl');
+	}
+}
+
+tlvid.onplay = function() {
+	// console.log(this_vid.paused);
+	if (is_preview) {
+		tm_playing = false;
+		is_preview = false;
+		return;
+	}
+	if (tm_playing == false) {
+		playTL(true);
+	}
+}
+
+tlvid.onpause = function() {
+	// console.log(this_vid.currentTime);
+	pauseTL(true);
+}
+
+tlvid.onended = function() {
+	// console.log(this_vid.currentTime);
+	tlprocessonend();
+}
+
+
+//To-Do: impelement media player logic for Nest Timeline and timeline playback
 //====
 
 
@@ -581,6 +637,7 @@ let repeatPL = false;
 
 //Loop Event for playing
 let offsets = 0;
+let offsets2 = 0;
 function rails(){
 	
 	
@@ -619,6 +676,46 @@ function rails(){
 
 	}
 	
+	
+	if(TLplaying == true){
+		play_on_current();
+		timeline_time++;
+		
+		
+		if(offsets2 >= 3){
+			setTimeDisplay(timeline_time+10, 'time_display_tl');
+			offsets2 = 0;
+			
+		}else{
+			offsets2++;
+		}
+		
+		
+		if(offsets2 == 1){
+			let event_time = (timeline_time + 10) / zoom_scale;
+			let calculated_time = (event_time / (20 / 3))
+			play_head(calculated_time);
+		}
+		
+		
+				
+		if(timeline_time < parseInt((tlvid.currentTime * 33.333) - 1) || timeline_time >  parseInt((tlvid.currentTime * 33.333) + 1)){
+			if(tlnomedia == false && tm_player_seeked == false){//only when media is playing
+					timeline_time = parseInt(tlvid.currentTime * 33.333);
+				 tlvid.play();
+			}
+		}
+		
+		
+		tm_player_seeked = false;
+
+		
+		//To-Do: implement timeline playing states
+		
+		
+		return;
+	}
+	
 }
 
 
@@ -628,6 +725,12 @@ function plprocessonend(){
 	}else if(currentPlayingIndex < playlistData.length - 1){
 		nextPL();
 	}
+}
+
+function tlprocessonend(){
+	//What happens if the media sampler for timeline ends
+	
+	
 }
 
 
@@ -1156,6 +1259,57 @@ function remove_subtrack(id=undefined){
 	loadTimeline();
 	return removedElement;
 }
+
+
+//Timeline Playback
+//================
+
+
+function playTL(from_player){
+	TLplaying = true;
+	
+	if(from_player){
+		return true;
+	}
+	
+	if(tlvid.paused ){	
+		try{
+			tlvid.play();	
+		}catch(e){
+			//-
+		}
+	}
+}
+
+ 
+function pauseTL(from_player){
+	TLplaying = false;
+	
+	if(from_player){
+		return true;
+	}
+	
+	if(tlvid.paused == false){
+		try{
+		tlvid.pause();
+		}catch(e){
+			//-
+		}
+	}
+}
+
+
+function stopTL(){
+	TLplaying = false;
+	timeline_time = 0;
+	
+	//clearAllBuffer();
+	
+	tlvid.currentTime = 0;
+	tlvid.pause();
+	
+}
+
 
 
 //Playhead Function
