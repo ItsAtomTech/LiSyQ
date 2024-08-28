@@ -639,8 +639,7 @@ let repeatPL = false;
 let offsets = 0;
 let offsets2 = 0;
 function rails(){
-	
-	
+
 	// for Plalist Playing rail
 	if(PLplaying == true){
 		play_on_current();
@@ -692,9 +691,9 @@ function rails(){
 		
 		
 		if(offsets2 == 1){
-			let event_time = (timeline_time + 10) / zoom_scale;
+			let event_time = (timeline_time);
 			let calculated_time = (event_time / (20 / 3))
-			play_head(calculated_time);
+			play_head(calculated_time + 5);
 		}
 		
 		
@@ -1009,12 +1008,12 @@ function timeline_click_event(){//clicked on timeline track
 		
 			timeline_time = (event_time * 20 / 3);
 			
-			// _("thisvid").currentTime = ((time-2)/33.333); 
-			
+			_("thisvidtm").currentTime = ((timeline_time-2)/33.333); 
+			setTimeDisplay(timeline_time, 'time_display_tl');
 			player_seeked = true;
 		}
 		if(playing == true){
-			// _("thisvid").play();
+			_("thisvidtm").play();
 		}
 	}
 	
@@ -1328,7 +1327,7 @@ function play_head(time){
 		pl.style.transform =  "translateX("+time_ex+"px)";
 	}
 		
-	// setTimeDisplay(time);
+	// setTimeDisplay(time, );
 	
 }
 
