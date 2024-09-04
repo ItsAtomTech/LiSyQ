@@ -64,9 +64,20 @@
 			> || </div>
 					
 				<div class="v_con_2 primary_color primary_background container_bound center_all_banner" id="v2_con_2">	
+
 					
-					<span class="huge primary_color faded"> Media Pl. Pane </span>
+							
+				<div class="media_bar_options padded_left">
+					<div class="load_button button_box" onclick="load_media_tm()" title="Load Media Sampling File for timeline"> </div>
+					<!-- <div class="load_link_button button_box " onclick="select_link()" title="Load and Link a media to this lsys file."> </div> -->
+				</div>
+			
+				<div class="video_media_con padded_left">
+						<video id="thisvidtm" class="media_player autofit_aspect" controls controlsList="nodownload noplaybackrate noplay"></video>
+						<input type="file" class="hidden_button" id="media_link_tm" accept="video/*,audio/*"/>
+				</div>
 					
+
 
 				</div>			
 			
@@ -89,16 +100,52 @@
 			
 			<div class="h_con_2 primary_color horizontal_bounds primary_background faded column_flex padded_top" id="h2_con_2">
 				<!-- Nested Player Timeline Goes here -->
-				<!-- To-Do: Implement adding contents to time track -->
 				<div class="time_ruler secondary_background offset_top" id="ruler_view">
 					<canvas id="canvas_ruler"></canvas>
 				</div>	
 				
 				<div class="nst_main" id="timeline_container">					
-					<div class="track_con selected_track larger_track" id="timeline_track">
+					<div class="timeline_head" id="playhead"> </div>
+					<div class="track_con selected_track larger_track" id="timeline_track" tracks_id="0">
 					
 					</div>
+						
 				</div>
+				
+				<div class="big_timer_display_">
+					
+					<div class="timer_con_big lcd huge" id="time_display_tl"> 0:00:00:00 </div>
+				
+				</div>
+				
+				
+								
+				<div class="bottom_bar_main_pl">
+
+					<div class="media_cont">
+						<div class="button_box grad_dark_button play_button_grad" onclick="playTL()"> </div>
+						<div class="button_box grad_dark_button pause_button_grad" onclick="pauseTL()"> </div>
+						<div class="button_box grad_dark_button stop_button_grad" onclick="stopTL()"> </div>
+					</div>
+					
+
+					
+					<div class="delay_setter">
+						<div class=" track_number_con" title='Apply Delay to Timeline play sequence'><span class='tiny'>Play Delay (ms): </span> <input type='number' onchange='set_delay_timeline(this.value)'  class='plane_input track_input primary_color small' min='0' max='1000' value=0 id='delay_disp_tl' /></div>
+					
+					</div>
+					
+				<div class="zoom_setter">
+					<div class=" track_number_con" title='Timeline Zoom scale'><span class='micro'>Zoom: </span> <input type='number' onchange='applyScale(this.value);decup(event)' onmousewheel='applyScale(this.value)' class='plane_input track_input primary_color small' min='0.3' max='2' step='0.1' value=1 id='zoom_disp' /></div>
+				
+				
+				</div>
+					
+				
+				
+				</div>
+				
+				
 				
 			</div>
 	
@@ -206,11 +253,44 @@
 <script src="../js/horizontal_resizer.js"></script>
 <script src="../js/indexer.js"></script>
 <script src="../js/nest_main.js"></script>
+<script src="../js/scaler.js"></script>
 <script src="../js/block_contents.js"></script>
 <script src="../js/media_player.js"></script>
 	<script src="../js/canvas_ruler.js"></script>
 <script defer src="../js/bottom_bar.js"></script>
 
+
+<script>//Dummy 
+TimelineSequence = [
+    {
+        "uid": "abc123-abc",
+        "length": 130,
+        "offset": 340.7843137254902,
+        "content_id": 0,
+        "end_at": 470.7843137254902
+    },
+    {
+        "uid": "abc153-abdc",
+        "length": 520,
+        "offset": 1345.8823529411766,
+        "content_id": 1,
+        "end_at": 1865.8823529411766
+    },
+    {
+        "uid": "abc123-abc",
+        "length": 130,
+        "offset": 847,
+        "content_id": 2
+    },
+    {
+        "uid": "abc123-abc",
+        "length": 130,
+        "offset": 2035,
+        "content_id": 3
+    }
+]
+
+</script>
 
 
 <script>
@@ -219,7 +299,11 @@
 	scaleFactor = 0.50;
 	timeFormatDevider = 10;
 	gen_ruler();
-
+	
+	//media player setup
+	localFileVideoPlayer('media_link', 'thisvidpl');
+	localFileVideoPlayer('media_link_tm', 'thisvidtm');
+	
 
 //Dummy Data
 TimelineData = [
@@ -279,12 +363,14 @@ TimelineData = [
                         ]
                     }
                 ],
-                "default_value": "000000",
+                "default_value": "0000",
                 "port_channel": 0
             }
         ],
         "options": {},
-        "filePath": "F:\\Projects\\Others\\LiSyQ Showcase\\Light Sequence.lsys"
+		"id":"abc123-abc",
+        "filePath": "F:\\Projects\\Others\\LiSyQ Showcase\\Light Sequence.lsys",
+		"max":130,
     },
     {
         "timeline": [
@@ -294,7 +380,7 @@ TimelineData = [
                     {
                         "start_at": 96,
                         "content_length": 34,
-                        "end_at": 130,
+                        "end_at": 100,
                         "type": "ambient",
                         "name": "Black to red",
                         "color": "#ff0000",
@@ -347,11 +433,14 @@ TimelineData = [
             }
         ],
         "options": {},
-        "filePath": "F:\\Projects\\Others\\LiSyQ Showcase\\Light Sequence.lsys"
+        "filePath": "F:\\Projects\\Others\\LiSyQ Showcase\\Light Sequence 2.lsys",
+		"id":"abc153-abdc",
+		"max":520,
     }
 ]
 
 generateTimelineListView();
+loadTimeline();
 </script>
 
 

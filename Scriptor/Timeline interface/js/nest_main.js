@@ -493,10 +493,6 @@ tlvid.onended = function() {
 }
 
 
-//To-Do: impelement media player logic for Nest Timeline and timeline playback
-//====
-
-
 
 //Playback for playlist
 
@@ -654,9 +650,9 @@ function rails(){
 		}
 	
 		
-			if(time < parseInt((plvid.currentTime * 33.333) - 2) || time >  parseInt((plvid.currentTime * 33.333) + 2)){
+			if(time < parseInt((plvid.currentTime * 33.33333) - 2) || time >  parseInt((plvid.currentTime * 33.33333) + 2)){
 			if(plnomedia == false && player_seeked == false){//only when media is playing
-					time = parseInt(plvid.currentTime * 33.333);
+					time = parseInt(plvid.currentTime * 33.33333);
 				 plvid.play();
 			}
 		}
@@ -677,7 +673,7 @@ function rails(){
 	
 	
 	if(TLplaying == true){
-		play_on_current();
+		railInTimeline();
 		timeline_time++;
 		
 		
@@ -693,14 +689,14 @@ function rails(){
 		if(offsets2 == 1){
 			let event_time = (timeline_time);
 			let calculated_time = (event_time / (20 / 3))
-			play_head(calculated_time + 5);
+			play_head(calculated_time + (8 / zoom_scale));
 		}
 		
 		
 				
-		if(timeline_time < parseInt((tlvid.currentTime * 33.333) - 1) || timeline_time >  parseInt((tlvid.currentTime * 33.333) + 1)){
+		if(timeline_time < (tlvid.currentTime * 33.333333333) || timeline_time >  (tlvid.currentTime * 33.333333333)){
 			if(tlnomedia == false && tm_player_seeked == false){//only when media is playing
-					timeline_time = parseInt(tlvid.currentTime * 33.333);
+					timeline_time = parseInt(tlvid.currentTime * 33.333333333);
 				 tlvid.play();
 			}
 		}
@@ -708,6 +704,7 @@ function rails(){
 		
 		tm_player_seeked = false;
 
+		
 		
 		//To-Do: implement timeline playing states
 		
@@ -980,8 +977,7 @@ function generateTMcontentblock(data){
 			
 			sub_track.style.backgroundColor = colorCode+"50";
 			// sub_track.addEventListener("contextmenu", function (e){}, false);
-		
-			console.log(content_data);
+			// console.log(content_data);
 		
 		var div_details = document.createElement("div");
 			div_details.classList.add("content_details_inline");
@@ -1309,6 +1305,90 @@ function stopTL(){
 	
 }
 
+// =======================
+// Nested Timeline Functions
+// =======================
+
+// Get Timeline Object Index based on given time, would return the most closet top match 
+function getTimelineContentOnTime(time=0){
+	let topMostIndex = -1;
+	let closestIndex = -1;
+	
+	let lowestOffset = -1;
+	for(let t=0;t<TimelineSequence.length;t++){
+		let endAt = TimelineSequence[t].offset + TimelineSequence[t].length;
+		let len = TimelineSequence[t].length;
+		let startAt = TimelineSequence[t].offset;
+		
+		if(startAt <= time && time <= endAt){
+			topMostIndex = t;
+		}
+		
+		if(time <= endAt ){
+			if(startAt <= lowestOffset || lowestOffset <= -1){
+				lowestOffset = startAt;
+				closestIndex = t;
+			}
+		}
+	}
+	
+	if(topMostIndex < 0){
+		return closestIndex;
+	}
+	
+	return topMostIndex;
+	
+}
+
+
+
+let currentPlayingTimeline = undefined;
+let optimizedGrouping = []; //contains an array of grouped array of timeline contents, if any overlap is found for optimization
+let isOptimized = false;
+
+
+
+function railInTimeline(){
+	let contentIndex = 0;
+
+	if(isOptimized){
+
+	}else{
+		contentIndex = getTimelineContentOnTime(timeline_time);
+		currentPlayingTimeline = TimelineData[
+								findIndexByUUID(TimelineSequence[contentIndex].uid)
+								];
+		
+		playNoOptimized(contentIndex);
+	}
+	
+	//To-Do : - load a timeline,also then load a timeline content if the current playing Timeline is outof bounds of timeline_time
+	
+}
+
+function playNoOptimized(contentId=undefined){
+	
+	let customTime = parseInt(timeline_time -  TimelineSequence[contentId].offset);
+	
+	
+	play_on_current(customTime, currentPlayingTimeline.timeline);
+	
+	
+}
+
+
+
+
+function optimizeTimelinePlayback(){
+	optimizedGrouping.length = 0;
+	
+	optimizedGrouping = findIntersectingGroups(TimelineSequence);
+	return isOptimized = true;
+	
+}
+
+
+
 
 
 //Playhead Function
@@ -1330,4 +1410,52 @@ function play_head(time){
 	// setTimeDisplay(time, );
 	
 }
+
+
+//Helper functions
+//======================
+function findIntersectingGroups(array) {
+    let groups = [];
+    let visited = new Set();
+
+    for (let i = 0; i < array.length; i++) {
+        if (visited.has(i)) continue; // Skip if already part of a group
+
+        let group = [i];
+        let obj1 = array[i];
+        let obj1End = obj1.end_at || obj1.offset + obj1.length;
+
+        for (let j = i + 1; j < array.length; j++) {
+            let obj2 = array[j];
+            let obj2End = obj2.end_at || obj2.offset + obj2.length;
+
+            // Check for intersection with any item in the current group
+            let intersects = group.some(index => {
+                let groupObj = array[index];
+                let groupObjEnd = groupObj.end_at || groupObj.offset + groupObj.length;
+                return (
+                    (groupObj.offset < obj2End && groupObjEnd > obj2.offset) || 
+                    (obj2.offset < groupObjEnd && obj2End > groupObj.offset)
+                );
+            });
+
+            if (intersects) {
+                group.push(j);
+                visited.add(j); // Mark as visited
+            }
+        }
+
+        if (group.length > 1) {
+            groups.push(group);
+        } else {
+            groups.push(group[0]);
+        }
+
+        visited.add(i); // Mark as visited
+    }
+
+    return groups;
+}
+
+
 

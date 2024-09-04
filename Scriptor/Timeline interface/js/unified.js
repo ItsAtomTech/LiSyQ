@@ -182,7 +182,7 @@ function play_on_current(customTime=undefined,customTimeline=undefined){//Plays 
 	not_empty = false;
 
 	let timeDelta = (typeof customTime !== 'undefined') ? customTime : time;
-	let playing_data = (typeof customTime !== 'undefined') ? customTimeline : timeline_data;
+	let playing_data = (typeof customTimeline !== 'undefined') ? customTimeline : timeline_data;
 
 	let timeFixed = parseInt(timeDelta);
 
@@ -192,7 +192,7 @@ function play_on_current(customTime=undefined,customTimeline=undefined){//Plays 
 	}else{
 		time_delay = 0;
 	}
-
+	
 
 	//Loop through tracks
 	for(tr = 0;tr < playing_data.length;tr++){
@@ -232,8 +232,12 @@ function play_on_current(customTime=undefined,customTimeline=undefined){//Plays 
 					if(subtracks.start_at  + time_delay <= timeDelta && timeDelta <= subtracks.end_at  + time_delay){
 						
 						// console.log("Track #"+ tr +", content block #"+ str +" : "+ time + "\n content_index: " + (time - subtracks.start_at));
-						
-						let muted = timeline_data[tr_id].muted
+						let muted = false
+						try{
+							muted = timeline_data[tr].muted
+						}catch(e){
+							//--
+						}
 						
 						
 						to_output(ch_track,port_chan,playing_data[tr].sub_tracks[str].data[parseInt((timeFixed -  time_delay) - subtracks.start_at)],playing_data[tr].default_value,tr,muted);

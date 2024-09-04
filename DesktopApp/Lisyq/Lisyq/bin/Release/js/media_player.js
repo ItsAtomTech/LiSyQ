@@ -1,33 +1,43 @@
 var player_seeked = false;
 var nomedia = true;
 let mediaPath = undefined;
-(function localFileVideoPlayer() {
-	var URL = window.URL || window.webkitURL
-	var playSelectedFile = function(event) {
-		var file = this.files[0]
-		var type = file.type
-		var videoNode = document.querySelector('video')
-		var canPlay = videoNode.canPlayType(type)
-		if (canPlay === '') canPlay = 'no'
-		var isError = canPlay === 'no';
-		var path = (window.URL || window.webkitURL).createObjectURL(file);
-		// console.log('path', path);
-		if (isError) {
-			return
-		}
-		var fileURL = URL.createObjectURL(file)
-		videoNode.src = fileURL
-	}
-	var inputNode = _("media_link");
-	
-	try{
-		inputNode.addEventListener('change', playSelectedFile, false)
-	}catch(e){
-		//-
-	}
-	
-	
-})();
+
+function localFileVideoPlayer(inputId, videoId) {
+    var URL = window.URL || window.webkitURL;
+
+    var playSelectedFile = function(event) {
+        var file = this.files[0];
+        var type = file.type;
+        
+        // Select the video node based on the id provided or default to a querySelector
+        var videoNode = videoId ? document.getElementById(videoId) : document.querySelector('video');
+        
+        var canPlay = videoNode.canPlayType(type);
+        if (canPlay === '') canPlay = 'no';
+        var isError = canPlay === 'no';
+        var path = (window.URL || window.webkitURL).createObjectURL(file);
+        
+        if (isError) {
+            return;
+        }
+        
+        var fileURL = URL.createObjectURL(file);
+        videoNode.src = fileURL;
+    };
+    
+    // Get the input node based on the id provided
+    var inputNode = document.getElementById(inputId);
+
+    try {
+        inputNode.addEventListener('change', playSelectedFile, false);
+    } catch(e) {
+        // Handle error if needed
+    }
+
+};
+
+
+
 
 var this_vid = _("thisvid");
 
@@ -72,6 +82,11 @@ if(this_vid != null){
 
 function load_media() {
 	_("media_link").click();
+}
+
+function load_media_tm(){
+	_("media_link_tm").click();
+	
 }
 
 //Helper_function for loading media using string path

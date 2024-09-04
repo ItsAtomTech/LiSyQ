@@ -819,8 +819,6 @@ function revoke_selections(elm){
 		}
 	}
 	
-	
-	
 }
 
 	
@@ -1029,12 +1027,9 @@ function remove_onmove(){
 	var my_selected_track_ = document.getElementsByClassName("track_con")[selected_track_index];
 	my_selected_track_.style.width = _("timeline_container").scrollWidth - 10 + "px";	//resizes the track width after mouse user click
 	this.removeEventListener("mousemove",reposition_subtrack);	
-	
 
-	
 	gen_ruler();
 	
-
 }
 
 
@@ -1179,9 +1174,7 @@ function play_head(time){
 
 
 function pl_trans(){
-	
 	pl.style.transform =  "translateX("+time_ex+"px)";
-	
 }
 
 

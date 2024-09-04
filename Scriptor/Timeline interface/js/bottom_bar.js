@@ -11,7 +11,7 @@ var timeFormatTimer = function(raw_time){
 var time_disp;
 let customIdNest = undefined;
 function setTimeDisplay(rt,customId=undefined){
-	time_disp = timeFormatTimer((rt-10)/(33.33));
+	time_disp = timeFormatTimer((rt-10)/(33.333333333));
 	
 	customIdNest = customId;
 	

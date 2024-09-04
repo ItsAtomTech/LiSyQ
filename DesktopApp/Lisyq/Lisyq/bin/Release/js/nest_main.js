@@ -36,13 +36,27 @@ let playlistList = {
 let currentPlayingIndex = null;
 
 let plnomedia = true;
-
+let tlnomedia = true;
 
 
 // Timeline Vars
-let TimelineData = [];
+let TimelineData = [];//Timeline Templates
+let TimelineSequence = [];//Timeline Sequences 
 
+let click_on_track;
+var pl = _("playhead");
 
+let timeline_time = 0; //Time index for nested timeline
+let tm_playing = false;
+let TLplaying = false;
+
+var origin_sub;
+var origin_sub_pos = [];
+var can_move_track = true;
+var follow_playhead = false;
+var context_menu = false;
+
+let multiple_selected;
 
 
 function inits(){
@@ -96,6 +110,8 @@ try{
 	}
 	return size;
 }
+
+
 
 async function loadToPlaylist(){
 	
@@ -213,7 +229,7 @@ async function generatePLSave() {
 
 // Regeneration Handler
 function regen_empty_data(input_timeline_data=undefined) {
-  let used_timeline_data = input_timeline_data || timeline_data;
+  let used_timeline_data = input_timeline_data || timeline_data; //use default if timeline object is not passed
   let max_time = 0;
 
   for (let tmsd = 0; tmsd < used_timeline_data.length; tmsd++) {
@@ -244,9 +260,6 @@ function regen_empty_data(input_timeline_data=undefined) {
 
 
 //End regen function here
-
-
-
 
 
 
@@ -427,6 +440,58 @@ plvid.onended = function() {
 
 
 
+//=================================
+// Timeline Media Player Logic
+// Binding Functions
+
+
+let tlvid = _("thisvidtm");
+
+
+tlvid.oncanplay = function() {
+	// console.log(this_vid.currentTime);
+	tlnomedia = false;
+}
+
+tlvid.onerror = function() {
+	// console.log(this_vid.currentTime);
+	tlnomedia = true;
+}
+
+
+tlvid.onseeking = function() {
+	//console.log(this_vid.currentTime);
+	tm_player_seeked = true;
+	if (tm_playing == false) {
+		timeline_time = parseInt(tlvid.currentTime * 33.33);
+		console.log(timeline_time);
+		
+		setTimeDisplay(timeline_time+10, 'time_display_tl');
+	}
+}
+
+tlvid.onplay = function() {
+	// console.log(this_vid.paused);
+	if (is_preview) {
+		tm_playing = false;
+		is_preview = false;
+		return;
+	}
+	if (tm_playing == false) {
+		playTL(true);
+	}
+}
+
+tlvid.onpause = function() {
+	// console.log(this_vid.currentTime);
+	pauseTL(true);
+}
+
+tlvid.onended = function() {
+	// console.log(this_vid.currentTime);
+	tlprocessonend();
+}
+
 
 
 //Playback for playlist
@@ -469,7 +534,6 @@ function stopPL(){
 	time = 0;
 	
 	//clearAllBuffer();
-	
 	
 	plvid.currentTime = 0;
 	plvid.pause();
@@ -569,14 +633,12 @@ let repeatPL = false;
 
 //Loop Event for playing
 let offsets = 0;
+let offsets2 = 0;
 function rails(){
-	
 
-	
 	// for Plalist Playing rail
 	if(PLplaying == true){
 		play_on_current();
-		
 	
 		time++;
 		
@@ -588,9 +650,9 @@ function rails(){
 		}
 	
 		
-			if(time < parseInt((plvid.currentTime * 33.333) - 2) || time >  parseInt((plvid.currentTime * 33.333) + 2)){
+			if(time < parseInt((plvid.currentTime * 33.33333) - 2) || time >  parseInt((plvid.currentTime * 33.33333) + 2)){
 			if(plnomedia == false && player_seeked == false){//only when media is playing
-					time = parseInt(plvid.currentTime * 33.333);
+					time = parseInt(plvid.currentTime * 33.33333);
 				 plvid.play();
 			}
 		}
@@ -609,6 +671,47 @@ function rails(){
 
 	}
 	
+	
+	if(TLplaying == true){
+		railInTimeline();
+		timeline_time++;
+		
+		
+		if(offsets2 >= 3){
+			setTimeDisplay(timeline_time+10, 'time_display_tl');
+			offsets2 = 0;
+			
+		}else{
+			offsets2++;
+		}
+		
+		
+		if(offsets2 == 1){
+			let event_time = (timeline_time);
+			let calculated_time = (event_time / (20 / 3))
+			play_head(calculated_time + (8 / zoom_scale));
+		}
+		
+		
+				
+		if(timeline_time < (tlvid.currentTime * 33.333333333) || timeline_time >  (tlvid.currentTime * 33.333333333)){
+			if(tlnomedia == false && tm_player_seeked == false){//only when media is playing
+					timeline_time = parseInt(tlvid.currentTime * 33.333333333);
+				 tlvid.play();
+			}
+		}
+		
+		
+		tm_player_seeked = false;
+
+		
+		
+		//To-Do: implement timeline playing states
+		
+		
+		return;
+	}
+	
 }
 
 
@@ -620,10 +723,16 @@ function plprocessonend(){
 	}
 }
 
+function tlprocessonend(){
+	//What happens if the media sampler for timeline ends
+	
+	
+}
+
 
 
 // ===================================
-// Timeline Logic ======
+// Timeline Logic  ===================
 // ===================================
 
 
@@ -681,9 +790,6 @@ function openLsysFileNS(){
 	openFile();
 	
 }
-
-
-
 var fRuler = gen_ruler()//init the Ruler 
 
 
@@ -694,16 +800,18 @@ async function loadToNestTimeline(){
 	let timelineData = JSON.parse(decode(decodedData.timeline));
 	let timelineOptions = decodedData.options ? JSON.parse(decode(decodedData.options)) : {};
 	let maxEnd = undefined;
-		
+	let uid = crypto.randomUUID();	
 	if(loadmode == 'single'){
 		maxEnd = regen_empty_data(timelineData);
 	}
-
+	
 	
 	let playitem = {
 		'timeline': timelineData,
 		'options': timelineOptions,
 		'filePath': loadedFilePath,
+		'id':uid,
+		'max': maxEnd,
 		
 	}
 	
@@ -719,12 +827,12 @@ async function loadToNestTimeline(){
 
 function generateTimelineListView(){
 		//Generate Timeline list view and data here
-
 	let extId = 0;
 		_("script_main").innerHTML = "";
 	for(each of TimelineData){
 		let fileName = replaceBackslashes(each.filePath).split("/");
 			fileName = fileName[fileName.length - 1];
+			each.name = fileName;
 			
 			let config = {
 				'name': fileName,
@@ -732,35 +840,26 @@ function generateTimelineListView(){
 				
 			}
 			
-			
-		// To-Do: Generate List view of loaded scripts	
-			
-			
-		let item = genNSTItem(config, extId);
-		
-		// if(currentPlayingIndex == extId){
-			// item.classList.add('currentPlaying');
-		// }
+		let item = genNSTItem(config, extId, each.id);
 		
 		 _("script_main").appendChild(item);
 		extId++;
 	}
 	
-
 	
 }
 
 
 
 //generate Nest Item list
-function genNSTItem(tl_data,id){
+function genNSTItem(tl_data,id,uuid){
 
 	var template_thumb = document.createElement("div");
 		template_thumb.classList.add("template_thumb");
 		template_thumb.style.backgroundColor = tl_data.config.color+"d5";
 		// template_thumb.title = tl_data.name + "\nType:" + tl_data.type ;
 		template_thumb.setAttribute("template_id",id);
-		template_thumb.setAttribute("onclick","add_to_nesttimeline("+id+")");
+		template_thumb.setAttribute("onclick","add_to_nesttimeline('"+uuid+"')");
 		template_thumb.setAttribute("title",tl_data.name);
 		
 	var template_thumb_name = document.createElement("div");
@@ -773,6 +872,590 @@ function genNSTItem(tl_data,id){
 	
 }
 
+
+let _lastUID = "";
+let _lastFoundId;
+function findIndexByUUID(uuid) {
+	//optimized for repeated search
+	if(_lastUID == uuid){
+		if(TimelineData[_lastFoundId].id == uuid){
+				return _lastFoundId;
+		}
+	}
+	
+	
+    for (let i = 0; i < TimelineData.length; i++) {
+        if (TimelineData[i].id === uuid) {
+			_lastFoundId = i;
+			_lastUID = uuid;
+            return i;
+        }
+    }
+
+    return -1; // Return -1 if the UUID is not found
+}
+
+
+
+//Function to add a script template into the nest timeline
+function add_to_nesttimeline(id){
+	let foundIdex = findIndexByUUID(id);
+	if(foundIdex <= -1){
+		return console.warn("ID: ", id, "Not found on loaded script list");
+	}
+	
+	let contentData = {
+		uid: id, //uuid of the lysis content  
+		length: TimelineData[foundIdex].max,//length of the content derived from the content
+		offset: parseInt(timeline_time),   //location of this content as offset. 
+	}
+
+	TimelineSequence.push(contentData);
+	console.log(TimelineSequence);
+	
+	revoke_selections();
+	loadTimeline();
+	
+}
+
+
+//generate Timeline view and events
+function loadTimeline(){
+	let timeline_tracks = _("timeline_container").getElementsByClassName("track_con");
+	
+	// console.log(timeline_tracks);
+	
+	for(z = 0; z < timeline_tracks.length;z++){
+		timeline_tracks[z].innerHTML = "";
+		timeline_tracks[z].addEventListener("mousedown",timeline_click_event);
+		nestLoadTracksContents(z, timeline_tracks[z]);
+	}
+
+	
+}
+
+
+//Load all contents of a nest timeline track
+function nestLoadTracksContents(id = undefined, targettrack){
+	if(id == undefined){
+		return false;
+	}
+	
+	for(i = 0; i < TimelineSequence.length;i++){
+
+		
+		TimelineSequence[i].content_id = i;
+		let strack = generateTMcontentblock(TimelineSequence[i]);
+		targettrack.appendChild(strack);
+		
+	}
+	
+}
+
+
+function generateTMcontentblock(data){
+		//Visualy create the content to the timeline as an element
+
+		var sub_track = document.createElement("div");
+			sub_track.classList.add("sub_track","larger_subtrack");
+			sub_track.addEventListener("mousedown",set_track_node);
+			sub_track.setAttribute("content_id", data.content_id);
+			
+		var calculated_offset = (data.offset / (20 / 3));	
+		var calculated_lentime = (data.length / (20 / 3));	
+			
+			sub_track.style.left = "calc(var(--scale) *"+ (calculated_offset)+"px)";
+			sub_track.style.width = "calc(var(--scale) *"+ calculated_lentime +"px)";
+			
+		let content_data = TimelineData[findIndexByUUID(data.uid)];
+		let colorCode = "#afafaf"; //default gray	
+			
+			if(content_data.options.color != undefined){
+				colorCode = content_data.options.color;
+			}
+			
+			
+			sub_track.style.backgroundColor = colorCode+"50";
+			// sub_track.addEventListener("contextmenu", function (e){}, false);
+			// console.log(content_data);
+		
+		var div_details = document.createElement("div");
+			div_details.classList.add("content_details_inline");
+			div_details.innerText = content_data.name;
+			
+			sub_track.title = "";
+			sub_track.appendChild(div_details);
+		
+		return sub_track;
+}
+
+
+
+function timeline_click_event(){//clicked on timeline track
+		var scrolled = _("timeline_container").scrollLeft;
+	
+	let on_tracks = (event.srcElement.classList.contains("track_con") || event.srcElement.classList.contains("sub_track"));
+	
+	
+	if((click_on_track == true && event.shiftKey == true && event.buttons == 1) || playing == false){
+		if(on_tracks){
+			play_head((event.clientX+scrolled - (2)) / zoom_scale);
+			event_time = ((event.clientX - (10))+scrolled ) / zoom_scale;
+		
+			timeline_time = (event_time * 20 / 3);
+			
+			_("thisvidtm").currentTime = ((timeline_time-2)/33.333); 
+			setTimeDisplay(timeline_time, 'time_display_tl');
+			player_seeked = true;
+		}
+		if(playing == true){
+			_("thisvidtm").play();
+		}
+	}
+	
+	
+	// play_on_current();
+	selected_track_index = parseInt(this.getAttribute("tracks_id"));
+	
+
+	
+	if(on_tracks){
+		follow_playhead = false;
+	}
+	
+
+	limitThreshold = 2;
+	_("ruler_view").style.opacity = 0.75;
+	_("ruler_view").title = "";
+	click_on_track = true;
+	
+	for(s_tr = 0; s_tr < timeline_data.length;s_tr++){
+		this.parentNode.getElementsByClassName("track_con")[s_tr].classList.remove("selected_track");
+	}
+	
+	this.classList.add("selected_track");
+	this.classList.remove("track_not_in_view");
+	
+	var my_selected_track_ = document.getElementsByClassName("track_con")[selected_track_index];
+	my_selected_track_.style.width = _("timeline_container").scrollWidth - 10 + "px";	//resizes the track width after mouse user click
+	
+}
+
+
+//subtracks Function
+let content_id_block;
+let prev_content;
+let selected_content;
+let selected_contents = [];
+
+function set_track_node(){//gets the content block selected
+	
+	if(prev_content == selected_content){
+		sameSelection = true;
+	}else{
+		sameSelection = false;
+	}
+	
+	click_on_track = false;
+	follow_playhead = false;
+	limitThreshold = 2;
+	has_moved = false;
+	
+	_("ruler_view").style.opacity = 0.75;
+	_("ruler_view").title = "";
+	
+	//set_coords_context(event.screenX,event.screenY); //for context menu location
+	
+	var e = event;
+	// console.log(e);	
+	movement = 0;
+	this.parentNode.addEventListener("mousemove", reposition_subtrack);
+	this.parentNode.addEventListener("mouseup", remove_onmove);
+	this.parentNode.addEventListener("mouseleave", remove_onmove);
+	
+	content_id_block = this;
+	initial_pos_sub_track = [e.clientX, e.clientY];		
+	selected_content = this;
+
+	revoke_selections("force");
+	this.classList.add("selected_content");
+		
+	
+	//If the selected object was clicked again
+	if(prev_content == selected_content){
+		// console.log("same");
+		revoke_selections("force");
+		this.classList.add("selected_content");
+		selected_contents.length = 0;
+	}
+	prev_content = selected_content;
+	
+	if(this.style.left.length > 0){
+		origin_sub = this.style.left.replace(/[^\d.]/gi, "");
+		ds = this;
+	}else{
+		origin_sub = this.getBoundingClientRect().x;
+	}
+}
+
+
+
+//draging a sub_tracks to mouse postion
+function reposition_subtrack(){
+		
+		if(can_move_track == false || event.buttons >= 2){
+			// set_coords_context(event.screenX,event.screenY);
+			return;
+		}		
+				
+
+		//For Multiple Selections 
+		// if(selected_contents.length > 1){
+			// prev_content = null;
+			// multiple_moves();
+			// return;
+		// }
+		
+		
+		try{
+			selection.disable();	
+			enableAutoHide();			
+		}catch(e){
+			//--
+		}
+		
+		
+		
+	try{
+		var selected_item = selected_content.getAttribute('content_id');
+	
+		if(movement <= 0){
+			// push_undo("subtrack", "edit", selected_track_index, decople_data(timeline_data[selected_track_index].sub_tracks[selected_item]), selected_item);
+		}
+	
+		var the_element = content_id_block;
+		var current_position = event.clientX;
+		var scrolled_c = _("timeline_container").scrollLeft;
+		
+		var changes = (current_position - initial_pos_sub_track[0]);	
+		var calculated_position = (parseInt(origin_sub)+(changes) / zoom_scale);
+		var content_ids = the_element.getAttribute("content_id");
+		
+		if(calculated_position <= 0){		
+			content_id_block.style.left = 0;
+			
+		}else{
+			content_id_block.style.left = "calc(var(--scale) *" + calculated_position+"px)";
+		}
+
+		var content_lengths = TimelineSequence[content_ids].length;
+
+		TimelineSequence[content_ids].offset = calculated_position * (20 / 3);
+		
+		TimelineSequence[content_ids].end_at = (calculated_position * (20 / 3))+content_lengths;
+		
+		// set_coords_context(event.screenX,event.screenY);
+		
+		//This pushes to undo when user is done moving selected elm
+	
+		event.target.onmouseup = (function(){
+					
+			// push_undo("subtrack", "edit", selected_track_index, decople_data(timeline_data[selected_track_index].sub_tracks[selected_item]), selected_item);
+		
+		});	
+		event.target.onmouseleave = (function(){
+					
+			// push_undo("subtrack", "edit", selected_track_index, decople_data(timeline_data[selected_track_index].sub_tracks[selected_item]), selected_item);
+		
+		});
+	
+		
+		if(movement <= 0 || movement%6 == 0){
+			//
+		}
+		
+		has_moved = true;
+		select_count = 0;
+		
+		movement++;
+	}catch(e){
+		
+		//
+	}
+
+}
+
+
+
+
+function remove_onmove(){
+	can_move_track = true;	
+	var my_selected_track_ = document.getElementsByClassName("track_con")[selected_track_index];
+	my_selected_track_.style.width = _("timeline_container").scrollWidth - 10 + "px";	//resizes the track width after mouse user click
+	this.removeEventListener("mousemove",reposition_subtrack);	
+
+	gen_ruler();
+	
+}
+
+
+function revoke_selections(elm){		
+	//remove all selection visually
+	
+	
+	for(s_tr = 0; s_tr < document.getElementsByClassName("selected_content").length;s_tr++){	
+	
+		let current_selected_con = selected_contents.indexOf(document.getElementsByClassName("selected_content")[s_tr]);
+	
+		if(!multiple_selected && (current_selected_con <= -1)){
+			
+			document.getElementsByClassName("selected_content")[s_tr].classList.remove("selected_content");	
+			selected_contents.length = 0;
+			
+		}
+	
+	}
+	
+	if(elm == "force"){
+		try{
+			let sel_block = document.querySelectorAll(".selected_content");	
+			
+			for(selects of sel_block){
+				
+				selects.classList.remove("selected_content");
+				
+			}
+			
+			selected_contents.length = 0;
+		}catch(e){
+			//--
+		}
+	}
+	
+}
+
+
+function remove_subtrack(id=undefined){
+	let subtrack_id = id;
+	if(id == undefined && selected_content != undefined){
+		subtrack_id = parseInt(selected_content.getAttribute('content_id'));
+	}
+	
+	if(subtrack_id == undefined){
+		return false;
+	};
+	
+	let confirms = confirm("Are you sure you want remove this content?");
+	if(!confirms){
+		return false;
+	}
+	
+	let removedElement = TimelineSequence.splice(subtrack_id, 1);
+	loadTimeline();
+	return removedElement;
+}
+
+
+//Timeline Playback
+//================
+
+
+function playTL(from_player){
+	TLplaying = true;
+	
+	if(from_player){
+		return true;
+	}
+	
+	if(tlvid.paused ){	
+		try{
+			tlvid.play();	
+		}catch(e){
+			//-
+		}
+	}
+}
+
+ 
+function pauseTL(from_player){
+	TLplaying = false;
+	
+	if(from_player){
+		return true;
+	}
+	
+	if(tlvid.paused == false){
+		try{
+		tlvid.pause();
+		}catch(e){
+			//-
+		}
+	}
+}
+
+
+function stopTL(){
+	TLplaying = false;
+	timeline_time = 0;
+	
+	//clearAllBuffer();
+	
+	tlvid.currentTime = 0;
+	tlvid.pause();
+	
+}
+
+// =======================
+// Nested Timeline Functions
+// =======================
+
+// Get Timeline Object Index based on given time, would return the most closet top match 
+function getTimelineContentOnTime(time=0){
+	let topMostIndex = -1;
+	let closestIndex = -1;
+	
+	let lowestOffset = -1;
+	for(let t=0;t<TimelineSequence.length;t++){
+		let endAt = TimelineSequence[t].offset + TimelineSequence[t].length;
+		let len = TimelineSequence[t].length;
+		let startAt = TimelineSequence[t].offset;
+		
+		if(startAt <= time && time <= endAt){
+			topMostIndex = t;
+		}
+		
+		if(time <= endAt ){
+			if(startAt <= lowestOffset || lowestOffset <= -1){
+				lowestOffset = startAt;
+				closestIndex = t;
+			}
+		}
+	}
+	
+	if(topMostIndex < 0){
+		return closestIndex;
+	}
+	
+	return topMostIndex;
+	
+}
+
+
+
+let currentPlayingTimeline = undefined;
+let optimizedGrouping = []; //contains an array of grouped array of timeline contents, if any overlap is found for optimization
+let isOptimized = false;
+
+
+
+function railInTimeline(){
+	let contentIndex = 0;
+
+	if(isOptimized){
+
+	}else{
+		contentIndex = getTimelineContentOnTime(timeline_time);
+		currentPlayingTimeline = TimelineData[
+								findIndexByUUID(TimelineSequence[contentIndex].uid)
+								];
+		
+		playNoOptimized(contentIndex);
+	}
+	
+	//To-Do : - load a timeline,also then load a timeline content if the current playing Timeline is outof bounds of timeline_time
+	
+}
+
+function playNoOptimized(contentId=undefined){
+	
+	let customTime = parseInt(timeline_time -  TimelineSequence[contentId].offset);
+	
+	
+	play_on_current(customTime, currentPlayingTimeline.timeline);
+	
+	
+}
+
+
+
+
+function optimizeTimelinePlayback(){
+	optimizedGrouping.length = 0;
+	
+	optimizedGrouping = findIntersectingGroups(TimelineSequence);
+	return isOptimized = true;
+	
+}
+
+
+
+
+
+//Playhead Function
+function play_head(time){
+		time_ex = time * zoom_scale;
+	
+	if(time <= _("timeline_container").scrollWidth / zoom_scale){
+		//pl.style.left = (time)+"px";
+		//pl.style.transform =  "translateX("+time+"px)";		
+		window.requestAnimationFrame(pl_trans);
+	}
+	
+	
+		
+	function pl_trans(){
+		pl.style.transform =  "translateX("+time_ex+"px)";
+	}
+		
+	// setTimeDisplay(time, );
+	
+}
+
+
+//Helper functions
+//======================
+function findIntersectingGroups(array) {
+    let groups = [];
+    let visited = new Set();
+
+    for (let i = 0; i < array.length; i++) {
+        if (visited.has(i)) continue; // Skip if already part of a group
+
+        let group = [i];
+        let obj1 = array[i];
+        let obj1End = obj1.end_at || obj1.offset + obj1.length;
+
+        for (let j = i + 1; j < array.length; j++) {
+            let obj2 = array[j];
+            let obj2End = obj2.end_at || obj2.offset + obj2.length;
+
+            // Check for intersection with any item in the current group
+            let intersects = group.some(index => {
+                let groupObj = array[index];
+                let groupObjEnd = groupObj.end_at || groupObj.offset + groupObj.length;
+                return (
+                    (groupObj.offset < obj2End && groupObjEnd > obj2.offset) || 
+                    (obj2.offset < groupObjEnd && obj2End > groupObj.offset)
+                );
+            });
+
+            if (intersects) {
+                group.push(j);
+                visited.add(j); // Mark as visited
+            }
+        }
+
+        if (group.length > 1) {
+            groups.push(group);
+        } else {
+            groups.push(group[0]);
+        }
+
+        visited.add(i); // Mark as visited
+    }
+
+    return groups;
+}
 
 
 
