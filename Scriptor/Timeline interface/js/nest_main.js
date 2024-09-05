@@ -1315,6 +1315,7 @@ function getTimelineContentOnTime(time=0){
 	let closestIndex = -1;
 	
 	let lowestOffset = -1;
+	
 	for(let t=0;t<TimelineSequence.length;t++){
 		let endAt = TimelineSequence[t].offset + TimelineSequence[t].length;
 		let len = TimelineSequence[t].length;
@@ -1330,6 +1331,9 @@ function getTimelineContentOnTime(time=0){
 				closestIndex = t;
 			}
 		}
+		
+		
+		
 	}
 	
 	if(topMostIndex < 0){
@@ -1352,9 +1356,13 @@ function railInTimeline(){
 	let contentIndex = 0;
 
 	if(isOptimized){
-
+		playOptimized();
 	}else{
 		contentIndex = getTimelineContentOnTime(timeline_time);
+		if(contentIndex < 0){
+			return;
+		}
+		
 		currentPlayingTimeline = TimelineData[
 								findIndexByUUID(TimelineSequence[contentIndex].uid)
 								];
@@ -1362,29 +1370,120 @@ function railInTimeline(){
 		playNoOptimized(contentIndex);
 	}
 	
-	//To-Do : - load a timeline,also then load a timeline content if the current playing Timeline is outof bounds of timeline_time
-	
 }
 
 function playNoOptimized(contentId=undefined){
 	
 	let customTime = parseInt(timeline_time -  TimelineSequence[contentId].offset);
 	
-	
 	play_on_current(customTime, currentPlayingTimeline.timeline);
-	
 	
 }
 
 
 
+let optimizedNest = undefined;
+let maxOffseto = 0;
+let minOffseto = -1;
 
-function optimizeTimelinePlayback(){
-	optimizedGrouping.length = 0;
-	
-	optimizedGrouping = findIntersectingGroups(TimelineSequence);
-	return isOptimized = true;
-	
+function playOptimized() {
+    // Check if optimizedNest is undefined
+    if (optimizedNest === undefined) {
+        const targetIndex = getTimelineContentOnTime(timeline_time);
+        if (targetIndex < 0) {
+            return;
+        }
+        optimizedNest = optimizedGrouping[targetIndex];
+    }
+
+    let currentContentId = 0;
+    let customTime;
+
+    // Recheck timeline bounds
+    if (maxOffseto < timeline_time || minOffseto > timeline_time) {
+        const targetIndex = getTimelineContentOnTime(timeline_time);
+        if (targetIndex < 0) {
+            return;
+        }
+        optimizedNest = optimizedGrouping[targetIndex];
+    }
+
+    // If optimizedNest is an array (object in JS terms)
+    if (typeof optimizedNest === "object") {
+        let maxOffset = 0;
+        let minOffset = -1;
+
+        for (let zf = 0; zf < optimizedNest.length; zf++) {
+            const offsets = TimelineSequence[optimizedNest[zf]].offset;
+            const seqLength = TimelineSequence[optimizedNest[zf]].length;
+
+            // Calculate max and min offsets
+            if (offsets + seqLength > maxOffset) {
+                maxOffset = offsets + seqLength;
+                maxOffseto = maxOffset;
+            }
+
+            if (minOffset === -1 || offsets < minOffset) {
+                minOffset = offsets;
+                minOffseto = minOffset;
+            }
+
+            // Check if the content is within the current timeline time
+            const startAt = offsets;
+            const endAt = offsets + seqLength;
+
+            if (startAt <= timeline_time && timeline_time <= endAt) {
+                currentContentId = optimizedNest[zf];
+            }
+        }
+
+        // Set the currently playing timeline and custom time
+        currentPlayingTimeline = TimelineData[findIndexByUUID(TimelineSequence[currentContentId].uid)];
+        customTime = parseInt(timeline_time - TimelineSequence[currentContentId].offset);
+        
+    } else {
+        // optimizedNest is a single value (not an array)
+        const offsets = TimelineSequence[optimizedNest].offset;
+        const seqLength = TimelineSequence[optimizedNest].length;
+
+        let maxOffset = offsets + seqLength;
+        let minOffset = offsets;
+
+        maxOffseto = maxOffset;
+        minOffseto = minOffset;
+
+        // Set the currently playing timeline and custom time
+        currentPlayingTimeline = TimelineData[findIndexByUUID(TimelineSequence[optimizedNest].uid)];
+        customTime = parseInt(timeline_time - TimelineSequence[optimizedNest].offset);
+    }
+
+    // Play the current timeline with the calculated custom time
+    play_on_current(customTime, currentPlayingTimeline.timeline);
+}
+
+
+function optimizeTimelinePlayback() {
+    // Clear the existing optimizedGrouping
+    optimizedGrouping.length = 0;
+    
+    // Find intersecting groups in the timeline sequence
+    const grouped = findIntersectingGroups(TimelineSequence);
+    
+    // Loop through each group
+    for (let zf = 0; zf < grouped.length; zf++) {
+        if (typeof grouped[zf] === 'object') {
+            // If the current group is an array, map each element to its respective group
+            for (let zg = 0; zg < grouped[zf].length; zg++) {
+                optimizedGrouping[grouped[zf][zg]] = grouped[zf];
+            }
+        } else {
+            // Otherwise, assign the group directly to its index
+            optimizedGrouping[grouped[zf]] = grouped[zf];
+        }
+    }
+
+    // Set optimization flag to true and return it
+    return isOptimized = true;
 }
 
 
@@ -1453,6 +1552,20 @@ function findIntersectingGroups(array) {
 
         visited.add(i); // Mark as visited
     }
+
+    // Sort each group by their offset
+    groups.forEach(group => {
+        if (Array.isArray(group)) {
+            group.sort((a, b) => array[a].offset - array[b].offset);
+        }
+    });
+
+    // Sort the entire result by the offset of the first item in each group
+    groups.sort((a, b) => {
+        let offsetA = Array.isArray(a) ? array[a[0]].offset : array[a].offset;
+        let offsetB = Array.isArray(b) ? array[b[0]].offset : array[b].offset;
+        return offsetA - offsetB;
+    });
 
     return groups;
 }
