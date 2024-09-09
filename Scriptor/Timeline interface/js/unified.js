@@ -16,6 +16,7 @@ function sleep(ms) {
 }
 
 
+//Own implementation of array clone
 Object.prototype.clone = Array.prototype.clone = function() {
     const deepClone = (value) => {
         if (value === null || typeof value !== 'object') {

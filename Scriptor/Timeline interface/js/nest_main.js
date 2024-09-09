@@ -379,6 +379,9 @@ async function save_pl_to_file(){
 	command_save_pl();
 }
 
+
+
+
 function command_save_pl(){
 		try{				
 		window.chrome.webview.hostObjects.NativeObject.Save_File_PL();
@@ -1500,15 +1503,46 @@ function play_head(time){
 		window.requestAnimationFrame(pl_trans);
 	}
 	
-	
-		
 	function pl_trans(){
 		pl.style.transform =  "translateX("+time_ex+"px)";
 	}
 		
 	// setTimeDisplay(time, );
-	
 }
+
+
+
+
+//Saving Functions
+
+
+let stateForSaving = "";
+
+//Sets and Also returns the stringified JSON of the current Nest.in Project
+function saveCurrentTimelineProject(){
+	let timelineCollections = [];
+	let trackData = TimelineSequence.clone();
+
+	for(l = 0;l < TimelineData.length; l++){
+		let playitem = TimelineData[l].clone();
+			playitem.timeline = {};
+			timelineCollections.push(playitem);
+	}
+	
+	
+	//Project Save structure to use
+	let DataForSaving = {
+		'timelines': timelineCollections,
+		'track_data': trackData,
+	}
+	
+	return stateForSaving = JSON.stringify(DataForSaving);
+}
+
+
+
+//To-Do: Implement loading from file logic
+
 
 
 //Helper functions
