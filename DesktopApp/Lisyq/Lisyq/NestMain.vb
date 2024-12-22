@@ -8,11 +8,13 @@ Public Class NestMain
     Dim SavePath As String = ""
     Dim dirPath As String = ""
     Dim SavePlayListPath As String = ""
+    Dim SaveNestedTLPath As String = ""
     Dim relativeLocation = My.Application.Info.DirectoryPath
 
     Dim locationData As String = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) & "\LiSyQ"
     Dim settings As My.MySettings
     Dim Asnew
+    Dim NTAsnew
 
     Dim df As String
     Dim phc
@@ -70,6 +72,7 @@ Public Class NestMain
             NestMain.data_string_pl = data
         End Function
 
+
         Public Function Open_File_PL()
             NestMain.Open_File_PL()
 
@@ -86,6 +89,16 @@ Public Class NestMain
 
             Return fileReader
 
+        End Function
+
+
+        'Opening and saving Nested Playlist
+        Public Function Save_File_NT()
+            NestMain.Save_File_NT()
+        End Function
+
+        Public Function put_data_nt(data As String)
+            NestMain.data_string_nt = data
         End Function
 
         ' Progress Window Logic Start
@@ -259,8 +272,6 @@ Public Class NestMain
                 End If
             End If
 
-
-
         Else
             My.Computer.FileSystem.WriteAllText(SavePlayListPath, data_string_pl, False)
             NotificationManager.Show(Me, "Saving File: " & SavePlayListPath, Color.Green, 2000)
@@ -270,6 +281,33 @@ Public Class NestMain
 
 
     End Sub
+
+    Dim data_string_nt
+    Public Sub Save_File_NT()
+
+        If SaveNestedTLPath = "" Or NTAsnew = True Then
+            SaveFileDialog2.Filter = "Lisyq Nested Playlist Files (*.ntlis*)|*.ntlis"
+            If SaveFileDialog2.ShowDialog = Windows.Forms.DialogResult.OK Then
+                My.Computer.FileSystem.WriteAllText(SaveFileDialog2.FileName, data_string_nt, False)
+                SaveNestedTLPath = SaveFileDialog2.FileName
+                NTAsnew = False
+            Else
+                If SaveNestedTLPath = "" Then
+                    NTAsnew = True
+                End If
+            End If
+
+
+        Else
+            My.Computer.FileSystem.WriteAllText(SaveNestedTLPath, data_string_nt, False)
+            NotificationManager.Show(Me, "Saving File: " & SaveNestedTLPath, Color.Green, 2000)
+            'MsgBox("File saved! to " + SaveLivePlayerPath)
+        End If
+
+
+
+    End Sub
+
 
     Public Sub Open_File_PL()
         OpenFileDialog2.Filter = "Lisyq playlist Files (*.lips*)|*.lips"
@@ -309,5 +347,9 @@ Public Class NestMain
 
     Private Sub PortConfigurationToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles PortConfigurationToolStripMenuItem.Click
         Form1.Show()
+    End Sub
+
+    Private Sub SaveToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles SaveToolStripMenuItem.Click
+        WebView21.ExecuteScriptAsync("save_to_file_nt()")
     End Sub
 End Class

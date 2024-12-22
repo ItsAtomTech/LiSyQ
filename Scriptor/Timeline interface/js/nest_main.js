@@ -707,8 +707,6 @@ function rails(){
 		
 		tm_player_seeked = false;
 
-		
-		
 		//To-Do: implement timeline playing states
 		
 		
@@ -1540,7 +1538,40 @@ function saveCurrentTimelineProject(){
 }
 
 
+function save_to_file_nt(){
+	try{	
+		window.chrome.webview.hostObjects.NativeObject.put_data_nt(saveCurrentTimelineProject());	
+	}catch(e){
+		//-
+	}
+	command_save_nt();
+	
+}
+
+//for some reason, data and function call needs to be in separate call for the native side
+function command_save_nt(){
+		try{				
+			window.chrome.webview.hostObjects.NativeObject.Save_File_NT();
+		}catch(e){
+		alert(e);				
+	}
+	
+	
+}
+
+
+
 //To-Do: Implement loading from file logic
+function loadTimelineProject(){
+	
+	
+	
+	
+	
+}
+
+
+
 
 
 //Helper functions

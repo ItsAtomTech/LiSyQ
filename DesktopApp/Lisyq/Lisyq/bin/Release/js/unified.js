@@ -16,6 +16,7 @@ function sleep(ms) {
 }
 
 
+//Own implementation of array clone
 Object.prototype.clone = Array.prototype.clone = function() {
     const deepClone = (value) => {
         if (value === null || typeof value !== 'object') {
@@ -193,8 +194,6 @@ function play_on_current(customTime=undefined,customTimeline=undefined){//Plays 
 		time_delay = 0;
 	}
 	
-	
-	console.log(customTime, playing_data);
 
 	//Loop through tracks
 	for(tr = 0;tr < playing_data.length;tr++){
@@ -234,8 +233,12 @@ function play_on_current(customTime=undefined,customTimeline=undefined){//Plays 
 					if(subtracks.start_at  + time_delay <= timeDelta && timeDelta <= subtracks.end_at  + time_delay){
 						
 						// console.log("Track #"+ tr +", content block #"+ str +" : "+ time + "\n content_index: " + (time - subtracks.start_at));
-						
-						let muted = timeline_data[tr].muted
+						let muted = false
+						try{
+							muted = timeline_data[tr].muted
+						}catch(e){
+							//--
+						}
 						
 						
 						to_output(ch_track,port_chan,playing_data[tr].sub_tracks[str].data[parseInt((timeFixed -  time_delay) - subtracks.start_at)],playing_data[tr].default_value,tr,muted);
