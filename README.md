@@ -3,6 +3,8 @@
 
 
 
+![LiSyQ Logo](https://raw.githubusercontent.com/ItsAtomTech/LiSyQ/refs/heads/master/Scriptor/Timeline%20interface/images/logo.png)
+
 The LiSyQ Project is a light sequencing system that runs on Windows and will be released as open-source software. 
 It is designed to work with the Arduino Ecosystem to control custom-made light fixtures that are controlled by or connected to an Arduino MCU. It was inspired by the well-known DMX512 light rig controls, but this one comes with its own protocols. Timeline can sync to music, and you can control your Arduino lights with your computer keyboard, among other things.
 
