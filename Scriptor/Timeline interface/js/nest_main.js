@@ -1540,9 +1540,7 @@ function saveCurrentTimelineProject(){
 }
 
 
-
 //To-Do: Implement loading from file logic
-
 
 
 //Helper functions
