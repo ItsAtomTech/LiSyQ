@@ -77,6 +77,10 @@ Public Class NestMain
             NestMain.Open_File_PL()
 
         End Function
+        Public Function Open_File_NT()
+            NestMain.Open_File_NT()
+
+        End Function
 
         Public Function open_filePath(filePath) As String
             Dim fileReader As String
@@ -286,7 +290,7 @@ Public Class NestMain
     Public Sub Save_File_NT()
 
         If SaveNestedTLPath = "" Or NTAsnew = True Then
-            SaveFileDialog2.Filter = "Lisyq Nested Playlist Files (*.ntlis*)|*.ntlis"
+            SaveFileDialog2.Filter = "Lisyq Nested Project Timeline Files (*.ntlis*)|*.ntlis"
             If SaveFileDialog2.ShowDialog = Windows.Forms.DialogResult.OK Then
                 My.Computer.FileSystem.WriteAllText(SaveFileDialog2.FileName, data_string_nt, False)
                 SaveNestedTLPath = SaveFileDialog2.FileName
@@ -344,12 +348,56 @@ Public Class NestMain
 
 
     End Sub
+    Public Sub Open_File_NT()
+        OpenFileDialog2.Filter = "Lisyq Nested Project Timeline Files (*.ntlis*)|*.ntlis"
+
+
+        If SaveNestedTLPath.Length > 0 Then
+            Dim confirm_loadnew As DialogResult
+
+            confirm_loadnew = MessageBox.Show("You are about to load a file and close currently open file so save changes first, Continue to Load?", "Open New", MessageBoxButtons.YesNo
+                                         )
+            If confirm_loadnew = DialogResult.Yes Then
+                ProgressBar.Show(Me)
+            Else
+                Return
+            End If
+
+        End If
+
+        If OpenFileDialog2.ShowDialog <> Windows.Forms.DialogResult.Cancel Then
+            Dim fileReader As String = My.Computer.FileSystem.ReadAllText(OpenFileDialog2.FileName)
+
+            WebView21.ExecuteScriptAsync("load_from_file_nt('" & fileReader & "')")
+
+            SaveNestedTLPath = OpenFileDialog2.FileName
+
+            NotificationManager.Show(Me, "File: " & OpenFileDialog2.FileName & "is Now Loading.", Color.Green, 2000)
+
+        End If
+
+        ' ProgressBar.Show(Me)
+        ' ProgressBar.BringToFront()
+
+
+
+
+    End Sub
 
     Private Sub PortConfigurationToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles PortConfigurationToolStripMenuItem.Click
         Form1.Show()
     End Sub
 
     Private Sub SaveToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles SaveToolStripMenuItem.Click
+        WebView21.ExecuteScriptAsync("save_to_file_nt()")
+    End Sub
+
+    Private Sub OpenToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles OpenToolStripMenuItem.Click
+        Open_File_NT()
+    End Sub
+
+    Private Sub SaveAsToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles SaveAsToolStripMenuItem.Click
+        NTAsnew = True
         WebView21.ExecuteScriptAsync("save_to_file_nt()")
     End Sub
 End Class

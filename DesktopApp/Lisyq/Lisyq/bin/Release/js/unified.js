@@ -388,7 +388,7 @@ async function openFilePath(path) {
         try {
             window.chrome.webview.hostObjects.NativeObject.open_filePath(path)
                 .then(resultx => {
-                    // Do your enchanting magic with the resultx here
+
                     let fileData = resultx;
                     resolve(fileData);
                 })

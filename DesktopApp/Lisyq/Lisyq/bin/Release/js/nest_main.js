@@ -58,6 +58,8 @@ var context_menu = false;
 
 let multiple_selected;
 
+let PROGRESS_SAVED = false;
+
 
 function inits(){
 	
@@ -270,14 +272,14 @@ let loadedFilePath = "";
 let loadFilemode = "playlist";
 
 //callback from the Native Host
-function load_from_file(fileData, filePath){
+function load_from_file(fileData, filePath, extra={}){
 	// console.log(fileData, filePath);
 	loadedFile = fileData;
 	loadedFilePath = filePath;
 	
 	if(loadFilemode == "playlist"){
 		try{
-			loadToPlaylist();
+			loadToPlaylist(extra);
 		}catch(e){
 			console.log(e);
 		}
@@ -285,7 +287,7 @@ function load_from_file(fileData, filePath){
 	}else if(loadFilemode == "timeline"){
 		//Load it to Somewhere
 		try{
-			loadToNestTimeline();
+			loadToNestTimeline(extra);
 		}catch(e){
 			console.log(e);
 		}
@@ -795,13 +797,20 @@ var fRuler = gen_ruler()//init the Ruler
 
 
 
-async function loadToNestTimeline(){
+async function loadToNestTimeline(extra){
 	
 	let decodedData = JSON.parse(loadedFile);
 	let timelineData = JSON.parse(decode(decodedData.timeline));
 	let timelineOptions = decodedData.options ? JSON.parse(decode(decodedData.options)) : {};
 	let maxEnd = undefined;
-	let uid = crypto.randomUUID();	
+	let uid;
+	
+	if(extra.id){
+		uid = extra.id; //Supplied from Opening a Project file if present
+	}else{
+		uid = crypto.randomUUID();	
+	}
+	
 	if(loadmode == 'single'){
 		maxEnd = regen_empty_data(timelineData);
 	}
@@ -970,21 +979,27 @@ function generateTMcontentblock(data){
 			
 		let content_data = TimelineData[findIndexByUUID(data.uid)];
 		let colorCode = "#afafaf"; //default gray	
-			
-			if(content_data.options.color != undefined){
-				colorCode = content_data.options.color;
+		var div_details = document.createElement("div");	
+			div_details.innerText = "No Name";		
+			try{
+				if(content_data.options.color != undefined){
+					colorCode = content_data.options.color;
+				}
+				div_details.innerText = content_data.name;
+				
+			}catch(e){
+				console.log("Problimatic Timeline Data: "+ data.uid);
+				sub_track.title = "This Timeline Block is having Loading Problems: uuid - "+ data.uid;
 			}
-			
 			
 			sub_track.style.backgroundColor = colorCode+"50";
 			// sub_track.addEventListener("contextmenu", function (e){}, false);
 			// console.log(content_data);
-		
-		var div_details = document.createElement("div");
+
 			div_details.classList.add("content_details_inline");
-			div_details.innerText = content_data.name;
+
 			
-			sub_track.title = "";
+			
 			sub_track.appendChild(div_details);
 		
 		return sub_track;
@@ -1374,10 +1389,13 @@ function railInTimeline(){
 }
 
 function playNoOptimized(contentId=undefined){
-	
 	let customTime = parseInt(timeline_time -  TimelineSequence[contentId].offset);
 	
-	play_on_current(customTime, currentPlayingTimeline.timeline);
+	try{
+		play_on_current(customTime, currentPlayingTimeline.timeline);		
+	}catch(e){
+		//--
+	}
 	
 }
 
@@ -1459,7 +1477,11 @@ function playOptimized() {
     }
 
     // Play the current timeline with the calculated custom time
-    play_on_current(customTime, currentPlayingTimeline.timeline);
+	try{
+		play_on_current(customTime, currentPlayingTimeline.timeline);		
+	}catch(e){
+		//--
+	}
 }
 
 
@@ -1561,15 +1583,67 @@ function command_save_nt(){
 
 
 
+
+
 //To-Do: Implement loading from file logic
-function loadTimelineProject(){
+let projectDataRawNT;
+
+async function loadTimelineProject(){
+	
+	if(TimelineSequence.length > 0 && !PROGRESS_SAVED){
+		let cf = confirm("Current Project Progress would be replaced by loaded data, (save any Progress before doing so or you might loose your current work) \nLoad Data Now?");
+		if(!cf){
+			return;
+		}
+	}
+
+	
+	let TimelineDataRaw = projectDataRawNT.timelines;
+	TimelineData.length = 0;
+	TimelineSequence = projectDataRawNT.track_data;
+	
+	let tl_len = TimelineDataRaw.length;
+	loadFilemode = "timeline";
+		
+	for (let i = 0; i < tl_len; i++) {
+		show_loading(tl_len, i + 1, "Loading Project Files...");
+		let path = TimelineDataRaw[i].filePath;
+
+		try {
+			let fContents = await openFilePath(replaceBackslashes(path));
+			load_from_file(fContents, path, TimelineDataRaw[i]);
+		} catch (e) {
+			console.log("Failed loading: " + path);
+		}
+	}
 	
 	
+	//Regenerate All Emp
+	
+	for(let i = 0; i < TimelineData.length ;i++){
+		show_loading(TimelineData.length, i+1, "Regenerating Data of Project Files...");
+		TimelineData[i].max = regen_empty_data(TimelineData[i].timeline);
+		await sleep(20);
+	}
+	finish_loading();
 	
 	
+	//Generate Views and UI
+	generateTimelineListView();
+	loadTimeline();
+	optimizeTimelinePlayback();
 	
 }
 
+
+
+function load_from_file_nt(data){
+	
+	let nest_data = JSON.parse(replaceBackslashes(data));
+	projectDataRawNT = nest_data;
+	
+	loadTimelineProject();
+}
 
 
 
