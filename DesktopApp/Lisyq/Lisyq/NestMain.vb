@@ -115,6 +115,25 @@ Public Class NestMain
 
         End Function
 
+        Public Function set_mouse_coords(x As Integer, y As Integer)
+
+            NestMain.Point.X = x
+            NestMain.Point.Y = y
+
+        End Function
+
+        Public Function Show_template_scriptmenu()
+
+            NestMain.Show_template_scriptmenu()
+
+        End Function
+
+        Public Function Show_content_menu()
+
+            NestMain.Show_content_menu()
+
+        End Function
+
         Public Function show_progress()
 
             ProgressBar.ShowProgress()
@@ -201,6 +220,16 @@ Public Class NestMain
 
     End Class
 
+
+    Public Sub Show_template_scriptmenu()
+        template_menu.Show(Point.X, Point.Y)
+
+    End Sub
+    Public Sub Show_content_menu()
+        content_menu.Show(Point.X, Point.Y)
+
+    End Sub
+
     Public Sub Open_File_From(filepath As String)
         OpenFileDialog1.Filter = "LSYS Files (*.lsys*)|*.lsys"
 
@@ -228,6 +257,12 @@ Public Class NestMain
     End Sub
 
     Private Sub timeline__Click(sender As Object, e As EventArgs)
+
+    End Sub
+
+
+    Public Sub Open_template_scriptmenu()
+        template_menu.Show(Point.X, Point.Y)
 
     End Sub
 
@@ -399,5 +434,17 @@ Public Class NestMain
     Private Sub SaveAsToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles SaveAsToolStripMenuItem.Click
         NTAsnew = True
         WebView21.ExecuteScriptAsync("save_to_file_nt()")
+    End Sub
+
+    Private Sub CancelToolStripMenuItem1_Click(sender As Object, e As EventArgs) Handles CancelToolStripMenuItem1.Click
+
+    End Sub
+
+    Private Sub ToolStripMenuItem4_Click(sender As Object, e As EventArgs) Handles ToolStripMenuItem4.Click
+        WebView21.ExecuteScriptAsync("remove_subtrack()")
+    End Sub
+
+    Private Sub ToolStripMenuItem2_Click(sender As Object, e As EventArgs) Handles ToolStripMenuItem2.Click
+        WebView21.ExecuteScriptAsync("remove_scriptstub()")
     End Sub
 End Class

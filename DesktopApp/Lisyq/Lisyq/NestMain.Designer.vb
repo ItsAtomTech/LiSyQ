@@ -55,14 +55,11 @@ Partial Class NestMain
         Me.ToolStripMenuItem1 = New System.Windows.Forms.ToolStripMenuItem()
         Me.ToolStripMenuItem2 = New System.Windows.Forms.ToolStripMenuItem()
         Me.CancelToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me.ToolStripMenuItem20 = New System.Windows.Forms.ToolStripMenuItem()
         Me.content_menu = New System.Windows.Forms.ContextMenuStrip(Me.components)
-        Me.ToolStripMenuItem3 = New System.Windows.Forms.ToolStripMenuItem()
         Me.ToolStripMenuItem4 = New System.Windows.Forms.ToolStripMenuItem()
-        Me.ToolStripMenuItem5 = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ToolStripMenuItem3 = New System.Windows.Forms.ToolStripMenuItem()
         Me.ToolStripMenuItem14 = New System.Windows.Forms.ToolStripMenuItem()
         Me.CancelToolStripMenuItem1 = New System.Windows.Forms.ToolStripMenuItem()
-        Me.sendToTemplates = New System.Windows.Forms.ToolStripMenuItem()
         Me.track_options = New System.Windows.Forms.ContextMenuStrip(Me.components)
         Me.ToolStripMenuItem13 = New System.Windows.Forms.ToolStripMenuItem()
         Me.ToolStripMenuItem10 = New System.Windows.Forms.ToolStripMenuItem()
@@ -329,10 +326,10 @@ Partial Class NestMain
         'template_menu
         '
         Me.template_menu.BackColor = System.Drawing.SystemColors.WindowFrame
-        Me.template_menu.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.ToolStripMenuItem1, Me.ToolStripMenuItem2, Me.CancelToolStripMenuItem, Me.ToolStripMenuItem20})
+        Me.template_menu.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.ToolStripMenuItem1, Me.ToolStripMenuItem2, Me.CancelToolStripMenuItem})
         Me.template_menu.Name = "template_menu"
         Me.template_menu.RenderMode = System.Windows.Forms.ToolStripRenderMode.System
-        Me.template_menu.Size = New System.Drawing.Size(198, 92)
+        Me.template_menu.Size = New System.Drawing.Size(195, 92)
         Me.template_menu.Text = "Template Options"
         '
         'ToolStripMenuItem1
@@ -340,8 +337,8 @@ Partial Class NestMain
         Me.ToolStripMenuItem1.ForeColor = System.Drawing.SystemColors.ControlLight
         Me.ToolStripMenuItem1.Image = Global.Lisyq.My.Resources.Resources.edit1
         Me.ToolStripMenuItem1.Name = "ToolStripMenuItem1"
-        Me.ToolStripMenuItem1.Size = New System.Drawing.Size(197, 22)
-        Me.ToolStripMenuItem1.Text = "Edit Template"
+        Me.ToolStripMenuItem1.Size = New System.Drawing.Size(194, 22)
+        Me.ToolStripMenuItem1.Text = "Edit on Timeline Editor"
         '
         'ToolStripMenuItem2
         '
@@ -357,64 +354,42 @@ Partial Class NestMain
         Me.CancelToolStripMenuItem.Size = New System.Drawing.Size(197, 22)
         Me.CancelToolStripMenuItem.Text = "Cancel"
         '
-        'ToolStripMenuItem20
-        '
-        Me.ToolStripMenuItem20.ForeColor = System.Drawing.SystemColors.ControlLight
-        Me.ToolStripMenuItem20.Name = "ToolStripMenuItem20"
-        Me.ToolStripMenuItem20.Size = New System.Drawing.Size(197, 22)
-        Me.ToolStripMenuItem20.Text = "Send to Manual Templ."
-        '
         'content_menu
         '
         Me.content_menu.BackColor = System.Drawing.SystemColors.WindowFrame
-        Me.content_menu.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.ToolStripMenuItem3, Me.ToolStripMenuItem4, Me.ToolStripMenuItem5, Me.ToolStripMenuItem14, Me.CancelToolStripMenuItem1, Me.sendToTemplates})
+        Me.content_menu.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.ToolStripMenuItem4, Me.ToolStripMenuItem3, Me.ToolStripMenuItem14, Me.CancelToolStripMenuItem1})
         Me.content_menu.Name = "template_menu"
         Me.content_menu.RenderMode = System.Windows.Forms.ToolStripRenderMode.System
-        Me.content_menu.Size = New System.Drawing.Size(169, 136)
+        Me.content_menu.Size = New System.Drawing.Size(149, 92)
         Me.content_menu.Text = "Content Options"
-        '
-        'ToolStripMenuItem3
-        '
-        Me.ToolStripMenuItem3.ForeColor = System.Drawing.SystemColors.ControlLight
-        Me.ToolStripMenuItem3.Name = "ToolStripMenuItem3"
-        Me.ToolStripMenuItem3.Size = New System.Drawing.Size(168, 22)
-        Me.ToolStripMenuItem3.Text = "Edit"
         '
         'ToolStripMenuItem4
         '
         Me.ToolStripMenuItem4.ForeColor = System.Drawing.SystemColors.ControlLight
         Me.ToolStripMenuItem4.Name = "ToolStripMenuItem4"
-        Me.ToolStripMenuItem4.Size = New System.Drawing.Size(168, 22)
+        Me.ToolStripMenuItem4.Size = New System.Drawing.Size(148, 22)
         Me.ToolStripMenuItem4.Text = "Remove"
         '
-        'ToolStripMenuItem5
+        'ToolStripMenuItem3
         '
-        Me.ToolStripMenuItem5.ForeColor = System.Drawing.SystemColors.ControlLight
-        Me.ToolStripMenuItem5.Name = "ToolStripMenuItem5"
-        Me.ToolStripMenuItem5.Size = New System.Drawing.Size(168, 22)
-        Me.ToolStripMenuItem5.Text = "Copy"
+        Me.ToolStripMenuItem3.ForeColor = System.Drawing.SystemColors.ButtonFace
+        Me.ToolStripMenuItem3.Name = "ToolStripMenuItem3"
+        Me.ToolStripMenuItem3.Size = New System.Drawing.Size(148, 22)
+        Me.ToolStripMenuItem3.Text = "Details"
         '
         'ToolStripMenuItem14
         '
         Me.ToolStripMenuItem14.ForeColor = System.Drawing.SystemColors.ControlLight
         Me.ToolStripMenuItem14.Name = "ToolStripMenuItem14"
-        Me.ToolStripMenuItem14.Size = New System.Drawing.Size(168, 22)
+        Me.ToolStripMenuItem14.Size = New System.Drawing.Size(148, 22)
         Me.ToolStripMenuItem14.Text = "Track Options"
         '
         'CancelToolStripMenuItem1
         '
         Me.CancelToolStripMenuItem1.ForeColor = System.Drawing.SystemColors.ControlLight
         Me.CancelToolStripMenuItem1.Name = "CancelToolStripMenuItem1"
-        Me.CancelToolStripMenuItem1.Size = New System.Drawing.Size(168, 22)
+        Me.CancelToolStripMenuItem1.Size = New System.Drawing.Size(148, 22)
         Me.CancelToolStripMenuItem1.Text = "Cancel"
-        '
-        'sendToTemplates
-        '
-        Me.sendToTemplates.BackColor = System.Drawing.Color.Transparent
-        Me.sendToTemplates.ForeColor = System.Drawing.SystemColors.ControlLight
-        Me.sendToTemplates.Name = "sendToTemplates"
-        Me.sendToTemplates.Size = New System.Drawing.Size(168, 22)
-        Me.sendToTemplates.Text = "Add to Templates"
         '
         'track_options
         '
@@ -599,14 +574,10 @@ Partial Class NestMain
     Friend WithEvents template_menu As ContextMenuStrip
     Friend WithEvents ToolStripMenuItem2 As ToolStripMenuItem
     Friend WithEvents CancelToolStripMenuItem As ToolStripMenuItem
-    Friend WithEvents ToolStripMenuItem20 As ToolStripMenuItem
     Friend WithEvents content_menu As ContextMenuStrip
-    Friend WithEvents ToolStripMenuItem3 As ToolStripMenuItem
     Friend WithEvents ToolStripMenuItem4 As ToolStripMenuItem
-    Friend WithEvents ToolStripMenuItem5 As ToolStripMenuItem
     Friend WithEvents ToolStripMenuItem14 As ToolStripMenuItem
     Friend WithEvents CancelToolStripMenuItem1 As ToolStripMenuItem
-    Friend WithEvents sendToTemplates As ToolStripMenuItem
     Friend WithEvents track_options As ContextMenuStrip
     Friend WithEvents ToolStripMenuItem13 As ToolStripMenuItem
     Friend WithEvents ToolStripMenuItem10 As ToolStripMenuItem
@@ -626,4 +597,5 @@ Partial Class NestMain
     Friend WithEvents ToolStripSeparator1 As ToolStripSeparator
     Friend WithEvents ToolStripMenuItem12 As ToolStripMenuItem
     Friend WithEvents OpenFileDialog2 As OpenFileDialog
+    Friend WithEvents ToolStripMenuItem3 As ToolStripMenuItem
 End Class

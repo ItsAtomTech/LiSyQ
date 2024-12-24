@@ -57,6 +57,7 @@ var follow_playhead = true;
 var context_menu = false;
 
 let multiple_selected;
+let selected_script_index;
 
 let PROGRESS_SAVED = false;
 
@@ -842,21 +843,16 @@ function generateTimelineListView(){
 	for(each of TimelineData){
 		let fileName = replaceBackslashes(each.filePath).split("/");
 			fileName = fileName[fileName.length - 1];
-			each.name = fileName;
-			
+			each.name = fileName;			
 			let config = {
 				'name': fileName,
 				'config': {'color': '#fafafa'},
 				
 			}
-			
 		let item = genNSTItem(config, extId, each.id);
-		
 		 _("script_main").appendChild(item);
 		extId++;
 	}
-	
-	
 }
 
 
@@ -870,6 +866,7 @@ function genNSTItem(tl_data,id,uuid){
 		// template_thumb.title = tl_data.name + "\nType:" + tl_data.type ;
 		template_thumb.setAttribute("template_id",id);
 		template_thumb.setAttribute("onclick","add_to_nesttimeline('"+uuid+"')");
+		template_thumb.setAttribute("oncontextmenu","cotextmenu_scriptstub('"+uuid+"')");
 		template_thumb.setAttribute("title",tl_data.name);
 		
 	var template_thumb_name = document.createElement("div");
@@ -881,6 +878,30 @@ function genNSTItem(tl_data,id,uuid){
 	return template_thumb;
 	
 }
+
+
+function cotextmenu_scriptstub(uuid){
+	// console.log(event.target);
+	selected_script_index = findIndexByUUID(uuid);
+	
+	set_coords_context(event.screenX,event.screenY);
+
+	window.chrome.webview.hostObjects.NativeObject.Show_template_scriptmenu();
+	
+}
+
+function content_context_menu(){
+	// To-Do: Context Menu for content 
+	set_coords_context(event.screenX,event.screenY);
+	
+	
+	
+	
+	window.chrome.webview.hostObjects.NativeObject.Show_content_menu();
+}
+
+
+
 
 
 let _lastUID = "";
@@ -970,6 +991,9 @@ function generateTMcontentblock(data){
 			sub_track.classList.add("sub_track","larger_subtrack");
 			sub_track.addEventListener("mousedown",set_track_node);
 			sub_track.setAttribute("content_id", data.content_id);
+			sub_track.setAttribute("oncontextmenu", "content_context_menu()");
+			
+			
 			
 		var calculated_offset = (data.offset / (20 / 3));	
 		var calculated_lentime = (data.length / (20 / 3));	
@@ -1248,6 +1272,35 @@ function revoke_selections(elm){
 		}
 	}
 	
+}
+
+// To-Do: Remove Script and its items on the Timeline
+
+function remove_scriptstub(id=undefined){
+	let script_id = (id != undefined) ? id : selected_script_index ;
+	if(id == undefined && selected_script_index == undefined){
+		return console.warn("No selected index found for this item");
+	}
+	
+	let confirms = confirm("Are you sure you want remove this script content? \nIt will also remove entries from the timeline that is using this script.");
+	if(!confirms){
+		return false;
+	}
+	
+	
+	let uuid = TimelineData[script_id].id;
+	
+	for(let ts = 0; ts < TimelineSequence.length;ts++){
+		
+		
+		
+		
+	}
+	
+	
+	let removedElement = TimelineData.splice(script_id, 1);
+	loadTimeline();
+	return removedElement;
 }
 
 
