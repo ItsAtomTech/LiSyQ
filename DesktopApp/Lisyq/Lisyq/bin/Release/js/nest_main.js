@@ -53,7 +53,7 @@ let TLplaying = false;
 var origin_sub;
 var origin_sub_pos = [];
 var can_move_track = true;
-var follow_playhead = false;
+var follow_playhead = true;
 var context_menu = false;
 
 let multiple_selected;
@@ -1531,6 +1531,33 @@ function play_head(time){
 }
 
 
+function jump_to_time(){
+	
+	let raw_time = gen_seconds_input(['jump_s','jump_m','jump_h']);
+	var time_jump = (raw_time) * (5);
+	var my_selected_track_ = document.getElementsByClassName("track_con")[0];
+	
+	if (get_size(my_selected_track_)[0] < time_jump){
+		my_selected_track_.style.width = ((zoom_scale * time_jump) + 10 )+"px";
+		gen_ruler();
+	};
+	
+	//If following, play at this time
+	if(follow_playhead){
+		timeline_time = (raw_time * 33.334) + 10;
+		play_head(time_jump + 10);
+		setTimeDisplay(timeline_time, 'time_display_tl');
+	}
+	
+	
+	//scroll time to view
+	_("timeline_container").scrollTo(((time_jump * zoom_scale) - (_("timeline_container").getBoundingClientRect().width * 0.5)),_("timeline_container").scrollTop);
+	destroy_dia();
+	
+}
+
+
+
 
 
 //Saving Functions
@@ -1585,7 +1612,7 @@ function command_save_nt(){
 
 
 
-//To-Do: Implement loading from file logic
+//Implements loading from file logic
 let projectDataRawNT;
 
 async function loadTimelineProject(){
@@ -1709,3 +1736,31 @@ function findIntersectingGroups(array) {
 
 
 
+// Delay Helper Function
+
+function set_delay_timeline(val){
+	
+	let local = localStorage.getItem('play_delay_tl');
+	
+	if(val == undefined||val == null){
+		_("delay_disp_tl").value = parseInt(local);
+	
+		let set = parseInt(local);
+			if(set.toString() == "NaN"){
+				set = 0;
+			}
+		time_delay = delay = (set*0.001)*33.333;		
+		return;
+	}else{
+		localStorage.setItem('play_delay_tl',val);		
+		if((val == "" || val == null) || val.length == 0){				
+			localStorage.setItem('play_delay_tl',0);			
+		}			
+		let set = parseInt(localStorage.getItem('play_delay_tl'));		
+		delay = (set*0.001)*33.333;		
+		
+	}
+
+}
+
+set_delay_timeline();

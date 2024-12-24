@@ -1142,14 +1142,7 @@ function set_delay(val){
 		optimizedData = false;	
 		
 	}
-	
-	
-	
-	
-	
-	
-	
-	
+
 }
 
 
