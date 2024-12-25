@@ -885,18 +885,12 @@ function cotextmenu_scriptstub(uuid){
 	selected_script_index = findIndexByUUID(uuid);
 	
 	set_coords_context(event.screenX,event.screenY);
-
 	window.chrome.webview.hostObjects.NativeObject.Show_template_scriptmenu();
 	
 }
 
 function content_context_menu(){
-	// To-Do: Context Menu for content 
 	set_coords_context(event.screenX,event.screenY);
-	
-	
-	
-	
 	window.chrome.webview.hostObjects.NativeObject.Show_content_menu();
 }
 
@@ -946,7 +940,7 @@ function add_to_nesttimeline(id){
 	
 	revoke_selections();
 	loadTimeline();
-	
+	isOptimized = false;
 }
 
 
@@ -1289,17 +1283,31 @@ function remove_scriptstub(id=undefined){
 	
 	
 	let uuid = TimelineData[script_id].id;
+		_lastUID = ""; //clear prevs
+		_lastFoundId = "";
 	
-	for(let ts = 0; ts < TimelineSequence.length;ts++){
-		
-		
-		
-		
+	//we start from the last
+	for(let ts =  TimelineSequence.length; ts >= 0; ts--){
+		let each = TimelineSequence[ts-1];
+		try{
+			if(each.uid == uuid){
+				TimelineSequence.splice(ts-1, 1);
+		 }				
+		}catch(e){
+			//--
+		}
 	}
 	
 	
 	let removedElement = TimelineData.splice(script_id, 1);
+	
+	isOptimized = false;
+	
+	generateTimelineListView();
 	loadTimeline();
+	optimizeTimelinePlayback();
+	
+	
 	return removedElement;
 }
 
@@ -1321,7 +1329,11 @@ function remove_subtrack(id=undefined){
 	
 	let removedElement = TimelineSequence.splice(subtrack_id, 1);
 	loadTimeline();
+	
+	isOptimized = false;
+	
 	return removedElement;
+	
 }
 
 
@@ -1647,6 +1659,7 @@ function save_to_file_nt(){
 		//-
 	}
 	command_save_nt();
+	optimizeTimelinePlayback();
 	
 }
 

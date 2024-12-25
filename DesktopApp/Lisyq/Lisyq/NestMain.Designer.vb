@@ -344,14 +344,14 @@ Partial Class NestMain
         '
         Me.ToolStripMenuItem2.ForeColor = System.Drawing.SystemColors.ControlLight
         Me.ToolStripMenuItem2.Name = "ToolStripMenuItem2"
-        Me.ToolStripMenuItem2.Size = New System.Drawing.Size(197, 22)
+        Me.ToolStripMenuItem2.Size = New System.Drawing.Size(194, 22)
         Me.ToolStripMenuItem2.Text = "Remove"
         '
         'CancelToolStripMenuItem
         '
         Me.CancelToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlLight
         Me.CancelToolStripMenuItem.Name = "CancelToolStripMenuItem"
-        Me.CancelToolStripMenuItem.Size = New System.Drawing.Size(197, 22)
+        Me.CancelToolStripMenuItem.Size = New System.Drawing.Size(194, 22)
         Me.CancelToolStripMenuItem.Text = "Cancel"
         '
         'content_menu
@@ -367,28 +367,28 @@ Partial Class NestMain
         '
         Me.ToolStripMenuItem4.ForeColor = System.Drawing.SystemColors.ControlLight
         Me.ToolStripMenuItem4.Name = "ToolStripMenuItem4"
-        Me.ToolStripMenuItem4.Size = New System.Drawing.Size(148, 22)
+        Me.ToolStripMenuItem4.Size = New System.Drawing.Size(180, 22)
         Me.ToolStripMenuItem4.Text = "Remove"
         '
         'ToolStripMenuItem3
         '
         Me.ToolStripMenuItem3.ForeColor = System.Drawing.SystemColors.ButtonFace
         Me.ToolStripMenuItem3.Name = "ToolStripMenuItem3"
-        Me.ToolStripMenuItem3.Size = New System.Drawing.Size(148, 22)
+        Me.ToolStripMenuItem3.Size = New System.Drawing.Size(180, 22)
         Me.ToolStripMenuItem3.Text = "Details"
         '
         'ToolStripMenuItem14
         '
         Me.ToolStripMenuItem14.ForeColor = System.Drawing.SystemColors.ControlLight
         Me.ToolStripMenuItem14.Name = "ToolStripMenuItem14"
-        Me.ToolStripMenuItem14.Size = New System.Drawing.Size(148, 22)
+        Me.ToolStripMenuItem14.Size = New System.Drawing.Size(180, 22)
         Me.ToolStripMenuItem14.Text = "Track Options"
         '
         'CancelToolStripMenuItem1
         '
         Me.CancelToolStripMenuItem1.ForeColor = System.Drawing.SystemColors.ControlLight
         Me.CancelToolStripMenuItem1.Name = "CancelToolStripMenuItem1"
-        Me.CancelToolStripMenuItem1.Size = New System.Drawing.Size(148, 22)
+        Me.CancelToolStripMenuItem1.Size = New System.Drawing.Size(180, 22)
         Me.CancelToolStripMenuItem1.Text = "Cancel"
         '
         'track_options

@@ -447,4 +447,21 @@ Public Class NestMain
     Private Sub ToolStripMenuItem2_Click(sender As Object, e As EventArgs) Handles ToolStripMenuItem2.Click
         WebView21.ExecuteScriptAsync("remove_scriptstub()")
     End Sub
+
+
+    Public Sub ComingSoon()
+        NotificationManager.Show(Me, "This Feature is coming soon...", Color.Gold, 2000)
+    End Sub
+
+    Private Sub ToolStripMenuItem3_Click(sender As Object, e As EventArgs) Handles ToolStripMenuItem3.Click
+        ComingSoon()
+    End Sub
+
+    Private Sub ToolStripMenuItem14_Click(sender As Object, e As EventArgs) Handles ToolStripMenuItem14.Click
+        ComingSoon()
+    End Sub
+
+    Private Sub ToolStripMenuItem1_Click(sender As Object, e As EventArgs) Handles ToolStripMenuItem1.Click
+        ComingSoon()
+    End Sub
 End Class

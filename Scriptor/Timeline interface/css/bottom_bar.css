@@ -107,7 +107,7 @@
 
 .button_box{
 	width:30px;
-	height:30px;	
+	height:30px;
 	/* border:solid white 1px; */
 	display:flex;
 	align-items:center;
@@ -124,6 +124,11 @@
 	transform:scale(0.9,0.9);
 	
 }
+
+.media_cont > .button_box{
+		min-width:30px;	
+}
+
 
 .grad_dark_button{
 /* Gradiant_button */
