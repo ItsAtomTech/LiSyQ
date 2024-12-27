@@ -104,6 +104,13 @@ function createDialogue(type,data){
 			dia.innerHTML = "<div class='dialogue_box primary_background'><span class='close_dia primary_color' onclick='destroy_dia()'>&times;</span>  "+Settingsdia.includeData()+" </div>"	
 				
 			created = true;
+		break;	
+		
+		case "scriptsettings" :
+		
+			dia.innerHTML = "<div class='dialogue_box primary_background'><span class='close_dia primary_color' onclick='destroy_dia()'>&times;</span>  "+Settingsdia.colorScriptProfile()+" </div>";	
+				
+			created = true;
 		break;
 		
 		

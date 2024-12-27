@@ -53,7 +53,7 @@ const settings = {
 
 }
 
-
+//Helper Functions
 
 function returnChecked(bool){	
 
@@ -61,7 +61,17 @@ function returnChecked(bool){
 	
 }
 
+function getColorCurrent(){
+	let scriptColor =  fileOptions.color ? fileOptions.color : "";
+	return scriptColor;
+	
+	
+}
 
+
+
+
+//Views
 
 let Settingsdia =  {
 
@@ -81,11 +91,38 @@ let Settingsdia =  {
 		
 		"<hr class='dashed'>"
 		},
+		
+		
+		
+	colorScriptProfile: function(){ return "<div class='dai_title'><b>Project Configuration</b></div>"+
+		"<hr class='dashed'>"+
+		"<div class='option_row'>"+
+			
+			"<div class='option_title'>Script Custom Color:  <input class='clr' type='color' title='Option is Saved Upon selecting.' onchange='projectScriptColor(this.value)' value='"+
+			
+			 getColorCurrent()
+			
+			+"' /> </div>"+
+			"<div class='option_info small'> This Color scheme will be used on Other Views like in the Nest.in Player to help distinguish script files or for customization </div>"+
+			"<div class='option_info small'>Other option such as to use pictures or Album arts would be implemented soon, there are many things to consider for this before it can happen.</div>"+
+			
+		"</div>"+
+		
+		"<hr class='dashed'>"
+		},
 	
 
 }
 
 
+// Other Functions and Configurations
 
-
+function showTimelineScriptOptions(){
+	
+	createDialogue('scriptsettings');
+	
+	
+	
+	
+}
 

@@ -165,6 +165,18 @@ hr.dashed{
 
 
 
+.clr{
+	margin-left:10px;
+	min-width:100px;
+	min-height:20px;
+	cursor:pointer;
+	background:none;
+	float:right;
+	border-radius:6px;
+}
+
+
+
 .option_title{
 	display:inline;
 	

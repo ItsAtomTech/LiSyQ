@@ -849,6 +849,12 @@ function generateTimelineListView(){
 				'config': {'color': '#fafafa'},
 				
 			}
+			
+			//Add the Custom Color to Script Stub
+			if(each.options.color && each.options.color != ""){
+				config.config.color = each.options.color;
+			}
+			
 		let item = genNSTItem(config, extId, each.id);
 		 _("script_main").appendChild(item);
 		extId++;

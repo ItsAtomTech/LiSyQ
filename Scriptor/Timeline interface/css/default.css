@@ -478,6 +478,7 @@ border:solid blue 1px;
 	background-image:url('../images/load.png');
 	
 }
+
 .load_link_button{
 	width:29px;
 	height:29px;
@@ -487,6 +488,21 @@ border:solid blue 1px;
 	background-repeat:none;
 	background-size:100% 100%;
 	background-image:url('../images/load_link.png');
+	
+}
+
+
+.options_button{
+	width:29px;
+	height:29px;
+	min-width:30px;
+	min-height:30px;
+	/* border:solid white 1px; */
+	cursor:pointer;
+	margin-left:5px;
+	background-repeat:none;
+	background-size:100% 100%;
+	background-image:url('../images/options.png');
 	
 }
 

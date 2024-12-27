@@ -51,7 +51,7 @@ var playMode = 'timeline'; //values: timeline, manual, both
 
 //Save_type
 var include_data = settings.get('includeData');
-let fileOptions = {};
+let fileOptions = {}; //storing the config values for this script
 
 //Animating and playing
 
@@ -2497,6 +2497,12 @@ function dataIncluded(val){
 	include_data = val;
 	
 
+	
+}
+
+
+function projectScriptColor(val){
+	fileOptions.color = val;
 	
 }
 
