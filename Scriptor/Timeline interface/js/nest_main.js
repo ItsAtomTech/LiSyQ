@@ -49,6 +49,7 @@ var pl = _("playhead");
 let timeline_time = 0; //Time index for nested timeline
 let tm_playing = false;
 let TLplaying = false;
+let tm_player_seeked = false;
 
 var origin_sub;
 var origin_sub_pos = [];

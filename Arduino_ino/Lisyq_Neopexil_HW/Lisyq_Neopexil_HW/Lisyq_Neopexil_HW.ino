@@ -126,7 +126,9 @@ void FillLEDsFromPaletteColors( uint8_t colorIndex, int index, uint8_t brightnes
 void ChangePalettePeriodically(int fx_index)
 {
     
-        if( fx_index ==  0)  { currentPalette = RainbowColors_p;         currentBlending = LINEARBLEND; }
+        if( fx_index ==  0)  { CRGBPalette16 currentPalette;
+TBlendType    currentBlending;
+ }
         if( fx_index == 1)  { currentPalette = RainbowStripeColors_p;   currentBlending = NOBLEND;  }
         if( fx_index == 2)  { currentPalette = RainbowStripeColors_p;   currentBlending = LINEARBLEND; }
         if( fx_index == 3)  { SetupPurpleAndGreenPalette();             currentBlending = LINEARBLEND; }
