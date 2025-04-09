@@ -29,6 +29,7 @@ var optimizedData = false;
 
 // Elements
 var main_timeline = _("timeline_");
+let timeline_container = _("timeline_container");
 var origin_sub;
 var origin_sub_pos = [];
 var can_move_track = true;
@@ -64,7 +65,7 @@ let limitThreshold = 2;
 
 
 //Misc
-
+var markers = [];
 var copied;
 var copies = [];
 
@@ -394,6 +395,7 @@ function add_track(data,com,mode){
 		
 		_("playhead").style.height = (_("timeline_container").scrollHeight)+"px";
 		
+		_("dyna_height").innerText = (':root {--overall-height:' +_("timeline_container").scrollHeight + "px; }");
 		
 		if(loaded_from_data == false){
 			
