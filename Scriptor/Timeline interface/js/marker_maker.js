@@ -22,7 +22,7 @@ const Marker_Maker = {
 		
 		target.push(marker);
 		
-		console.log(target, targetTime,marker);
+		// console.log(target, targetTime,marker);
 		
 		
 		
@@ -39,11 +39,27 @@ const Marker_Maker = {
 		
 		for(each of marks){
 					
+					
+			if(_(each.id)){ //just update it if its already created
+				let markElement = _(each.id);
+				let headerM = markElement.getElementsByClassName("marker_head_top")[0];
+					markElement.style.borderLeftColor = each.color;
+					markElement.style.transform = "translateX(calc(" + (each.time + 7) + "px * var(--scale)))";
+					markElement.title = each.name;
+				
+				headerM.innerText = each.name;
+				headerM.style.borderColor = each.color;
+				
+				silent ? false :console.log(each.id + " was updated");
+				continue;
+			}
+					
+					
 			let devMarker = make("div");
 			devMarker.classList.add("marker_element");
 			devMarker.id = each.id;
 			devMarker.style.borderLeftColor = each.color;
-			devMarker.style.transform = "translateX(calc(" + (each.time + 6) + "px * var(--scale)))";
+			devMarker.style.transform = "translateX(calc(" + (each.time + 7) + "px * var(--scale)))";
 
 			devMarker.title = each.name;
 
@@ -51,8 +67,7 @@ const Marker_Maker = {
 				marker_header.classList.add("marker_head_top", "tiny");
 				marker_header.innerText = each.name;
 				marker_header.style.borderColor = each.color;
-
-
+				
 			devMarker.appendChild(marker_header);
 			targetEl.appendChild(devMarker);
 			
@@ -60,8 +75,6 @@ const Marker_Maker = {
 		}
 		
 
-		
-		
 		
 		
 	},
@@ -95,6 +108,7 @@ function generateUUID8() {
 //dummy 
 Marker_Maker.addMarker(135);
 Marker_Maker.addMarker(168);
+Marker_Maker.addMarker(1600);
 Marker_Maker.renderMarkers();
 
 //To-Do: Implement Renaming of marker, removing of marker

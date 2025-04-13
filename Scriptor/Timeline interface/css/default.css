@@ -448,13 +448,13 @@ border:solid blue 1px;
 	pointer-events:all;
 	cursor:crosshair;
 	opacity:0.4;
-	-webkit-transition:0.2s;
-	transition:0.2s;
+	-webkit-transition: opacity 0.2s, -webkit-transform 0.1s;
+	transition: opacity 0.2s, transform 0.1s;
 	
 }
 
 .marker_element > .marker_head_top{
-	
+	display:block !important;
 	position:sticky;
 	min-width:30px;
 	top:-10px;
