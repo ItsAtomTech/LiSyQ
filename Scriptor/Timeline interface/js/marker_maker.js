@@ -6,6 +6,9 @@
 const Marker_Maker = {
 	//Adds a marker to timelines, specify a timeline object to put into supplied timeline object
 	mUUID: generateUUID8(),
+	objectID: "Marker_Maker", //Should match the Variable name given;
+	addToWindow: function(){window[this.objectID] = this},
+	markerPools: undefined,
 	
 	addMarker: function(time_target=undefined,silent=false,targetTimeline=undefined){
 		let target = targetTimeline ? targetTimeline : markers; //defaults to main timeline markers
@@ -67,6 +70,7 @@ const Marker_Maker = {
 				marker_header.classList.add("marker_head_top", "tiny");
 				marker_header.innerText = each.name;
 				marker_header.style.borderColor = each.color;
+				marker_header.setAttribute("onclick",this.objectID + ".editableMarker(this)");
 				
 			devMarker.appendChild(marker_header);
 			targetEl.appendChild(devMarker);
@@ -74,25 +78,64 @@ const Marker_Maker = {
 			
 		}
 		
-
-		
-		
+		//add window reference object after render
+		if(window[this.objectID] == undefined){
+			this.addToWindow();
+			this.markerPools = marks;
+		}
 	},
 	
 
 	//Generate a marker object;
 	makeMarkerObject: function(){
 		let markerObject = {
-			"name": "Unamed Marker",
+			"name": "Unnamed Marker",
 			"time": 0,
 			"color": "#26b254",//default
 			"id": "marker_"+this.mUUID +"_"+generateUUID8()+"_"+generateUUID8(),
-			
 		}
-		
 		return markerObject;
-	}
+	},
 	
+	
+	//Save name changes
+	saveName: function(id,name="No name"){
+		let markerParent = id;
+		if(typeof(id) != "object"){
+			markerParent = _(id);
+		}
+		for(each of this.markerPools){
+			if(markerParent.id == each.id){
+				each.name = name;
+			}
+		}
+		markerParent.title = name;
+	},
+	
+	
+	//Helper functions
+	editableMarker: function(elm){
+		let currentName = elm.innerText;
+		let objectID = this.objectID;
+		let editMarkerNameElm = make("input");
+			editMarkerNameElm.type = "text";
+			editMarkerNameElm.classList.add("editing_marker");
+			editMarkerNameElm.value = currentName;
+			editMarkerNameElm.onblur = function() {
+				currentName = event.target.value;
+				elm.innerText = currentName;
+				elm.setAttribute("onclick",objectID + ".editableMarker(this)");
+				
+				window[objectID].saveName(elm.parentElement, currentName);
+				
+			};
+		elm.innerHTML = "";
+		elm.setAttribute("onclick","");
+		elm.appendChild(editMarkerNameElm);
+		editMarkerNameElm.focus();
+		
+		
+	}
 	
 	
 }
@@ -108,7 +151,6 @@ function generateUUID8() {
 //dummy 
 Marker_Maker.addMarker(135);
 Marker_Maker.addMarker(168);
-Marker_Maker.addMarker(1600);
 Marker_Maker.renderMarkers();
 
-//To-Do: Implement Renaming of marker, removing of marker
+//To-Do: removing of marker
