@@ -10,6 +10,12 @@ const Marker_Maker = {
 	addToWindow: function(){window[this.objectID] = this},
 	markerPools: undefined,
 	
+	
+	/*Main function that adds a marker
+	  @ time_target - the target time to put the mark at
+	  @ silent - if true, will not render the newly added marker
+	  @ targetTimeline - specify the marker polls on where it will be added
+	*/
 	addMarker: function(time_target=undefined,silent=false,targetTimeline=undefined){
 		let target = targetTimeline ? targetTimeline : markers; //defaults to main timeline markers
 		
@@ -19,23 +25,16 @@ const Marker_Maker = {
 		if(target == undefined){
 			target = [];
 		}
-	
 		marker.time = time_target;
-		
-		
 		target.push(marker);
 		
 		// console.log(target, targetTime,marker);
-		
-		
-		
+		!silent ? this.renderMarkers(true): false;
 		
 	},
 
 
-
-
-//render the markers on a timeline or other container
+	//render the markers on a timeline or other container
 	renderMarkers: function(silent=true,target=undefined,type="main",pool=undefined){
 		let targetEl = target ? target : timeline_container;
 		let marks = pool ? pool : markers;
@@ -85,7 +84,26 @@ const Marker_Maker = {
 		}
 	},
 	
+	
+	//removes a marker based on given id
+	removeMarker: function(id=undefined, target=undefined){
+		let marks = target ? target : markers;//use default
+		
+		if(id == undefined){
+			console.warn("Marker remove needs an ID of the marker");
+			return false;
+		}
 
+		for (let i = 0; i < marks.length; i++) {
+			if (marks[i].id === id) {
+				_(id).remove();
+				marks.splice(i, 1); 
+				break; 
+			}
+		}		
+	},
+	
+	
 	//Generate a marker object;
 	makeMarkerObject: function(){
 		let markerObject = {
@@ -149,8 +167,6 @@ function generateUUID8() {
 
 
 //dummy 
-Marker_Maker.addMarker(135);
-Marker_Maker.addMarker(168);
 Marker_Maker.renderMarkers();
 
 //To-Do: removing of marker
