@@ -29,6 +29,7 @@ var optimizedData = false;
 
 // Elements
 var main_timeline = _("timeline_");
+let timeline_container = _("timeline_container");
 var origin_sub;
 var origin_sub_pos = [];
 var can_move_track = true;
@@ -64,7 +65,7 @@ let limitThreshold = 2;
 
 
 //Misc
-
+var markers = [];
 var copied;
 var copies = [];
 
@@ -394,6 +395,7 @@ function add_track(data,com,mode){
 		
 		_("playhead").style.height = (_("timeline_container").scrollHeight)+"px";
 		
+		_("dyna_height").innerText = (':root {--overall-height:' +_("timeline_container").scrollHeight + "px; }");
 		
 		if(loaded_from_data == false){
 			
@@ -1951,6 +1953,17 @@ function minimize_track(id){
 }
 
 
+//helper function for adding marker
+function addMarker(t=time){
+	Marker_Maker.addMarker(time);
+}
+
+function removeMarker(){
+	Marker_Maker.removeMarker(Marker_Maker.selectedMarker);
+
+}
+
+
 // ===============
 // Muting And Solo Track Logic End
 // ===============
@@ -2032,6 +2045,7 @@ async function load_from_file(df){
 	loaded_from_data = true;	
 	timeline_data = [];
 	templates = [];
+	markers = [];
 	
 	
 	var ftemplates = JSON.parse(decode(project_data.templates));
@@ -2045,6 +2059,10 @@ async function load_from_file(df){
 	try{
 		fileOptions = {};
 		fileOptions = JSON.parse(decode(project_data.options));
+		
+		//load markers if applicable
+		markers = JSON.parse(decode(project_data.markers));
+		
 	}catch(e){
 		//-
 	}
@@ -2105,6 +2123,8 @@ async function load_from_file(df){
 	await sleep(2);
 	loaded_from_data = false;
 	
+	Marker_Maker.clearAll();
+	Marker_Maker.renderMarkers();
 	
 	scanOptimized();	
 	finish_loading();
@@ -2186,6 +2206,7 @@ function save_dummy(){
 	localStorage.setItem("data_dummy",datas);	
 	localStorage.setItem("data_templates",templates_);	
 	localStorage.setItem("options",JSON.stringify(fileOptions));	
+	localStorage.setItem("markers",JSON.stringify(markers));	
 }
 
 
@@ -2223,6 +2244,7 @@ function save_to_file(){
 		"templates":encode(JSON.stringify(templates)),
 		"timeline":encode(JSON.stringify(comulate_timeline())),	
 		"options": encode(JSON.stringify(fileOptions)),
+		"markers": encode(JSON.stringify(markers)),
 	}
 	
 	try{	
@@ -2493,10 +2515,7 @@ function modeSelect(mode){
 //Helper Function for initializing and setting Data Inclusion preference 
 function dataIncluded(val){
 	settings.set('includeData',val);
-	
 	include_data = val;
-	
-
 	
 }
 

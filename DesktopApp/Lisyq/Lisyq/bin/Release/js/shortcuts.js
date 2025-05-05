@@ -11,9 +11,6 @@ var editing_shortcuts = true;
 function shortcuts(e){
 	
 		
-		// console.log(e)
-		
-		
 	if(e.code == "KeyS" && e.ctrlKey == true){
 		
 		save_to_file();
@@ -132,6 +129,13 @@ function shortcuts(e){
 		if(e.code == "KeyP"){
 			
 			edit_track_option('port');
+			
+		}	
+		
+		//Adds Marker
+		if(e.code == "KeyM" && e.shiftKey == true){
+			
+			addMarker();
 			
 		}
 		
