@@ -306,6 +306,40 @@
 }
 
 
+.marker_on_stab{
+	width:0px;
+	position:absolute;
+	top:0;
+	bottom:0;
+	border:none;
+	border-left-width:2px;
+	border-left-style:solid;
+	cursor:crosshair;
+	z-index:3;
+	opacity:0.8;
+	-webkit-transition:border 0.2s;
+	transition: border 0.2s;
+}
+
+.marker_on_stab > .markercircle{
+	position:absolute;
+	top:0px;
+	left:-6px;
+	width:4px;
+	padding:3px;
+	border-radius:100%;
+	border-width:2px;
+	border-style:solid;
+	background-color:var(--primary_background);
+	
+}
+
+
+.marker_on_stab:hover{
+	border-left-width:4px;
+	opacity:1;
+}
+
 
 /* Nest Player Styles End*/
 

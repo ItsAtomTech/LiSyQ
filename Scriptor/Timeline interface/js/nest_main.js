@@ -804,6 +804,7 @@ async function loadToNestTimeline(extra){
 	let decodedData = JSON.parse(loadedFile);
 	let timelineData = JSON.parse(decode(decodedData.timeline));
 	let timelineOptions = decodedData.options ? JSON.parse(decode(decodedData.options)) : {};
+	let markers = decodedData.markers ? JSON.parse(decode(decodedData.markers)) : {};
 	let maxEnd = undefined;
 	let uid;
 	
@@ -821,6 +822,7 @@ async function loadToNestTimeline(extra){
 	let playitem = {
 		'timeline': timelineData,
 		'options': timelineOptions,
+		'markers': markers,
 		'filePath': loadedFilePath,
 		'id':uid,
 		'max': maxEnd,
@@ -1023,6 +1025,27 @@ function generateTMcontentblock(data){
 
 			div_details.classList.add("content_details_inline");
 
+			
+			//Add the Markers to the Stab
+			for(let m=0; m < content_data.markers.length;m++){
+				let mark = content_data.markers[m];
+				
+				let markElm = make("div");
+					markElm.title = mark.name;
+					markElm.classList.add("marker_on_stab");
+					markElm.style.borderColor = mark.color+"fe";
+					
+				let calculated_mark = (mark.time / (20 / 3));	
+					
+					markElm.style.left = "calc(var(--scale) *"+ (calculated_mark)+"px)";
+					
+				let markerCircle = make("span");
+					markerCircle.classList.add("markercircle");
+					markerCircle.style.borderColor = mark.color+"fe";
+					markElm.appendChild(markerCircle);
+				sub_track.appendChild(markElm);
+			}
+			
 			
 			
 			sub_track.appendChild(div_details);
@@ -1712,6 +1735,12 @@ async function loadTimelineProject(){
 		try {
 			let fContents = await openFilePath(replaceBackslashes(path));
 			load_from_file(fContents, path, TimelineDataRaw[i]);
+
+			
+			
+			
+			
+			
 		} catch (e) {
 			console.log("Failed loading: " + path);
 		}
@@ -1723,6 +1752,7 @@ async function loadTimelineProject(){
 	for(let i = 0; i < TimelineData.length ;i++){
 		show_loading(TimelineData.length, i+1, "Regenerating Data of Project Files...");
 		TimelineData[i].max = regen_empty_data(TimelineData[i].timeline);
+		
 		await sleep(20);
 	}
 	finish_loading();
@@ -1734,6 +1764,7 @@ async function loadTimelineProject(){
 	optimizeTimelinePlayback();
 	
 }
+
 
 
 
