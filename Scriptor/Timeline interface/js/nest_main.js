@@ -62,6 +62,7 @@ let selected_script_index;
 
 let PROGRESS_SAVED = false;
 
+let left_margin = 0;
 
 function inits(){
 	
@@ -712,10 +713,93 @@ function rails(){
 		tm_player_seeked = false;
 
 		//To-Do: implement timeline playing states
-		
+
+
+			if(follow_playhead == true){
+				userScroll = false;
+				scroll_timeline();			
+			}
 		
 		return;
 	}
+	
+}
+
+var follow_mode = "";//settings.get('followMode');
+var followTick = 0;
+let prevScrollLeft;
+let TIME_SCALE = (20 / 3);
+function scroll_timeline(){
+	
+			
+			if(follow_mode == "page"){		
+				//follow scrolling by page 
+				
+				limitThreshold = 2;
+				
+				if((_("timeline_container").scrollLeft + get_size(_("timeline_container"))[0]) <= (timeline_time+10) * zoom_scale){
+					
+					_("timeline_container").scrollTo(timeline_time, _("timeline_container").scrollTop);
+					
+				}else if(_("playhead").getBoundingClientRect().left < 0 && follow_playhead == true){
+					_("timeline_container").scrollTo(timeline_time * zoom_scale, _("timeline_container").scrollTop);
+				}
+				
+			}else{
+				//follow scrolling with the playhead at center
+				
+				if(followTick < 1){
+					followTick++;
+					return;
+				}
+				
+				_("timeline_container").scrollTo(((timeline_time / TIME_SCALE)  * zoom_scale)-(_("timeline_container").getBoundingClientRect().width * 0.5),_("timeline_container").scrollTop);
+				
+				
+				
+				if(_("timeline_container").scrollLeft != prevScrollLeft){//adjust scroll Interval if not scrolling horizontally			
+					limitThreshold = 3;
+				}else{
+					limitThreshold = 2;
+				}
+				
+				prevScrollLeft = _("timeline_container").scrollLeft;
+				followTick = 0;
+			
+			}
+	
+}
+
+
+//Handle Click on ruler
+function click_on_ruler(){
+	
+	if(follow_playhead == true){
+		play_head((event.clientX - ( 2 + left_margin) + _("timeline_container").scrollLeft) / zoom_scale);
+		timeline_time = (((event.clientX) - (10+ left_margin) + _("timeline_container").scrollLeft ) * TIME_SCALE) / zoom_scale;
+		
+		_("thisvidtm").currentTime = ((timeline_time-2)/ 33.33333);
+		player_seeked = true;
+		
+		play_on_current();
+	
+	}else if(follow_playhead == false && TLplaying == false){
+		play_head((event.clientX - (2 + left_margin) + _("timeline_container").scrollLeft)/ zoom_scale);
+		timeline_time = (((event.clientX) - (10+ left_margin) + _("timeline_container").scrollLeft ) * TIME_SCALE) / zoom_scale;
+	
+		
+		_("thisvidtm").currentTime = ((timeline_time-2)/ 33.33333);
+		player_seeked = true;
+		
+		play_on_current();
+		
+	}
+	follow_playhead = true;
+	_("ruler_view").style.opacity = 1;
+	
+	_("ruler_view").title = "Follow head is On";
+	
+	setTimeDisplay(timeline_time, 'time_display_tl');
 	
 }
 
@@ -747,7 +831,7 @@ var prev_wi = 0;
 function gen_ruler(){
 	var width_ref = parseInt((_("timeline_container").scrollWidth)/((1000/30) ));
 	var  rv = _("ruler_view");
-	     // rv.addEventListener("mousedown",click_on_ruler);
+	     rv.addEventListener("mousedown",click_on_ruler);
 	
 	rv.style.width = (_("timeline_container").scrollWidth)+"px";
 	
@@ -1060,8 +1144,10 @@ function timeline_click_event(){//clicked on timeline track
 	
 	let on_tracks = (event.srcElement.classList.contains("track_con") || event.srcElement.classList.contains("sub_track"));
 	
+	let condition = (click_on_track == true && event.shiftKey == true && event.buttons == 1);
 	
-	if((click_on_track == true && event.shiftKey == true && event.buttons == 1) || playing == false){
+	
+	if(condition || TLplaying == false){
 		if(on_tracks){
 			play_head((event.clientX+scrolled - (2)) / zoom_scale);
 			event_time = ((event.clientX - (10))+scrolled ) / zoom_scale;
@@ -1072,7 +1158,7 @@ function timeline_click_event(){//clicked on timeline track
 			setTimeDisplay(timeline_time, 'time_display_tl');
 			player_seeked = true;
 		}
-		if(playing == true){
+		if(TLplaying == true){
 			_("thisvidtm").play();
 		}
 	}
