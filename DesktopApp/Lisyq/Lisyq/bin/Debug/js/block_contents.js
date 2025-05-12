@@ -176,26 +176,20 @@ function sendToI(fn,data){
 
 function show_plugins_list(){
 	
-	_("plugin_lists").innerHTML = "";
+	_("plugin_lists") && (_("plugin_lists").innerHTML = "");
 	regenerators.length = 0;
 	
-	for(plg = 0; plg < plugins.length;plg++){
-		
-		
-		generate_plugins(plugins[plg],plg);
-		
-		
-		
-		
-		
-		
-	}
+	let prefs = (typeof prefixRoot !== 'undefined') ? prefixRoot : undefined;
 	
+	
+	for(plg = 0; plg < plugins.length;plg++){	
+		generate_plugins(plugins[plg],plg,prefs);
+	}
 	
 	
 }
 
-function generate_plugins(pl_data,id){
+function generate_plugins(pl_data,id,prefix=''){
 	
 	
 	
@@ -208,7 +202,7 @@ function generate_plugins(pl_data,id){
 	var plug_thumb_image = document.createElement("img");
 		plug_thumb_image.classList.add("plug_thumb_image");
 		
-		plug_thumb_image.src = "plugins/"+ pl_data.thumbnail_src;
+		plug_thumb_image.src = prefix+"plugins/"+ pl_data.thumbnail_src;
 		plug_thumb.appendChild(plug_thumb_image);
 		
 	var plug_thumb_name = document.createElement("div");
@@ -217,10 +211,10 @@ function generate_plugins(pl_data,id){
 		plug_thumb.appendChild(plug_thumb_name);
 		
 	
-	_("plugin_lists").appendChild(plug_thumb);
+	_("plugin_lists") && _("plugin_lists").appendChild(plug_thumb);
 	
 	var regen_script = document.createElement("script");
-		regen_script.src = pl_data.regenerator_src;
+		regen_script.src = prefix+pl_data.regenerator_src;
 		regen_script.id = pl_data.type_name+id;
 		document.head.appendChild(regen_script);
 		
@@ -404,8 +398,12 @@ function remove_template(){
 
 function load_all_templates(){
 	
-	_("content_con").innerHTML = "";
+	if(_("content_con") == null){
+		return;
+	}
 	
+	
+	_("content_con").innerHTML = "";
 	
 	
 	for(plg = 0; plg < templates.length;plg++){
@@ -481,6 +479,17 @@ function sendToTimelineTemplates(){
 		return false;
 	}else if(selected_contents.length > 1){
 		//multiple add
+		
+		if(selected_contents.length > 10){
+			
+			alert("Please Select no more than 10 content blocks for this!");
+			
+			return ;
+			
+		}
+		
+		
+		
 		let extID = 0;
 		for(sel of selected_contents){
 			

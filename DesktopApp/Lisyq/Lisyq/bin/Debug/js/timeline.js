@@ -29,12 +29,14 @@ var optimizedData = false;
 
 // Elements
 var main_timeline = _("timeline_");
+let timeline_container = _("timeline_container");
 var origin_sub;
 var origin_sub_pos = [];
 var can_move_track = true;
 var click_on_track;
 var follow_playhead = false;
 var context_menu = false;
+var left_margin = 0;
 
 
 //Play States
@@ -47,13 +49,10 @@ var delay = 0;
 var playMode = 'timeline'; //values: timeline, manual, both
 
 
-//Generated Outputs
-var output = [[],[]];
-
 
 //Save_type
 var include_data = settings.get('includeData');
-
+let fileOptions = {}; //storing the config values for this script
 
 //Animating and playing
 
@@ -66,57 +65,18 @@ let limitThreshold = 2;
 
 
 //Misc
-
+var markers = [];
 var copied;
 var copies = [];
-//Encode and Decoder
-var for_rep = ["'",'"',",","/","\\","<","\n"];
-var to_rep = ["&#39;","&#34;","&#44;","&#47;","&#92;","&lt;","&#13;"];
-//Encode and Decoder end
+
 
 //Utilities
 function _(elm){
 	return document.getElementById(elm);
 }
 
-var timeFormat = function(raw_time){
-	if(raw_time < 60){
-		return parseInt(raw_time)+"s"
-	}
-	else if(raw_time >= 60 && raw_time < 3600){
-			if(raw_time%60 < 10){
-				zero = "0";
-			}else{
-				zero = "";
-			}
-		return parseInt(raw_time/60)+":"+zero+parseInt(raw_time%60)+"";
-	}else if(raw_time >= 3600){
-		
-		return parseInt((raw_time/60/60)%60) +":"+add_zero(parseInt((raw_time/60)%60))+":"+add_zero(parseInt(raw_time%60))+"";
-		
-	}
-	
-	
-};
-
-function add_zero(num){
-	if(parseInt(num) < 10){	
-		return "0"+num;
-	}else{
-		return num;
-	}
-}
-
- 
-function decople_data(data){
-	var decopled = JSON.parse(JSON.stringify(data));
-	
-	 return decopled;
-}
 
 
-
-function encode(st){var torep = st;torep = torep.replace(/'/gi, to_rep[0]);torep = torep.replace(/"/gi, to_rep[1]);torep = torep.replace(/,/gi, to_rep[2]);torep = torep.replace(/\n/gi, to_rep[6]);torep = torep.replace(/\//gi, to_rep[3]);torep = torep.replace(/\\/gi, to_rep[4]);torep = torep.replace(/\</gi, to_rep[5]);return torep;}function decode(sty){try{var torep = sty;torep = torep.replace(/&#39;/gi, for_rep[0]);torep = torep.replace(/&#34;/gi, for_rep[1]);torep = torep.replace(/&#44;/gi, for_rep[2]);torep = torep.replace(/&#47;/gi, for_rep[3]);torep = torep.replace(/&#92;/gi, for_rep[4]);torep = torep.replace(/&lt;/gi, for_rep[5]);torep = torep.replace(/&#13;/gi, for_rep[6]);return torep;}catch(e){return '';}}
 
 
  function get_size(elm){ //getting the size of an element	
@@ -168,6 +128,107 @@ function locateNode(parentID, childID){
 	
 }
 
+if(typeof make !== 'function'){
+   window.make = function(elm){ return document.createElement(elm);};
+}
+
+//create the track bound info bar 
+function createTrackBound(data){
+	let track_port;
+	let channel;
+		
+		
+	if(timeline_data[data.track_id] != undefined){
+		let track_data_ = timeline_data[data.track_id];
+		try{
+			track_port = track_data_.port_channel;
+			channel = track_data_.target_channel;
+		}catch(e){
+			//-
+		}
+		
+	}
+	
+	
+	
+let trackInfo = make('div');
+	trackInfo.setAttribute('class', 'track_info_bound');
+	trackInfo.setAttribute('tabindex',1);
+	trackInfo.setAttribute('parent_track',data.track_id);
+	trackInfo.setAttribute('title',"Channel: "+ channel + "\n Port: "+track_port);
+	
+		var trackInfo_SPAN = make('span');
+		trackInfo_SPAN.setAttribute('class', 'info_con');
+
+			var trackInfo_SPAN_SPAN = make('span');
+			trackInfo_SPAN_SPAN.setAttribute('class', 'track_num');
+			trackInfo_SPAN_SPAN.innerText = data.track_id;
+		trackInfo_SPAN.appendChild(trackInfo_SPAN_SPAN);
+
+	trackInfo.appendChild(trackInfo_SPAN);
+
+		var trackInfo_SPAN = make('span');
+		trackInfo_SPAN.setAttribute('class', 'options_con_');
+
+			var trackInfo_SPAN_SPAN = make('span');
+			trackInfo_SPAN_SPAN.setAttribute('class', 'data_icon button_box mute_icon');
+			trackInfo_SPAN_SPAN.setAttribute('onclick', 'mute_track('+data.track_id+')');
+			trackInfo_SPAN_SPAN.setAttribute('title', 'Mute track output');
+
+		trackInfo_SPAN.appendChild(trackInfo_SPAN_SPAN);
+
+			var trackInfo_SPAN_SPAN = make('span');
+			trackInfo_SPAN_SPAN.setAttribute('class', 'data_icon button_box solo_icon');
+			trackInfo_SPAN_SPAN.setAttribute('onclick', 'solo_track('+data.track_id+')');
+			trackInfo_SPAN_SPAN.setAttribute('title', 'Solo track output');
+
+		trackInfo_SPAN.appendChild(trackInfo_SPAN_SPAN);
+		
+			var trackInfo_SPAN_SPAN = make('span');
+			trackInfo_SPAN_SPAN.setAttribute('class', 'data_icon button_box resize_icon');
+			trackInfo_SPAN_SPAN.setAttribute('onclick', 'minimize_track('+data.track_id+')');
+			trackInfo_SPAN_SPAN.setAttribute('title', 'Minimize Track View');
+
+		trackInfo_SPAN.appendChild(trackInfo_SPAN_SPAN);
+		trackInfo.appendChild(trackInfo_SPAN);
+
+		return trackInfo;
+	
+}
+
+//Update all track info bound, index = specify one track or pass nothing for all
+function updateTrackBounds(index=undefined){
+let all_bounds = document.querySelectorAll('.track_info_bound');
+
+	function update_this_tub(bd, data){
+		bd.outerHTML = createTrackBound({'track_id':data.track_id}).outerHTML;
+		
+		if(data.muted == true){
+			parentTrack(data.track_id).classList.add('muted');
+			parentTrack(data.track_id).setAttribute('title','Track is Muted');
+		}		
+		if(data.solo == true){
+			parentTrack(data.track_id).classList.add('solo');
+		}		
+		if(data.minimize == true){
+			parentTrack(data.track_id).classList.add('minimize');
+		}
+
+		
+	}
+	if(index == undefined){
+		for(tb=0;tb < all_bounds.length;tb++){
+			let this_bound = all_bounds[tb];
+			let track_of = (this_bound.parentNode.getAttribute('tracks_id'));
+
+			update_this_tub(this_bound,timeline_data[track_of]);
+		}		
+	}else{
+		let track_of = (all_bounds[index].parentNode.getAttribute('tracks_id'));
+		update_this_tub(all_bounds[index],timeline_data[track_of]);
+	}
+}
+
 
 //Utilities End
 
@@ -192,41 +253,51 @@ var ds;
 
 function see_event(){//clicked on track ?
 	var scrolled = _("timeline_container").scrollLeft;
-	// console.log(event.clientX+scrolled);
-	if((click_on_track == true && event.shiftKey == true && event.buttons == 1) || playing == false){
 	
-		
-		play_head((event.clientX+scrolled - 2 ) / zoom_scale);
-		time = ((event.clientX - 10)+scrolled ) / zoom_scale;
-		_("thisvid").currentTime = ((time-2)/33.333);
-		player_seeked = true;
-		
+	let on_tracks = (event.srcElement.classList.contains("track_con") || event.srcElement.classList.contains("sub_track"));
+	
+	
+	if((click_on_track == true && event.shiftKey == true && event.buttons == 1) || playing == false){
+		if(on_tracks){
+			play_head((event.clientX+scrolled - (2 + left_margin)) / zoom_scale);
+			time = ((event.clientX - (10 + left_margin))+scrolled ) / zoom_scale;
+			_("thisvid").currentTime = ((time-2)/33.333);
+			player_seeked = true;
+		}
 		if(playing == true){
 			_("thisvid").play();
 		}
 	}
-	
-	
-
+	try{
+		if(event.ctrlKey){
+			selection.enable();
+		}else if(event.ctrlKey == false){
+			selection.disable();				
+			enableAutoHide();
+		}
+	}catch(e){
+		//--
+	}
 	
 	
 	play_on_current();
-	
 	selected_track_index = parseInt(this.getAttribute("tracks_id"));
 	
 	_("track_disp").value = selected_track_index;
 	_("total_tracks").innerHTML = timeline_data.length;
 	
-	follow_playhead = false;
+	if(on_tracks){
+		follow_playhead = false;
+	}
+	
+
 	limitThreshold = 2;
 	_("ruler_view").style.opacity = 0.75;
 	_("ruler_view").title = "";
 	click_on_track = true;
 	
 	for(s_tr = 0; s_tr < timeline_data.length;s_tr++){
-		
 		this.parentNode.getElementsByClassName("track_con")[s_tr].classList.remove("selected_track");
-		
 	}
 	
 	this.classList.add("selected_track");
@@ -262,7 +333,10 @@ function add_track(data,com,mode){
 		"port_channel": 0
 	}	
 	
+		
 	
+		
+		
 	
 		
 		//something more here
@@ -270,6 +344,7 @@ function add_track(data,com,mode){
 		if(data == undefined || data == null){
 			
 			timeline_data[tracks_len] = track_data;
+
 			_("timeline_").appendChild(track);
 			
 			
@@ -320,6 +395,7 @@ function add_track(data,com,mode){
 		
 		_("playhead").style.height = (_("timeline_container").scrollHeight)+"px";
 		
+		_("dyna_height").innerText = (':root {--overall-height:' +_("timeline_container").scrollHeight + "px; }");
 		
 		if(loaded_from_data == false){
 			
@@ -349,7 +425,7 @@ function add_track(data,com,mode){
 		
 		}
 		tracks_id = timeline_data.length;
-		
+	track.appendChild(createTrackBound({'track_id':tracks_len}));
 	autoHide();
 	
 	return capInput(parseInt(data,0,timeline_data.length));
@@ -602,6 +678,7 @@ function set_track_node(){//gets the content block selected
 
 	if(e.ctrlKey){
 		multiple_selected = true;
+		selection.cancel();
 	}else{
 		multiple_selected = false;
 		//if user clicks on not selected content, remove all selections
@@ -711,6 +788,8 @@ function set_track_node(){//gets the content block selected
 
 function revoke_selections(elm){		
 	//remove all selection visually
+	
+	
 	for(s_tr = 0; s_tr < document.getElementsByClassName("selected_content").length;s_tr++){	
 	
 		let current_selected_con = selected_contents.indexOf(document.getElementsByClassName("selected_content")[s_tr]);
@@ -722,15 +801,24 @@ function revoke_selections(elm){
 			
 		}
 		
-		if(elm == "force"){
-			try{
-				document.getElementsByClassName("selected_content")[s_tr].classList.remove("selected_content");	
-				selected_contents.length = 0;
-			}catch(e){
-				//--
-			}
-		}
+
 	
+	}
+	
+	if(elm == "force"){
+		try{
+			let sel_block = document.querySelectorAll(".selected_content");	
+			
+			for(selects of sel_block){
+				
+				selects.classList.remove("selected_content");
+				
+			}
+			
+			selected_contents.length = 0;
+		}catch(e){
+			//--
+		}
 	}
 	
 }
@@ -770,7 +858,9 @@ function reposition_subtrack(){
 			return;
 		}		
 				
-
+		
+		// console.log(event);
+		
 				
 		if(selected_contents.length > 1){
 			prev_content = null;
@@ -779,6 +869,16 @@ function reposition_subtrack(){
 			
 			return;
 		}
+		
+		
+			
+		try{
+			selection.disable();	
+			enableAutoHide();			
+		}catch(e){
+			//--
+		}
+		
 		
 		
 	try{
@@ -813,12 +913,23 @@ function reposition_subtrack(){
 		
 		set_coords_context(event.screenX,event.screenY);
 		
+		//This pushes to undo when user is done moving selected elm
+	
+		event.target.onmouseup = (function(){
+					
+			push_undo("subtrack", "edit", selected_track_index, decople_data(timeline_data[selected_track_index].sub_tracks[selected_item]), selected_item);
+		
+		});	
+		event.target.onmouseleave = (function(){
+					
+			push_undo("subtrack", "edit", selected_track_index, decople_data(timeline_data[selected_track_index].sub_tracks[selected_item]), selected_item);
+		
+		});
 	
 		
 		
 		if(movement <= 0 || movement%6 == 0){
-			
-			push_undo("subtrack", "edit", selected_track_index, decople_data(timeline_data[selected_track_index].sub_tracks[selected_item]), selected_item);
+			//
 		}
 		
 		has_moved = true;
@@ -879,8 +990,22 @@ function multiple_moves(){
 			
 		if(movement <= 0 || movement%6 == 0){
 			
-			push_undo("subtrack", "edit", selected_track_indexes,selected_contents_data, selected_contents_indexes);
+			
 		} 
+		
+		//Push to undo stack after moving
+		
+		event.target.onmouseup = (function(){
+
+			push_undo("subtrack", "edit", selected_track_indexes,selected_contents_data, selected_contents_indexes);
+		
+		});	
+		event.target.onmouseleave = (function(){
+					
+			push_undo("subtrack", "edit", selected_track_indexes,selected_contents_data, selected_contents_indexes);
+		
+		});
+		
 		
 		
 		has_moved = true;
@@ -904,212 +1029,13 @@ function remove_onmove(){
 	var my_selected_track_ = document.getElementsByClassName("track_con")[selected_track_index];
 	my_selected_track_.style.width = _("timeline_container").scrollWidth - 10 + "px";	//resizes the track width after mouse user click
 	this.removeEventListener("mousemove",reposition_subtrack);	
-	
 
-	
 	gen_ruler();
 	
-
 }
 
 
 
-
-var time_delay = 0;
-var not_empty = false;
-
-
-function play_on_current(){//Plays through all track and content blocks at current time
-not_empty = false;
-
-
-let timeFixed = parseInt(time);
-
-if(playing == true){	
-	time_delay = parseInt(delay);
-	// console.log(delay);
-}else{
-	time_delay = 0;
-}
-
-
-	//Loop through tracks
-	for(tr = 0;tr < timeline_data.length;tr++){
-		try{
-			var port_chan = 0;
-			
-			if(timeline_data[tr].port_channel != undefined){
-				port_chan = timeline_data[tr].port_channel;
-				
-			}
-			
-	
-			let ch_track;
-			
-			if(timeline_data[tr].target_channel != undefined){
-				ch_track = timeline_data[tr].target_channel;
-			}else{	
-				ch_track = tr;
-			}
-
-			//Puts Default Value from track if no content at current time index
-			try{			
-				output[port_chan][ch_track] = timeline_data[tr].default_value;			
-			}catch(e){
-				output[port_chan] = [];
-				output[port_chan][ch_track] = timeline_data[tr].default_value;	
-			}
-			
-			for(str = 0;str < timeline_data[tr].sub_tracks.length;str++){
-					var subtracks = timeline_data[tr].sub_tracks[str];
-				
-
-				
-				try{
-					if(subtracks.start_at  + time_delay <= time && time <= subtracks.end_at  + time_delay){
-						
-						// console.log("Track #"+ tr +", content block #"+ str +" : "+ time + "\n content_index: " + (time - subtracks.start_at));
-
-						
-						to_output(ch_track,port_chan,timeline_data[tr].sub_tracks[str].data[parseInt((timeFixed -  time_delay) - subtracks.start_at)],timeline_data[tr].default_value);
-						
-						not_empty = true;
-
-						
-					}else{
-						
-						// Somthing in the future
-						
-					}
-				}catch(e){
-					console.log(e);
-				}
-				
-			}
-		
-	
-		
-	}catch(e){
-
-	}	
-		
-		
-	}
-
-	if(not_empty == false){
-		
-		send_to_port();
-		
-	}else{
-		send_to_port();
-	}
-	
-}
-
-
-
-function to_output(tr,chp,df,def){
-	
-	
-	//chp is for channel_port for port selected for track
-	not_empty = true;
-		
-		var channel_port = validate_number(chp);
-		
-		//provide index for the port_channel array if not present
-		if(output[channel_port] == undefined){
-			output[channel_port] = [];		
-		}
-		
-		if(df == undefined || df ==  ""){
-			//set to default value if no data
-			
-			output[chp][tr] = def;			
-		}else{
-			//set to value 
-			output[chp][tr] = df;	
-		}
-	
-
-	
-}
-
-function send_to_port(){//This should send the output to the configured port to Arduino
-
-	 
-		try{
-			//Separate each port channel by " | "
-			sendPort(0,output.join("|").toString());
-		}catch(e){
-			
-			
-		} 
-		
-		//console.log(output.length);
-		
-		output.length = 0;	
-	
-}
-	
-let SeeDataFlow;
-	
-function sendPort(pch,str){
-
-
-	try{
-		window.chrome.webview.hostObjects.NativeObject.set_values(pch, str);
-		window.chrome.webview.hostObjects.NativeObject.outputs();
-	}catch(e){
-	//
-	}
-	
-	if(SeeDataFlow){
-		console.log(str);
-	}
-	
-	
-	//Clear output buffer array after sending to all ports
-	try{
-		output[pch].length = 0;
-	}catch(e){
-		//
-		
-	}
-}
-		
-async function show_loading(total,current,info){
-
-	if(info == undefined || info == null){
-		info = "";
-	}
-	
-	let pr = parseInt(((current/total) * 100));
-		
-		console.log("Progress: ", pr);
-		
-	try{
-		window.chrome.webview.hostObjects.NativeObject.set_progress(pr, info);
-		window.chrome.webview.hostObjects.NativeObject.show_progress();
-	}catch(e){
-	//
-	
-	
-	
-	}
-
-}
-			
-//Hides the Progress window if shown			
-function finish_loading(){
-
-	try{
-		window.chrome.webview.hostObjects.NativeObject.set_progress(100, "Done");
-		window.chrome.webview.hostObjects.NativeObject.close_progress();
-	}catch(e){
-	//
-	}
-
-}
 	
 
 //Clear all Pending Buffers on Com Ports etc.
@@ -1139,10 +1065,14 @@ function clearAllBuffer(){
 
 //Playback
 
-function play(){
+function play(from_player){
 	playing = true;
 	
-	if(_("thisvid").paused){	
+	if(from_player){
+		return true;
+	}
+	
+	if(_("thisvid").paused ){	
 		try{
 			_("thisvid").play();	
 		}catch(e){
@@ -1151,8 +1081,12 @@ function play(){
 	}
 }
 
-function pause(){
+function pause(from_player){
 	playing = false;
+	
+	if(from_player){
+		return true;
+	}
 	
 	if(_("thisvid").paused == false){
 		try{
@@ -1210,14 +1144,7 @@ function set_delay(val){
 		optimizedData = false;	
 		
 	}
-	
-	
-	
-	
-	
-	
-	
-	
+
 }
 
 
@@ -1242,9 +1169,7 @@ function play_head(time){
 
 
 function pl_trans(){
-	
 	pl.style.transform =  "translateX("+time_ex+"px)";
-	
 }
 
 
@@ -1326,7 +1251,9 @@ function save_port_conf(){
 	timeline_data[selected_track_index].target_channel = cha_val;
 	
 	optimizedData = false;
-
+	updateTrackBounds(selected_track_index);
+	
+	
 	destroy_dia();
 	
 }
@@ -1440,17 +1367,19 @@ function move_ruler(){
 function click_on_ruler(){
 	
 	if(follow_playhead == true){
-		play_head((event.clientX - 2 + _("timeline_container").scrollLeft) / zoom_scale);
-		time = (event.clientX - 10 + _("timeline_container").scrollLeft) / zoom_scale;
+		play_head((event.clientX - ( 2 + left_margin) + _("timeline_container").scrollLeft) / zoom_scale);
+		time = (event.clientX - (10+ left_margin) + _("timeline_container").scrollLeft) / zoom_scale;
+		
 	
+		
 		_("thisvid").currentTime = ((time-2)/33.333);
 		player_seeked = true;
 		
 		play_on_current();
 	
 	}else if(follow_playhead == false && playing == false){
-		play_head((event.clientX - 2 + _("timeline_container").scrollLeft)/ zoom_scale);
-		time = (event.clientX - 10 + _("timeline_container").scrollLeft ) / zoom_scale;
+		play_head((event.clientX - (2 + left_margin) + _("timeline_container").scrollLeft)/ zoom_scale);
+		time = (event.clientX - (10 + left_margin) + _("timeline_container").scrollLeft ) / zoom_scale;
 	
 		
 		_("thisvid").currentTime = (((time-2)/33.333));
@@ -1470,6 +1399,9 @@ function click_on_ruler(){
 //removing content blocks and tracks
 function remove_content(id,com){
 	select_count = 0;
+	
+	//removes from dragselections as well
+	selection.clearSelection(true, true);
 	
 	if(selected_contents.length > 0 && com == undefined){
 		
@@ -1527,21 +1459,19 @@ function remove_content(id,com){
 	
 	selected_content = null;
 	selected_contents.length = 0;
+	
+	
+	
 	return timeline_data;
 	
 	
 }
 
 //removing multiple content blocks and tracks
-function remove_multiple(com){
+function remove_multiple(com,id){
 	select_count = 0;
 	
 
-	
-	if(!selected_content && id == undefined){
-		console.log("No selection");
-		return false;
-	}
 	
 	let extId = 0;
 	for(contents  of selected_contents)	{
@@ -1590,6 +1520,9 @@ function remove_track(id,com){
 		return false;
 	}
 	
+		//removes from dragselections as well
+	selection.clearSelection(true, true);
+	
 	var trc = document.getElementsByClassName("track_con")[selected_track_index];
 	
 	trc.removeEventListener("mousedown",see_event);
@@ -1616,8 +1549,10 @@ function remove_track(id,com){
 		timeline_data[stad].track_id = stad;
 		_("timeline_").getElementsByClassName("track_con")[stad].setAttribute("tracks_id",stad);
 		
+		
 	}
 	
+	updateTrackBounds();
 	
 	selected_track_index = null;
 	_("track_disp").value = 0;
@@ -1792,6 +1727,8 @@ function paste_content(){
 		return false;
 	}else if(copies.length > 0){
 		
+		let last_selected_index = selected_track_index;
+		
 		let start_at_track = decople_data(selected_track_index);
 		
 		revoke_selections('force');
@@ -1834,12 +1771,12 @@ function paste_content(){
 			}
 			
 				selected_track_indexes[extId] = selected_track_index;
+				
+				//remove the extra data from normalized copies
 				delete pasting_copies[extId].start_distance;
 				delete pasting_copies[extId].track_distance;
 			
 					add_sub_tracks(pasting_copies[extId], 'multiple');
-				
-				
 				
 				
 				let this_track = document.querySelector('[tracks_id="'+selected_track_index+'"]').querySelector('[content_id="'+selected_contents_indexes[extId]+'"]')
@@ -1853,16 +1790,13 @@ function paste_content(){
 				extId++;
 		}
 		
-		// console.log(selected_contents_indexes);
-		
 				
 		prev_content = null;
 		
-		// console.log(pasting_copies);
 		
 		push_undo("subtrack", "add", selected_track_indexes,decople_data(pasting_copies), selected_contents_indexes);
 	
-		
+		selected_track_index = last_selected_index; //revert selected track after pasting into previus before pasting
 		
 		return true;
 	}
@@ -1919,6 +1853,8 @@ function duplicate_track(index,destination){
 	//Push an Undo Entry for this duplication
 	push_undo("track", "add", insert_at, timeline_data[insert_at], '');
 	
+	
+	
 	return insert_at;
 	
 }
@@ -1929,11 +1865,116 @@ function duplicateTrack(destination_option){
 	return duplicate_track(selected_track_index, destination_option);
 }
 
+// ===============
+// Muting And Solo Track Logic
+// ===============
+
+// To-Do: Just do it (Done)
+
+function mute_track(id,toggle=true,unmute=false){
+	if(timeline_data[id] == undefined){
+		return;
+	}
+	let trselect = timeline_data[id];
+
+	if(trselect.muted && toggle == true){
+		trselect.muted = false;
+		parentTrack(id).classList.remove("muted");
+		parentTrack(id).setAttribute("title", '');
+		
+		
+	}else if(unmute){
+		trselect.muted = false;
+		parentTrack(id).classList.remove("muted");
+		parentTrack(id).setAttribute("title", '');
+		
+	}else{
+		trselect.muted = true;
+		parentTrack(id).classList.add("muted");
+		parentTrack(id).setAttribute("title", 'Track is Muted');
+		trselect.solo = false;
+		parentTrack(id).classList.remove("solo");
+	}
+	
+	
+	optimizedData = false;
+	
+}
+
+
+function solo_track(id){
+	function mute_all(unmute){
+		for(trs = 0; trs <= timeline_data.length; trs++){
+			if(trs == id){
+				mute_track(id,false,true);
+				continue;
+			}
+			mute_track(trs,false,unmute);
+			
+		}
+		
+	}
+	
+	let trselect = timeline_data[id];
+
+	if(trselect.solo){
+		trselect.solo = false;
+		parentTrack(id).classList.remove("solo");
+		mute_all(true);
+	}else{
+		trselect.solo = true;
+		parentTrack(id).classList.add("solo");
+		mute_all(false);
+	}
+	
+}
+
+
+// Other Similar Functions
+
+function minimize_track(id){
+	if(timeline_data[id] == undefined){
+		return;
+	}
+	let trselect = timeline_data[id];
+
+	if(trselect.minimize){
+		trselect.minimize = false;
+		parentTrack(id).classList.remove("minimize");
+		
+	}else{
+		trselect.minimize = true;
+		parentTrack(id).classList.add("minimize");
+
+	}
+	
+	autoHide();
+	
+}
+
+
+//helper function for adding marker
+function addMarker(t=time){
+	Marker_Maker.addMarker(time);
+}
+
+function removeMarker(){
+	Marker_Maker.removeMarker(Marker_Maker.selectedMarker);
+
+}
+
+
+// ===============
+// Muting And Solo Track Logic End
+// ===============
+
+
 
 //Load From Datas
 
 var dummy_data = localStorage.getItem("data_dummy");
 var dummy_templates = localStorage.getItem("data_templates");
+var dummy_options = localStorage.getItem("options");
 
 function load_saved(data){
 	
@@ -1942,6 +1983,12 @@ function load_saved(data){
 	data = dummy_data;
 	
 	data = JSON.parse(data);
+	fileOptions = {};
+	try{
+		fileOptions = JSON.parse(dummy_options);
+	}catch(e){
+		//-
+	}
 	
 	
 	//_("timeline_").innerHTML = "";
@@ -1966,20 +2013,17 @@ function load_saved(data){
 			
 			
 		}
-		
-		
 	}
 	
 	templates = JSON.parse(dummy_templates);
 		
-	
-	
 	timeline_data = data;
 	loaded_from_data = false;	
 	regen_empty_data();	
 	load_all_templates();
 	
 	scanOptimized();
+	updateTrackBounds();
 	
 }
 
@@ -1989,9 +2033,6 @@ function test_(df){
 }
 
 
-function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
 
 
 
@@ -2004,6 +2045,7 @@ async function load_from_file(df){
 	loaded_from_data = true;	
 	timeline_data = [];
 	templates = [];
+	markers = [];
 	
 	
 	var ftemplates = JSON.parse(decode(project_data.templates));
@@ -2013,9 +2055,19 @@ async function load_from_file(df){
 	
 	load_all_templates();	
 	var timeline_data_ = JSON.parse(decode(project_data.timeline));
+	
+	try{
+		fileOptions = {};
+		fileOptions = JSON.parse(decode(project_data.options));
+		
+		//load markers if applicable
+		markers = JSON.parse(decode(project_data.markers));
+		
+	}catch(e){
+		//-
+	}
+	
 			
-	
-	
 	
 	// _("timeline_").innerHTML = "";
 	
@@ -2028,7 +2080,7 @@ async function load_from_file(df){
 		for(dtracks = 0;dtracks < timeline_data_.length;dtracks++){
 			
 			
-			//To-Do: Try Loading Display Logic here...
+			// Loading Display Logic here...
 			
 			show_loading(timeline_data_.length, dtracks+1, "Loading tracks");
 			
@@ -2071,35 +2123,46 @@ async function load_from_file(df){
 	await sleep(2);
 	loaded_from_data = false;
 	
+	Marker_Maker.clearAll();
+	Marker_Maker.renderMarkers();
 	
 	scanOptimized();	
 	finish_loading();
+	updateTrackBounds();
+	
+	try{		
+		loadLinkedMedia(fileOptions); //Try to load any linked media to this file
+	}catch(e){
+		//-
+	}
+	
+	
+	selected_content = null; //remove selection for the newly loaded timeline
 	return;
 	
 }
 
 
 function refresh_track(tr_id){
-	
 	if(tr_id >= timeline_data.length || tr_id == null){
 		
 		console.warn("Track id out of bound!");
-		
 		return false;
 	}
 	
 	loaded_from_data = true;
 	parentTrack(tr_id).innerHTML = "";
+	parentTrack(tr_id).appendChild(createTrackBound({'track_id':tr_id}));
+	
 	selected_track_index = tr_id;
 	
 		for(dft = 0;dft < timeline_data[tr_id].sub_tracks.length;dft++){
 			sub_data_id = dft;
 			add_sub_tracks(timeline_data[tr_id].sub_tracks[dft]);
-			
-			
 		}
 	
 	loaded_from_data = false;
+	updateTrackBounds();
 }
 
 
@@ -2132,10 +2195,6 @@ function regen_empty_data(){
 		
 	}
 	
-	
-	
-	
-	
 }
 
 
@@ -2146,6 +2205,8 @@ function save_dummy(){
 	var templates_ = JSON.stringify(templates);
 	localStorage.setItem("data_dummy",datas);	
 	localStorage.setItem("data_templates",templates_);	
+	localStorage.setItem("options",JSON.stringify(fileOptions));	
+	localStorage.setItem("markers",JSON.stringify(markers));	
 }
 
 
@@ -2179,11 +2240,11 @@ function comulate_timeline(){
 
 function save_to_file(){
 	
-	
-	
 	var rec_project = {
 		"templates":encode(JSON.stringify(templates)),
-		"timeline":encode(JSON.stringify(comulate_timeline()))	
+		"timeline":encode(JSON.stringify(comulate_timeline())),	
+		"options": encode(JSON.stringify(fileOptions)),
+		"markers": encode(JSON.stringify(markers)),
 	}
 	
 	try{	
@@ -2191,12 +2252,9 @@ function save_to_file(){
 		window.chrome.webview.hostObjects.NativeObject.put_data(to_transfer);	
 		
 	}catch(e){
-				
-		
+		//-
 	}
-	
 	command_save();
-	
 }
 
 function command_save(){
@@ -2438,6 +2496,7 @@ function modeSelect(mode){
 	}else{
 		_("timeline_container").style.visibility = "visible";
 		_("template_player_container").style.display = "none";
+		current_mode = "add";
 		playMode = "timeline";
 		editing_shortcuts = true;
 		
@@ -2456,14 +2515,25 @@ function modeSelect(mode){
 //Helper Function for initializing and setting Data Inclusion preference 
 function dataIncluded(val){
 	settings.set('includeData',val);
-	
 	include_data = val;
-	
-
 	
 }
 
 
+function projectScriptColor(val){
+	fileOptions.color = val;
+	
+}
+
+
+// Send Ready to Native Host
+
+try{
+	window.chrome.webview.hostObjects.NativeObject.Onready();
+
+	}catch(e){
+	console.log('No native host found');
+}
 
 
 

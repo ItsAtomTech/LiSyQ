@@ -11,6 +11,7 @@
 		<link rel="stylesheet" href="css/template_player.css">
 		<link rel="stylesheet" id="color" href="css/coloring.css">
 		<link rel="stylesheet" href="css/dailoge.css">
+		<link rel="stylesheet" href="css/contextmenu.css">
 		<link rel="icon" type="image/png" href="images/favicon.ico"/>
 	
 	<style id='dyna_scaler'>
@@ -18,6 +19,19 @@
 			--scale: 1;
 		}
 	</style>
+	<style id='dyna_height'>
+		:root {
+			--overall-height: 150px;
+		}
+	</style>
+		
+	<style id='dyna_margin'>
+		:root {
+			--margin_left: 0px;
+		}
+	</style>
+	
+	
 	
  </head>
  <body class='primary_color' onresize="init_resize()">
@@ -31,10 +45,18 @@
 			
 		
 			<div class="templates_time_con" >
-			
-				<div class="search_bar time_templates_search"> 				
+				
+				<div class="search_bar_tool_section">
+					
+					<div class="options_button button_box" onclick="showTimelineScriptOptions()">
+					</div>
+					
+					<div class="search_bar time_templates_search"> 				
 						<input type="search"  class='search_input primary_background primary_color' placeholder='Search...'id='_ttemp' onchange="decup(event)" oninput="indexer.timeline_templates(this)" />
-				</div>	
+					</div>	
+				</div>
+				
+		
 			
 			
 				<div id="content_con" class="content_con">
@@ -59,7 +81,8 @@
 		<div class="media_player_con">
 			<div class="media_bar_options">
 
-				<div class="load_button" onclick="load_media()" title="Load Media Sampling File"> </div>
+				<div class="load_button button_box" onclick="load_media()" title="Load Media Sampling File"> </div>
+				<div class="load_link_button button_box " onclick="select_link()" title="Load and Link a media to this lsys file."> </div>
 
 			</div>
 		
@@ -98,13 +121,11 @@
 		<!-- Timeline Player -->
 		<div class="timeline_main_con" id="timeline_container" >
 			
-					<div class="timeline_head" id="playhead"> </div>
+			<div class="timeline_head" id="playhead"> </div>
 			<div class="timeline_main" id="timeline_">
-
-				
+	
 			
-			
-			</div>
+			</div>	
 		</div>
 		
 		<!-- Template Player -->
@@ -130,6 +151,11 @@
 			onmouseleave="vertical_resizer.dropSlider(this)"
 			onmouseup="vertical_resizer.dropSlider(this)"
 			
+			ontouchstart="vertical_resizer.pickSlider(this)" 
+			ontouchmove="vertical_resizer.resize(this)" 
+			ontouchend="vertical_resizer.dropSlider(this)"
+			ontouchcancel="vertical_resizer.dropSlider(this)"
+			
 			> || </div>
 			
 			
@@ -137,9 +163,17 @@
 				<div class="search_bar flexed"> 	
 					<div class="activate_button button_box" onclick="activate_player(this)"><span class='active_button_icon'></span><span class='tex'> Off</span></div>
 					
-					<div class="button_box actions" onclick="manual_template_manager.save();"> Save  </div>
-					<div class="button_box actions" onclick="manual_template_manager.load();"> Load  </div>
+					<div class="button_box actions" onclick="saveLocalTemplate();"title="Save to Local"> Save  </div>
+					<div class="button_box actions" onclick="openLocalSaves();"> Load  </div>
+					<input type='text' class="plane_input name_live_templ primary_background primary_color" id="local_save_name" placeholder='No name'>  </input>
 					
+					<div class="button_box actions small" onclick="save_LV_to_file();" title="Write data to file"> Save File  </div>
+					
+					<div class="button_box actions small" onclick="openLiveFile();" title="Open an lytemp File"> Open File  </div>
+					
+					<div class="button_box actions small layout_view" onclick="layoutChange();" title="Change Layout: Simple or Expanded(Default)">  </div>			
+					
+					<div class="button_box actions small layout_full_view" onclick="layoutLiveFull();" title="Toggle to cover entire Window with this panel">  </div>
 				</div>
 				
 				<div class="triggers_con" id="triggers_con"> 
@@ -202,11 +236,15 @@
 
 
 
- 
+ <!-- Temp -->
+
+
+
  
  
  
  </body>
+	<script src="js/unified.js"></script>
 	<script src="js/settings.js"></script>
 	<script src="js/timeline.js"></script>
 	<script src="js/play_optimized.js"></script>
@@ -225,6 +263,18 @@
 	<script src="js/media_player.js"></script>
 	<script src="js/dialogue.js"></script>
 	<script src="js/scaler.js"></script>
+	
+	<script src="js/viselect.umd.js"></script>
+	
+	 <!--Matthias Thalmann (Github) -->
+	<script src="js/contextmenu.min.js"></script>
+	
+
+	<script defer src="js/impexporter.js"></script>
+	<script defer src="js/marker_maker.js"></script>
+	<script defer src="js/dragSelectHelper.js"></script>
+	
+	<script defer src="js/context_menu_helper.js"></script> 
  
  <script>
  
@@ -235,9 +285,17 @@
 	<!-- var g = load_saved(); -->
 	<!-- optimizedData = false; -->
 	<!-- modeSelect('manual'); -->
-	
+	<!-- open_saved(0); -->
+	<!-- load_saved(); -->
+
+	//media player setup
+	localFileVideoPlayer('media_link', 'thisvid');
 	
  </script>
+ 
+ 
+
+ 
  
  </html>
  

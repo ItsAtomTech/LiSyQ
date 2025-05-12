@@ -74,6 +74,23 @@ hr.dashed{
 }
 
 
+.confirm_message_info{
+	padding:10px;
+	
+	
+}
+
+
+.confirm_buttons_box{
+	width:100%;
+	display:flex;
+	align-items:center;
+	padding:5px;
+	justify-content:center;
+	
+}
+
+
 /* Time Jump styles */
 
 .input_bar_con{
@@ -148,6 +165,18 @@ hr.dashed{
 
 
 
+.clr{
+	margin-left:10px;
+	min-width:100px;
+	min-height:20px;
+	cursor:pointer;
+	background:none;
+	float:right;
+	border-radius:6px;
+}
+
+
+
 .option_title{
 	display:inline;
 	
@@ -165,7 +194,11 @@ hr.dashed{
 }
 
 
-
+.warn_background{
+	
+	background-color:rgba(240,140,0, 0.8);
+	
+}
 
 
 

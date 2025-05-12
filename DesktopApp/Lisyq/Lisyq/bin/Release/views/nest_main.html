@@ -203,12 +203,12 @@
 			
 			<div class="h_con_2 primary_color primary_background" id="h_con_2">
 				<div class="search_bar flexed"> 	
-					<div class="button_box actions grad_dark_button auto_width" onclick="openLsysFilePL();" title="Load an Lysis File to List" > Load  </div>
+					<div class="button_box actions grad_dark_button auto_width" onclick="openLsysFilePL();" title="Load an Lysis File to List" > Add  </div>
 					<input type='text' class="plane_input name_live_templ primary_background primary_color" id="pl_save_name" placeholder='No name'>  </input>
 					
-					<div class="button_box actions small grad_dark_button auto_width" onclick="save_pl_to_file();" title="Write Playlist data to file"> Save File  </div>
+					<div class="button_box actions small grad_dark_button auto_width" onclick="save_pl_to_file();" title="Write Playlist data to file"> Save Playlist  </div>
 					
-					<div class="button_box actions small grad_dark_button auto_width" onclick="OpenFilePL();" title="Open a playlist File"> Open File  </div>
+					<div class="button_box actions small grad_dark_button auto_width" onclick="OpenFilePL();" title="Open a playlist File"> Open Playlist  </div>
 					
 					<!-- <div class="button_box actions small layout_view" onclick="layoutChange();" title="Change Layout: Simple or Expanded(Default)">  </div>			 -->
 					
@@ -264,6 +264,7 @@
 <script src="../js/canvas_ruler.js"></script>
 <script defer src="../js/dialogue.js"></script>
 <script defer src="../js/bottom_bar.js"></script>
+<script defer src="../js/shortcuts_ns.js"></script>
 
 
 
@@ -273,6 +274,8 @@
 	scaleFactor = 0.50;
 	timeFormatDevider = 10;
 	gen_ruler();
+	
+	zoom_limit_min = 0.3;
 	
 	//media player setup
 	localFileVideoPlayer('media_link', 'thisvidpl');

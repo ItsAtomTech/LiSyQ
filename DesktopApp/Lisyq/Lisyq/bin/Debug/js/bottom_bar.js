@@ -9,10 +9,11 @@ var timeFormatTimer = function(raw_time){
 
 
 var time_disp;
-
-function setTimeDisplay(rt){
-	time_disp = timeFormatTimer((rt-10)/(33.33));
+let customIdNest = undefined;
+function setTimeDisplay(rt,customId=undefined){
+	time_disp = timeFormatTimer((rt-10)/(33.333333333));
 	
+	customIdNest = customId;
 	
 	//samp.textContent = "00"
 	window.requestAnimationFrame(update_time_display);
@@ -20,6 +21,11 @@ function setTimeDisplay(rt){
 }
 
 function update_time_display(){
+	
+	if(customIdNest){
+		_(customIdNest).textContent = time_disp;
+		return;
+	}
 	
 	_("time_display_").textContent = time_disp;
 	

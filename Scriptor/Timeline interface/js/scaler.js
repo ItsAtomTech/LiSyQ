@@ -10,7 +10,7 @@ function applyScale(n){
 	}
 	
 	if(n < zoom_limit_min){	
-		zoom_val = zoom_limit_min;	
+		n = zoom_limit_min;	
 	}else if(n > zoom_limit_max){	
 		n = zoom_limit_max;
 	}
