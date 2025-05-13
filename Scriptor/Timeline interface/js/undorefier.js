@@ -5,6 +5,8 @@
 var undo_stack = [];
 var redo_stack = [];
 
+let unredoType = "default";
+
 
 function add_undo(data){
 	if(data == undefined){
@@ -111,9 +113,15 @@ function undo(){
 					for(idx of undo_data.data.index){
 						selected_track_index = idx;
 													
-						var sub_track_index = undo_data.data.subtrack_index[exIndex];
-						add_sub_tracks(undo_data.data.track_data[[exIndex]],'redo','insert',sub_track_index);
 						
+						
+						if(unredoType == "nested"){
+							addToNestTimeline(undo_data.data,'undo','insert',sub_track_index);
+						}else{
+							
+							var sub_track_index = undo_data.data.subtrack_index[exIndex];
+							add_sub_tracks(undo_data.data.track_data[[exIndex]],'undo','insert',sub_track_index);
+						}
 						
 						exIndex++;
 					}
@@ -121,10 +129,15 @@ function undo(){
 				}else{
 					selected_track_index = undo_data.data.index;
 					
-					var sub_track_index = parseInt(undo_data.data.subtrack_index);
-					
+					if(unredoType == "nested"){
+							addToNestTimeline(undo_data.data,'undo','insert');
+					}else{
+						var sub_track_index = parseInt(undo_data.data.subtrack_index);
+						add_sub_tracks(undo_data.data.track_data,'undo','insert',sub_track_index);	
+						
+					}
 				
-					add_sub_tracks(undo_data.data.track_data,'undo','insert',sub_track_index);
+					
 				}
 			
 				

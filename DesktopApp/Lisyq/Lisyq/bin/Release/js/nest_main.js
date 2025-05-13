@@ -1016,7 +1016,7 @@ function findIndexByUUID(uuid) {
 
 
 //Function to add a script template into the nest timeline
-function add_to_nesttimeline(id){
+function add_to_nesttimeline(id,com){
 	let foundIdex = findIndexByUUID(id);
 	if(foundIdex <= -1){
 		return console.warn("ID: ", id, "Not found on loaded script list");
@@ -1030,6 +1030,12 @@ function add_to_nesttimeline(id){
 
 	TimelineSequence.push(contentData);
 	console.log(TimelineSequence);
+	
+	let content_id = TimelineSequence.length-1;
+		
+	if(com == undefined){
+		push_undo("subtrack", "add", 0, contentData,content_id);
+	}
 	
 	revoke_selections();
 	loadTimeline();
@@ -1101,17 +1107,20 @@ function generateTMcontentblock(data){
 			}catch(e){
 				console.log("Problimatic Timeline Data: "+ data.uid);
 				sub_track.title = "This Timeline Block is having Loading Problems: uuid - "+ data.uid;
+				console.log(e);
 			}
 			
 			sub_track.style.backgroundColor = colorCode+"50";
 			// sub_track.addEventListener("contextmenu", function (e){}, false);
-			// console.log(content_data);
+			console.log(content_data);
 
 			div_details.classList.add("content_details_inline");
 
 			
 			//Add the Markers to the Stab
-			for(let m=0; m < content_data.markers.length;m++){
+			
+			if(content_data.markers){
+				for(let m=0; m < content_data.markers.length;m++){
 				let mark = content_data.markers[m];
 				
 				let markElm = make("div");
@@ -1128,7 +1137,10 @@ function generateTMcontentblock(data){
 					markerCircle.style.borderColor = mark.color+"fe";
 					markElm.appendChild(markerCircle);
 				sub_track.appendChild(markElm);
+				}
 			}
+			
+
 			
 			
 			
@@ -1337,6 +1349,14 @@ function reposition_subtrack(){
 
 
 
+function modify_sub_track(data, action=undefined){
+	
+	console.log(data);
+	
+	
+	
+}
+
 
 function remove_onmove(){
 	can_move_track = true;	
@@ -1428,7 +1448,7 @@ function remove_scriptstub(id=undefined){
 }
 
 
-function remove_subtrack(id=undefined){
+function remove_subtrack(id=undefined,com=undefined,silent=false){
 	let subtrack_id = id;
 	if(id == undefined && selected_content != undefined){
 		subtrack_id = parseInt(selected_content.getAttribute('content_id'));
@@ -1438,10 +1458,14 @@ function remove_subtrack(id=undefined){
 		return false;
 	};
 	
-	let confirms = confirm("Are you sure you want remove this content?");
-	if(!confirms){
-		return false;
+	if(!silent){
+		let confirms = confirm("Are you sure you want remove this content?");
+		if(!confirms){
+			return false;
+		}
 	}
+	
+
 	
 	let removedElement = TimelineSequence.splice(subtrack_id, 1);
 	loadTimeline();
@@ -1691,6 +1715,14 @@ function optimizeTimelinePlayback() {
 }
 
 
+
+function parentTrack(id){
+	
+	var parent = document.getElementsByClassName('track_con')[id];
+	return parent;
+	
+	
+}
 
 
 
@@ -1954,3 +1986,29 @@ function set_delay_timeline(val){
 }
 
 set_delay_timeline();
+
+// ==============================
+//Undo Redo Section =============
+// ==============================
+
+function TimelineUndo(){
+	undo();
+}
+
+
+function TimelineRedo(){
+	redo();
+}
+
+
+
+function remove_content(data, com){
+	
+
+	remove_subtrack(data,com,silent=true);
+	console.log(data);
+}
+
+
+
+
