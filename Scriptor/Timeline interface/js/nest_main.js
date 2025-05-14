@@ -1016,7 +1016,7 @@ function findIndexByUUID(uuid) {
 
 
 //Function to add a script template into the nest timeline
-function add_to_nesttimeline(id,com){
+function add_to_nesttimeline(id,com,raw_data=undefined){
 	let foundIdex = findIndexByUUID(id);
 	if(foundIdex <= -1){
 		return console.warn("ID: ", id, "Not found on loaded script list");
@@ -1027,7 +1027,13 @@ function add_to_nesttimeline(id,com){
 		length: TimelineData[foundIdex].max,//length of the content derived from the content
 		offset: parseInt(timeline_time),   //location of this content as offset. 
 	}
-
+	
+	if(typeof(raw_data) == "object"){
+		
+		contentData.uid = raw_data.id;
+		contentData = raw_data;
+	}
+	
 	TimelineSequence.push(contentData);
 	console.log(TimelineSequence);
 	
@@ -1471,6 +1477,13 @@ function remove_subtrack(id=undefined,com=undefined,silent=false){
 	loadTimeline();
 	
 	isOptimized = false;
+		
+	console.log(removedElement);
+		
+		
+	if(com == undefined){
+		push_undo("subtrack", "delete", 0, removedElement,subtrack_id);
+	}
 	
 	return removedElement;
 	
@@ -2004,10 +2017,20 @@ function TimelineRedo(){
 
 function remove_content(data, com){
 	
-
 	remove_subtrack(data,com,silent=true);
 	console.log(data);
 }
+
+
+function addToNestTimeline(data, com=undefined, type){
+	
+	let contentId = data.track_data[0].uid;	
+	add_to_nesttimeline(contentId,"undo",data.track_data[0]);
+	console.log(contentId);
+	
+	
+}
+
 
 
 
