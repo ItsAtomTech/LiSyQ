@@ -21,6 +21,8 @@ Public Class NestMain
 
     Dim OpenQuePath As String
 
+
+
     Private Async Sub NestMain_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 
         Dim opts = New CoreWebView2EnvironmentOptions(additionalBrowserArguments:="--allow-file-access-from-files")
@@ -48,6 +50,7 @@ Public Class NestMain
     <ClassInterface(ClassInterfaceType.None)>
     <ComVisible(True)>
     Public Class WebJsObject
+        Public msgChache As String
 
         Public Function get_values() As String
 
@@ -105,15 +108,7 @@ Public Class NestMain
             NestMain.data_string_nt = data
         End Function
 
-        ' Progress Window Logic Start
 
-        Public Function set_progress(progress As Integer, info As String)
-
-            ProgressBar.Progress = progress
-            ProgressBar.ProgressText = info
-
-
-        End Function
 
         Public Function set_mouse_coords(x As Integer, y As Integer)
 
@@ -131,6 +126,16 @@ Public Class NestMain
         Public Function Show_content_menu()
 
             NestMain.Show_content_menu()
+
+        End Function
+
+        ' Progress Window Logic Start
+
+        Public Function set_progress(progress As Integer, info As String)
+
+            ProgressBar.Progress = progress
+            ProgressBar.ProgressText = info
+
 
         End Function
 
@@ -217,6 +222,14 @@ Public Class NestMain
 
         ' Sending to Port start End
 
+
+        Public Function set_toastMessage(ms As String)
+            msgChache = ms
+        End Function
+        Public Function show_toast()
+            NotificationManager.Show(NestMain, msgChache, Color.Green, 2000)
+            msgChache = ""
+        End Function
 
     End Class
 

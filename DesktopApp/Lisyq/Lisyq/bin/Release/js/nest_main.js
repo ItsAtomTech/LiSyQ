@@ -1118,7 +1118,7 @@ function generateTMcontentblock(data){
 			
 			sub_track.style.backgroundColor = colorCode+"50";
 			// sub_track.addEventListener("contextmenu", function (e){}, false);
-			console.log(content_data);
+			// console.log(content_data);
 
 			div_details.classList.add("content_details_inline");
 
@@ -1298,7 +1298,13 @@ function reposition_subtrack(){
 		var selected_item = selected_content.getAttribute('content_id');
 	
 		if(movement <= 0){
-			// push_undo("subtrack", "edit", selected_track_index, decople_data(timeline_data[selected_track_index].sub_tracks[selected_item]), selected_item);
+			
+			TimelineSequence
+			
+			
+			
+			
+			push_undo("subtrack", "edit", selected_track_index, decople_data(TimelineSequence[selected_item]), selected_item);
 		}
 	
 		var the_element = content_id_block;
@@ -2001,16 +2007,19 @@ function set_delay_timeline(val){
 set_delay_timeline();
 
 // ==============================
-//Undo Redo Section =============
+// Undo Redo Section =============
 // ==============================
 
 function TimelineUndo(){
 	undo();
+	showToast("Undid Previus Changes");
 }
 
 
 function TimelineRedo(){
 	redo();
+	showToast("Restored Undone Prev. Changes");
+
 }
 
 
@@ -2018,7 +2027,7 @@ function TimelineRedo(){
 function remove_content(data, com){
 	
 	remove_subtrack(data,com,silent=true);
-	console.log(data);
+	// console.log(data);
 }
 
 
@@ -2026,12 +2035,22 @@ function addToNestTimeline(data, com=undefined, type){
 	
 	let contentId = data.track_data[0].uid;	
 	add_to_nesttimeline(contentId,"undo",data.track_data[0]);
-	console.log(contentId);
-	
+	// console.log(contentId);
 	
 }
 
-
+function modifySubtract(data, com, type){
+	let subIndex = parseInt(data.subtrack_index);
+	
+	if(subIndex < 0){
+		return;
+	}
+	let dataSub = data.track_data;
+	TimelineSequence[subIndex] = decople_data(dataSub);
+		// console.log(data, data.subtrack_index);
+	loadTimeline();
+	
+}
 
 
 

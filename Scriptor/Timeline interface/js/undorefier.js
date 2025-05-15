@@ -23,6 +23,9 @@ function get_undo(){
 	
 	if(undo_stack.length <= 0){
 		console.log("No undo item left");
+		
+		try{showToast("No Undo item left")}catch(e){};
+
 		return false;
 	}
 
@@ -39,6 +42,9 @@ function get_undo(){
 function get_redo(data){
 	if(redo_stack.length <= 0){
 		console.log("No redo item left");
+		
+		try{showToast("No Redo item left")}catch(e){};
+		
 		return false;
 	}
 
@@ -158,7 +164,13 @@ function undo(){
 				var parent_node = parentTrack(idx);			
 					selected_content = parent_node.querySelector('[content_id="'+undo_data.data.subtrack_index[exIndex]+'"]');
 							
-					modify_sub_track(undo_data.data.track_data[exIndex],'undo');
+					
+					if(unredoType == "nested"){
+						modifySubtract(undo_data.data,"undo");
+					}else{
+						modify_sub_track(undo_data.data.track_data[exIndex],'undo');
+					}
+					
 					
 					exIndex++;
 				}
@@ -170,7 +182,14 @@ function undo(){
 				var parent_node = parentTrack(undo_data.data.index);			
 					selected_content = parent_node.querySelector('[content_id="'+undo_data.data.subtrack_index+'"]');
 							
-					modify_sub_track(undo_data.data.track_data,'undo');
+							
+					if(unredoType == "nested"){
+						modifySubtract(undo_data.data,"undo");
+					}else{
+						modify_sub_track(undo_data.data.track_data,'undo');
+	
+					}
+							
 				
 			};
 			

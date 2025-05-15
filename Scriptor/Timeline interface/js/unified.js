@@ -415,11 +415,17 @@ async function show_loading(total,current,info){
 		console.log("Progress: ", pr);
 		
 	try{
-		window.chrome.webview.hostObjects.NativeObject.set_progress(pr, info);
-		window.chrome.webview.hostObjects.NativeObject.show_progress();
+		window.chrome.webview.hostObjects.NativeObject.set_progress(parseInt(pr), info);
+		
+		window.chrome.webview.hostObjects.NativeObject.show_progress()    
+		.then(resultx => {})
+		.catch(error => {
+			console.log(error);
+			// reject(error);
+		});
 	}catch(e){
 	//
-	
+		console.log(e);
 	
 	
 	}
@@ -438,6 +444,17 @@ function finish_loading(){
 
 }
 
+
+function showToast(message=""){
+	try{
+		window.chrome.webview.hostObjects.NativeObject.set_toastMessage(message);
+		window.chrome.webview.hostObjects.NativeObject.show_toast();
+	}catch(e){
+	//
+	}
+	
+	
+}
 
 
 
