@@ -316,6 +316,16 @@ Public Class Main
             Return True
         End Function
 
+        Public msgChache As String
+        Public Function set_toastMessage(ms As String)
+            msgChache = ms
+        End Function
+        Public Function show_toast()
+            NotificationManager.Show(Main, msgChache, Color.Green, 2000)
+            msgChache = ""
+        End Function
+
+
 
     End Class
 

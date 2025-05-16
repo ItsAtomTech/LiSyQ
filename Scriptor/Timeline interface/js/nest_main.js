@@ -1884,7 +1884,7 @@ async function loadTimelineProject(){
 	}
 	
 	
-	//Regenerate All Emp
+	//Regenerate All Empty
 	
 	for(let i = 0; i < TimelineData.length ;i++){
 		show_loading(TimelineData.length, i+1, "Regenerating Data of Project Files...");
@@ -1894,6 +1894,7 @@ async function loadTimelineProject(){
 	}
 	finish_loading();
 	
+	reset_undo_redo();
 	
 	//Generate Views and UI
 	generateTimelineListView();
@@ -2032,9 +2033,18 @@ function remove_content(data, com){
 
 
 function addToNestTimeline(data, com=undefined, type){
+	let contentId;
+
+	if(com == "undo"){
+		contentId = data.track_data[0].uid;
+		add_to_nesttimeline(contentId,"undo",data.track_data[0]);
+	}else{
+		contentId = data.track_data.uid;
+		add_to_nesttimeline(contentId,"redo",data.track_data);
+		
+	}
 	
-	let contentId = data.track_data[0].uid;	
-	add_to_nesttimeline(contentId,"undo",data.track_data[0]);
+
 	// console.log(contentId);
 	
 }

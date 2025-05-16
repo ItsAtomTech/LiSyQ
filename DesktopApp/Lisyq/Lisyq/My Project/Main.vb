@@ -80,7 +80,7 @@ Public Class Main
     <ComVisible(True)>
     Public Class WebJsObject
 
-
+        Public msgChaches As String
         Dim phc As Integer
 
         Public Function Onready() As String
@@ -263,18 +263,25 @@ Public Class Main
 
         ' Progress Window End
 
-        Public msgChache As String
+
 
         Public Function set_toastMessage(ms As String)
-            msgChache = ms
+            msgChaches = ms
         End Function
+
         Public Function show_toast()
-            NotificationManager.Show(Main, msgChache, Color.Green, 2000)
-            msgChache = ""
+            showLocalTaost(msgChaches)
+            msgChaches = ""
         End Function
 
 
     End Class
+
+
+    Public Sub showLocalToast(md As String)
+        NotificationManager.Show(Me, msgChache, Color.Green, 2000)
+    End Sub
+
 
     Private Sub ToolStripMenuItem1_Click(sender As Object, e As EventArgs) Handles ToolStripMenuItem1.Click
         WebView21.ExecuteScriptAsync("edit_template()")

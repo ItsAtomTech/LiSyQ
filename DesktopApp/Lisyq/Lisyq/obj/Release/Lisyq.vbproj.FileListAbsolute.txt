@@ -6,7 +6,6 @@ D:\Projects\Windows\LiSyQ\DesktopApp\Lisyq\Lisyq\bin\Release\Lisyq.xml
 D:\Projects\Windows\LiSyQ\DesktopApp\Lisyq\Lisyq\bin\Release\Microsoft.Web.WebView2.Core.xml
 D:\Projects\Windows\LiSyQ\DesktopApp\Lisyq\Lisyq\bin\Release\Microsoft.Web.WebView2.WinForms.xml
 D:\Projects\Windows\LiSyQ\DesktopApp\Lisyq\Lisyq\bin\Release\Microsoft.Web.WebView2.Wpf.xml
-D:\Projects\Windows\LiSyQ\DesktopApp\Lisyq\Lisyq\obj\Release\Lisyq.vbproj.AssemblyReference.cache
 D:\Projects\Windows\LiSyQ\DesktopApp\Lisyq\Lisyq\obj\Release\Lisyq.Form1.resources
 D:\Projects\Windows\LiSyQ\DesktopApp\Lisyq\Lisyq\obj\Release\Lisyq.Main.resources
 D:\Projects\Windows\LiSyQ\DesktopApp\Lisyq\Lisyq\obj\Release\Lisyq.Resources.resources
