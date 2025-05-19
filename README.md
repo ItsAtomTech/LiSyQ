@@ -45,11 +45,12 @@ The LiSyQ Project is using:
 ## Installation
 
 ##### For Non-Coding users 
-- You can download the Installer at this link:  [Media Fire Folder](https://www.mediafire.com/folder/frpofhcy7vs31/LiSyQ) 
+- You can download the Installer at this link:  [Release](https://github.com/ItsAtomTech/LiSyQ/releases) 
 
-Install the dependencies before running, we included the last version used to build the Project, links would be updated as well.
+Install the dependencies before running, we included the last version used to build the Project, only install dependencies if running Win 7 or 8.1, dependencies are already baked in to Win10 and 11 Clean Install, but if that's not the case we got you covered. Links would be updated as well.
 
-
+- Dependencies Installer: [Mediafire Folder]
+(https://www.mediafire.com/folder/ecxlt9b815f7u/Dependencies)
 
 ##### For Coders and Devs
 
