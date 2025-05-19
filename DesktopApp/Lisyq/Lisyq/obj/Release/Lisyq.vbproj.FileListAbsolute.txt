@@ -46,3 +46,4 @@ D:\Projects\Windows\LiSyQ\DesktopApp\Lisyq\Lisyq\bin\Release\Microsoft.Web.WebVi
 D:\Projects\Windows\LiSyQ\DesktopApp\Lisyq\Lisyq\bin\Release\Microsoft.Web.WebView2.Wpf.dll
 \\ATOM2-PC\Projects\Windows\LiSyQ\DesktopApp\Lisyq\Lisyq\obj\Release\Lisyq.SplashScreen_legacy.resources
 D:\Projects\Windows\LiSyQ\DesktopApp\Lisyq\Lisyq\obj\Release\Lisyq.NestMain.resources
+D:\Projects\Windows\LiSyQ\DesktopApp\Lisyq\Lisyq\obj\Release\Lisyq.vbproj.AssemblyReference.cache
