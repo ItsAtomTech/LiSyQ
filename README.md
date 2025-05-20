@@ -37,6 +37,7 @@ The LiSyQ Project is using:
 - HTML5 and CSS - we have written every single bit in pure code from this, not bloated, web standards.
 - MicrosoftEdge Webview2 - A Microsoft chromium based web engine  
 - [Viselect](https://simonwep.github.io/selection) - A high performance and lightweight library to add a visual way of selecting elements, just like on your Desktop. We have used it for the Drag Select feature on the Timeline.
+- [ContextmenuJS](https://github.com/m-thalmann/contextmenujs) - a simple JavaScript library, to display custom contextmenus (right-click). We used this for web enchanced context menus to support online edition.
 - _we are still documenting them so keep up!_
 
 
