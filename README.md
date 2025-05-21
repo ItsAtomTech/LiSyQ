@@ -12,7 +12,7 @@ It is designed to work with the Arduino Ecosystem to control custom-made light f
 
 - **Arduino_ino** - this is where all Arduino sketches are placed
 - **DesktopApp** - This is where the VB Project is Located
-- **Scriptor** - If you are planning to build differnt native environment for the Project, you can use the source code of the web based only source files
+- **Scriptor** - If you are planning to build different native environment for the Project, you can use the source code of the web based only source files
 
 ## Features
 
@@ -38,7 +38,7 @@ The LiSyQ Project is using:
 - MicrosoftEdge Webview2 - A Microsoft chromium based web engine  
 - [Viselect](https://simonwep.github.io/selection) - A high performance and lightweight library to add a visual way of selecting elements, just like on your Desktop. We have used it for the Drag Select feature on the Timeline.
 - [ContextmenuJS](https://github.com/m-thalmann/contextmenujs) - a simple JavaScript library, to display custom contextmenus (right-click). We used this for web enchanced context menus to support online edition.
-- _we are still documenting them so keep up!_
+
 
 
 
