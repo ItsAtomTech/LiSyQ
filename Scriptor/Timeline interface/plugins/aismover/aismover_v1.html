@@ -83,21 +83,42 @@
                 <div class="modal_row">
 				
 					<div class="modal_colm position_panel">
-						<div class="position_pad_elm">
-						
+                    
+                        <div class="modal_panel pos_options_range">
+                        
+                                <select class="effect_choice" id="position_mode" onclick="modeChange(this)">
+                                    <option value="raw" selected>Raw</option>
+                                    <option value="preset">Presets</option>
+                                    <option value="????" disabled>Coming Soon</option>
+                                </select>
+                        </div>
+                    
+                    <div>
+                    
+              
+                    
+						<div class="position_pad_elm" id="position_pad">
+                            <div class="crosshair_elm" id="pos_crosshair"> </div>
 						</div>
 						
-						<div class="modal_panel pos_options_col">
-							<input type="range" />
-							<input type="range" />
+                        
+                        
+						<div class="modal_panel pos_options_range">
+							<div> <label> Pan </label><input oninput="updateFromRange()" type="range" min="0" id="pan_slider" /> <span class="value_disp" id="pan_disp"> 0 </span></div>
+                            
+							<div> <label> Tilt</label><input type="range" oninput="updateFromRange()" id="tilt_slider" /> <span class="value_disp" id="tilt_disp"> 0 </span></div>
+			
 						</div>
 						
+                        
+                        
+                        
 						<div class="modal_panel pos_options_col">
-							<div class="my_buttons" onclick="">A</div>
+							<div class="my_buttons" onclick="setPositionPoint(0)">A</div>
 							
 							<span class="color_option_button" title="Options" onclick="pos_options('show')"> &hArr; </span>
 							
-							<div class="my_buttons" onclick="">B</div>
+							<div class="my_buttons" onclick="setPositionPoint(1)">B</div>
 						</div>
 						
 						<div class="position_options_drawer primary_color primary_background" id="pos_options" style="display: none;">
@@ -109,7 +130,9 @@
                         </div>
 						
 						
-					</div>
+                    </div>
+                    
+                </div>
 				
 				
                     <div class="modal_colm color_panel">

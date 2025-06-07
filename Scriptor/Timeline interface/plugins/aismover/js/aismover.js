@@ -17,6 +17,11 @@ var aismover_time_line = [];
 var selected_stabs;
 var idf;
 
+
+let MAX_PAN = 540;//degress
+let MAX_TILT = 270;//degress
+
+
 //Preview
 var is_preview = false;
 var preview_play = false;
@@ -39,6 +44,11 @@ function _(ghf){
 	}	
 		
 }
+
+function decople(dat){
+	return JSON.parse(JSON.stringify(dat));
+}
+
 
 function change_secs_sacle(s){
 	
@@ -270,8 +280,8 @@ function save_key(){
 			"color_end": (_("c_end").value).replace(/#/gi, ""),
 			"bypass_global_effect": _("effect_bypass").checked,
 			"keyframe_aismover_effect": _("keyframe_effect_selector").value,
-			"keyframe_aismover_effect_len": _("keyframe_seconds_len_effect").value * 33	
-			
+			"keyframe_aismover_effect_len": _("keyframe_seconds_len_effect").value * 33	,
+			"position_data": decople(positionKeyData),
 		}
 		
 		add_time_stab(start,width,aismover_time_line.length);
@@ -288,7 +298,8 @@ function save_key(){
 			"color_end": (_("c_end").value).replace(/#/gi, ""),
 			"bypass_global_effect": _("effect_bypass").checked,
 			"keyframe_aismover_effect": _("keyframe_effect_selector").value,
-			"keyframe_aismover_effect_len": _("keyframe_seconds_len_effect").value * 33
+			"keyframe_aismover_effect_len": _("keyframe_seconds_len_effect").value * 33,
+			"position_data": decople(positionKeyData),
 			
 		}
 		
@@ -334,6 +345,8 @@ function refresh_timeline(){
 	
 }
 
+// To-Do: Load Position Data to Position Options Panel
+
 function show_keyframe_man(fr){
 	
 	_("key_man").style.display = "initial";
@@ -359,7 +372,7 @@ function show_keyframe_man(fr){
 		
 		_("r_button").style.display = "none";
 		_("copy_frame").style.display = "none";
-	
+		
 		
 	}else if(fr == "stabs"){
 		
@@ -834,7 +847,178 @@ function load_from_host(df){
 	
 }
 
+// ==========================
+// Position Pad and Related 
+// ==========================
+let pad = _("position_pad");
+let crosshair = _("pos_crosshair");
+
+let isDragging = false;
+
+let crosshairPercent = { x: 0, y: 0 }; // 💚 Percentage position
+
+let positionsSets = [];
+let selectedPositionPoint = 0;
+let positionMode = "raw"
+
+
+let positionKeyData = {"mode":positionMode, "position_set": positionsSets}
+
+let hasPosChanges = false;
+
+function updateCrosshairFromCoords(x, y) {
+    let rect = pad.getBoundingClientRect();
+    let relX = x - rect.left;
+    let relY = y - rect.top;
+
+    // Clamp within bounds
+    relX = Math.max(0, Math.min(relX, rect.width));
+    relY = Math.max(0, Math.min(relY, rect.height));
+
+    let crosshairWidth = crosshair.offsetWidth;
+    let crosshairHeight = crosshair.offsetHeight;
+
+    let drawX = relX - crosshairWidth / 2;
+    let drawY = relY - crosshairHeight / 2;
+
+    // Clamp drawing position so crosshair stays fully inside
+    drawX = Math.max(0, Math.min(drawX, rect.width - crosshairWidth));
+    drawY = Math.max(0, Math.min(drawY, rect.height - crosshairHeight));
+
+    crosshair.style.position = "absolute";
+    crosshair.style.left = (drawX - 2)+"px";
+    crosshair.style.top =  (drawY - 2) +"px";
+
+    crosshairPercent.x = (relX / rect.width) * 100;
+    crosshairPercent.y = (relY / rect.height) * 100;
+	
+	setDisptext(crosshairPercent.x, crosshairPercent.y);
+	hasPosChanges = true;
+    // console.log(`% X: ${crosshairPercent.x.toFixed(2)}, % Y: ${crosshairPercent.y.toFixed(2)}`);
+}
+
+
+pad.addEventListener("mousedown", function (event) {
+    isDragging = true;
+    updateCrosshairFromCoords(event.clientX, event.clientY);
+	
+});
+
+pad.addEventListener("mousemove", function (event) {
+    if (isDragging) {
+        updateCrosshairFromCoords(event.clientX, event.clientY);
+    }
+});
+
+document.addEventListener("mouseup", function () {
+    isDragging = false;
+});
+
+// Touch support
+pad.addEventListener("touchstart", function (event) {
+    isDragging = true;
+    let touch = event.touches[0];
+    updateCrosshairFromCoords(touch.clientX, touch.clientY);
+});
+
+pad.addEventListener("touchmove", function (event) {
+    if (isDragging) {
+        let touch = event.touches[0];
+        updateCrosshairFromCoords(touch.clientX, touch.clientY);
+    }
+});
+
+document.addEventListener("touchend", function () {
+    isDragging = false;
+});
+
+
+
+
+function setCrosshairByPercent(xPercent, yPercent) {
+    let rect = pad.getBoundingClientRect();
+
+    // Clamp percentages between 0–100
+    xPercent = Math.max(0, Math.min(xPercent, 100));
+    yPercent = Math.max(0, Math.min(yPercent, 100));
+
+    let x = (xPercent / 100) * rect.width;
+    let y = (yPercent / 100) * rect.height;
+
+    let crosshairWidth = crosshair.offsetWidth;
+    let crosshairHeight = crosshair.offsetHeight;
+
+    let drawX = x - crosshairWidth / 2;
+    let drawY = y - crosshairHeight / 2;
+
+    drawX = Math.max(0, Math.min(drawX, rect.width - crosshairWidth));
+    drawY = Math.max(0, Math.min(drawY, rect.height - crosshairHeight));
+
+    crosshair.style.position = "absolute";
+    crosshair.style.left = `${drawX}px`;
+    crosshair.style.top = `${drawY}px`;
+
+    crosshairPercent.x = xPercent;
+    crosshairPercent.y = yPercent;
+
+	setDisptext(crosshairPercent.x, crosshairPercent.y);
+
+    console.log(`Moved crosshair to % X: ${xPercent.toFixed(2)}, % Y: ${yPercent.toFixed(2)}`);
+}
+
+
+function setPosition(xprct, yprct){
+	setCrosshairByPercent(xprct, yprct);
+}
+
+
+function setDisptext(perx, pery){
+	let pan_value = parseInt(perx * MAX_PAN / 100);
+	_("pan_slider").max = MAX_PAN;
+	_("pan_disp").innerText = pan_value;
+	_("pan_slider").value = pan_value;
+	
+	let tilt_value = parseInt(pery * MAX_TILT / 100);
+	_("tilt_slider").max = MAX_TILT;
+	_("tilt_disp").innerText = tilt_value;
+	_("tilt_slider").value = tilt_value;
+}
+
+
+function updateFromRange(){
+	
+	let panValue = parseInt(_("pan_slider").value);
+	let tiltValue = parseInt(_("tilt_slider").value);
+	let perPan = (panValue / MAX_PAN) * 100;
+	let perTilt = (tiltValue / MAX_TILT) * 100;
+	
+	setPosition(perPan, perTilt);
+	hasPosChanges = true;
+	
+}
+
+
+
+let prevSelectedPosIndex = 0;
+function setPositionPoint(index){
+	selectedPositionPoint = index;
+	
+	if(positionsSets[index] && hasPosChanges == false){
+		setPosition(positionsSets[index].pan, positionsSets[index].tilt);
+	}
+	
+	if(index == prevSelectedPosIndex){
+			positionsSets[index] = decople({"pan":crosshairPercent.x, "tilt": crosshairPercent.y});
+	}
+
+	prevSelectedPosIndex = index;
+	hasPosChanges = false;
+	
+}
+
+
 // Shorcuts
 
 	
 
+setPosition(50, 50); //Default pos
