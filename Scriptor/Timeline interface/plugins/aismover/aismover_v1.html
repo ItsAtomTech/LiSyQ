@@ -16,10 +16,10 @@
                 <div class="close_button_amb" onclick="sendTo('stop_media_prev');sendTo('close_plugin','')">&times;</div>
 
                 <div class="panel_con">
-                    <div class="number_picker"><span> Length: </span><input type="number" max="60" min="0.1" id="seconds_len" step="0.1" value="1" onchange="change_secs_sacle(this.value)" /> <span>Secs.</span></div>
+                    <div class="number_picker small"><span> Length: </span><input type="number" max="60" min="0.1" id="seconds_len" step="0.1" value="1" onchange="change_secs_sacle(this.value)" /> <span>Secs.</span></div>
                 </div>
 
-                <div class="panel_con" id="scroll_manner">
+                <div class="panel_con centered_panel" id="scroll_manner">
                     <div class="keyframe_con" id="keyframe_container" onmousedown="click_on_time_con(this)">
                         <div class="line_key_time" id="line_key_time" onmousedown="click_on_time_bar(this)" onmousemove="show_time(this);" onmouseleave="empty_display();"></div>
                         <div class="preview_head" id="preview_head"></div>
@@ -74,7 +74,7 @@
 
             <!-- Modals -->
 
-            <div class="modal_view" style="display: initial;" id="key_man">
+            <div class="modal_view" style="display: none;" id="key_man">
          
                 <div class="modal_title">Manage Keyframe 
 				       <div class="close_button_amb" onclick="close_key_man()">&times;</div>
@@ -88,7 +88,6 @@
                         
                                 <select class="effect_choice" id="position_mode" onclick="modeChange(this)">
                                     <option value="raw" selected>Raw</option>
-                                    <option value="preset">Presets</option>
                                     <option value="????" disabled>Coming Soon</option>
                                 </select>
                         </div>
@@ -128,8 +127,23 @@
                             <div class="my_buttons" onclick="pos_command('swap')" title="Swap Start and End">Swap</div>
                             <div class="my_buttons" onclick="pos_command('b')" title="End color copied to Start">A <- B</div>
                         </div>
-						
-						
+                    
+                    <div class="modal_panel pos_options_range">
+                            <div class="medium "> Effects:   </div>
+                            <select class="effect_choice" id="effect_selection" onclick="effectChange(this)">
+                                <option value="" >None</option>
+                                <option value="wave" >Wave</option>
+                                <option value="circle" >Circle</option>
+                                <option value="????" disabled>Coming Soon</option>
+                            </select>
+                            
+                            <div par="speed"> <label> Speed </label><input onchange="updateEffectParams(this,'effect_speed_disp')" oninput="updateEffectParams(this,'effect_speed_disp')" type="range" partype="speed" min="0" max="20" value="0" id="effect_speed" /> <span class="value_disp" id="effect_speed_disp"> 0 </span></div>
+                            
+							<div par="size"> <label> Size</label><input type="range" partype="size" max="20" onchange="updateEffectParams(this,'effect_size_disp')" oninput="updateEffectParams(this,'effect_size_disp')" id="effect_size" value="0" /> <span class="value_disp" id="effect_size_disp"> 0 </span></div>
+                            
+                    </div>
+                        
+                        
                     </div>
                     
                 </div>
@@ -157,10 +171,7 @@
                             <input type="number" max="60" min="0" id="duration_" step="0.01" class="seconds_select" value="" maxlength="5" placeholder="Duration" onchange="set_end_at(this.value)" title="Duration for the Keyframe" />
                         </div>
 
-                        <div class="modal_panel">
-                            <div class="my_buttons" onclick="save_key()">Apply</div>
-                            <div class="my_buttons" id="r_button" onclick="remove_key()">Remove</div>
-                        </div>
+
 
                         <!-- Prev color picks -->
                         <div class="color_drawer primary_color primary_background" id="color_drawer" style="display: none;">
@@ -200,7 +211,20 @@
                         </div>
                     </div>
                 </div>
+
+
+                <div class="modal_row bottom_frame_actions">
+                        <div class="modal_panel">
+                            <div class="my_buttons" onclick="save_key()">Apply</div>
+                            <div class="my_buttons" id="r_button" onclick="remove_key()">Remove</div>
+                        </div>
+                </div>
+                
+                
             </div>
+            
+
+            
         </div>
 		
     </body>

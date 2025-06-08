@@ -44,8 +44,8 @@ body{
 	height:100%;
 	position:relative;
 	min-width:200px;
-	max-width:500px;
-	max-height:470px;
+	max-width:700px;
+	max-height:550px;
 	/* border:solid red 1px; */
 	border-radius:10px;
 	background:rgba(30,30,30,1);
@@ -85,6 +85,15 @@ body{
 }
 
 
+.centered_panel{
+	display:flex;
+	align-items:center;
+	justify-content:center;
+	
+	
+	
+}
+
 
 /* Elements */
 .number_picker{
@@ -99,7 +108,7 @@ body{
 	display:flex;
 	align-items:center;
 	justify-content:left;
-	font-size:0.6em;
+	font-size:0.7em;
 }
 
 #seconds_len{
@@ -382,7 +391,7 @@ opacity:0.8;
 	min-width:150px;
 	max-width:600px;
 	min-height:250px;
-	max-height:500px;
+	max-height:550px;
 	/* border:solid red 1px; */
 	position:absolute;
 	background:rgba(35,35,35,1);
@@ -398,12 +407,14 @@ opacity:0.8;
 
 .modal_title{
 	width:100%;
-	position:relative;
+	position:sticky;
+	top:0px;
 	padding:5px;
 	font-size:0.9em;
 	min-height:30px;
 	border-bottom:solid gray 2px;
-	
+	background:rgba(20,20,20,0.9);
+	z-index:10;
 	
 }
 
@@ -425,6 +436,14 @@ opacity:0.8;
 	
 	display:flex;
 	flex-direction:row;
+	
+}
+
+.bottom_frame_actions{
+	position:sticky;
+	bottom:0px;
+	background:rgba(40,40,40,1);
+	
 	
 }
 
@@ -751,6 +770,12 @@ opacity:0.8;
 
 .normal{
 	font-size:1em;
+	
+	
+}
+
+.medium{
+	font-size:1.3em;
 	
 	
 }

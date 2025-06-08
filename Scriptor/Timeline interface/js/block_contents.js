@@ -562,9 +562,7 @@ function set_coords_context(x,y){//This function sets the X,Y coords for Native 
 	try{
 		window.chrome.webview.hostObjects.NativeObject.set_mouse_coords(x,y);
 	}catch(e){
-		
 		console.log("This is not supported in this browser")
-		
 	}
 	
 	

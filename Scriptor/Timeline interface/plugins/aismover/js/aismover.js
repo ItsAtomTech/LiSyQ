@@ -46,7 +46,16 @@ function _(ghf){
 }
 
 function decople(dat){
-	return JSON.parse(JSON.stringify(dat));
+	let dataTo;
+	
+	try{
+		dataTo = structuredClone(dat);
+	}catch(e){
+		dataTo = JSON.parse(JSON.stringify(dat));
+
+	}
+	
+	return dataTo; 
 }
 
 
@@ -264,6 +273,7 @@ function cap(z){
 }
 
 function save_key(){
+	positionKeyData.position_set = decople(positionsSets);	
 	
 	if(mode == "add"){
 		
@@ -289,7 +299,7 @@ function save_key(){
 		aismover_time_line.push(key_frame);	
 		
 	}else if(mode == "edit"){
-				
+			
 		var key_frame = {
 			
 			"start_at": cap(_("s_start").value),
@@ -314,7 +324,7 @@ function save_key(){
 	save_prev_colors([_("c_start").value , _("c_end").value])
 	
 	close_key_man();
-	
+	positionsSets.length;
 }
 
 function remove_key(){
@@ -374,6 +384,13 @@ function show_keyframe_man(fr){
 		_("copy_frame").style.display = "none";
 		
 		
+		// Position Pad
+		
+		
+		setPosition(50,50);
+		setPositionPoint(0);
+		setPositionPoint(1);
+		
 	}else if(fr == "stabs"){
 		
 		_("s_start").value = selected_stabs.start_at;
@@ -394,6 +411,13 @@ function show_keyframe_man(fr){
 		_("effect_bypass").checked = selected_stabs.bypass_global_effect;
 		
 		mode = "edit";
+		
+		//Position pad load to view
+		loadPosFromData();
+		
+		
+		
+		
 	}else{
 		
 		_("s_start").value = 0;
@@ -862,7 +886,7 @@ let selectedPositionPoint = 0;
 let positionMode = "raw"
 
 
-let positionKeyData = {"mode":positionMode, "position_set": positionsSets}
+let positionKeyData = {"mode":positionMode, "position_set": positionsSets, "effect": "",}
 
 let hasPosChanges = false;
 
@@ -963,7 +987,7 @@ function setCrosshairByPercent(xPercent, yPercent) {
 
 	setDisptext(crosshairPercent.x, crosshairPercent.y);
 
-    console.log(`Moved crosshair to % X: ${xPercent.toFixed(2)}, % Y: ${yPercent.toFixed(2)}`);
+    // console.log(`Moved crosshair to % X: ${xPercent.toFixed(2)}, % Y: ${yPercent.toFixed(2)}`);
 }
 
 
@@ -1013,8 +1037,61 @@ function setPositionPoint(index){
 
 	prevSelectedPosIndex = index;
 	hasPosChanges = false;
+}
+
+
+
+function loadPosFromData(index=0){
+		positionKeyData = decople(selected_stabs.position_data);
+		positionsSets = positionKeyData.position_set;
+	let positions = positionKeyData.position_set[index];
+	
+		//console.log(positionKeyData);
+	try{
+		setPosition(positions.pan, positions.tilt);
+	}catch(e){
+		setPosition(50, 50); //Put to center if no position data is present
+	}
+	
+	
+	if(positionKeyData.effect || positionKeyData.effect.length > 0){
+		_("effect_selection").value = positionKeyData.effect;
+		_("effect_speed").value = positionKeyData.speed;
+		_("effect_size").value = positionKeyData.size;		
+		_("effect_speed_disp").innerText = positionKeyData.speed;
+		_("effect_size_disp").innerText = positionKeyData.size;
+	}else{
+		_("effect_selection").value = "";
+		_("effect_speed").value = 0;
+		_("effect_size").value = 0;		
+		
+		_("effect_speed_disp").innerText = 0;
+		_("effect_size_disp").innerText = 0;
+	}
+	
 	
 }
+
+
+function effectChange(elm){
+	let valueofEff = elm.value;
+	positionKeyData.effect = valueofEff;
+}
+
+const listOfParams = ["size", "speed"];
+function updateEffectParams(elm, disp){
+	let svalue = parseInt(elm.value);
+	try{
+		_(disp).innerText = svalue;
+	}catch(e){
+		//--
+	}
+	let partype = (elm.getAttribute("partype"));
+	if(listOfParams.includes(partype)){
+		positionKeyData[partype] = svalue;
+	}
+}
+
 
 
 // Shorcuts
