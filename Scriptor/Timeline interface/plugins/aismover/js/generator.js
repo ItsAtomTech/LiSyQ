@@ -1,201 +1,253 @@
-var aismover_time_line = [];
-var colors_array = []; // store generated data temp
-var aismover_pixel_length;
+let aismover = {
+    time_line: [],
+    colors_array: [],
+    pixel_length: 0,
 
-// Effects Vars
-var aismover_pulse_effect = false;
-var aismover_strobe_effect = false;
-var other_effect;
+    pulse_effect: false,
+    strobe_effect: false,
+    other_effect: "none",
 
-var aismover_fade_counter = 1;
-var aismover_fade_amount = 1;
-var aismover_effect_len = 1;
+    fade_counter: 1,
+    fade_amount: 1,
+    effect_len: 1,
 
-var keyframe_aismover_fade_counter = 1;
-var keyframe_aismover_fade_amount = 1;
-var keyframe_aismover_effect_len = 1;
+    keyframe_fade_counter: 1,
+    keyframe_fade_amount: 1,
+    keyframe_effect_len: 1,
+    
+    DEFAULT_POSITION: 50, //Percent
+    
+    beating_effect: {
+        beat_time: 0,
+        thresehold: 33,
+        effect_amount: 35,
 
-// Called by the timeline for regeneration
-function aismover_main(data) {
-    var delinked = JSON.parse(data);
-    return aismover_generate_data(delinked);
-}
+        beat: function (interval) {
+            this.beat_time += 1 / interval;
+        },
 
-// Regeneration function
-function aismover_generate_data(data) {
-    aismover_fade_amount = 1;
-    aismover_fade_counter = 1;
-    beating_aismover_effect.reset_clk();
+        get_beat: function () {
+            if (this.beat_time > this.thresehold) this.beat_time = 0;
+            return 1 - ((this.beat_time / this.thresehold) * this.effect_amount * 0.01);
+        },
 
-    keyframe_aismover_fade_counter = 1;
-    keyframe_aismover_fade_amount = 1;
+        auto_beat: function (inter) {
+            this.beat(inter);
+            return this.get_beat();
+        },
 
-    aismover_time_line = JSON.parse(data.raw_data_points);
-    aismover_pixel_length = data.seconds_length * 33;
-    aismover_effect_len = data.effect_len;
-    aismover_activate_effect(data.effect);
+        reset_clk: function () {
+            this.beat_time = 0;
+        }
+    },
 
-    colors_array.length = 0;
+    main: function (data) {
+        let delinked = JSON.parse(data);
+        return this.generate_data(delinked);
+    },
 
-    aismover_calculate_data();
+    generate_data: function (data) {
+        this.fade_amount = 1;
+        this.fade_counter = 1;
+        this.beating_effect.reset_clk();
 
-    return colors_array;
-}
+        this.keyframe_fade_counter = 1;
+        this.keyframe_fade_amount = 1;
 
-function aismover_calculate_data() {
-    for (let sd = 0; sd <= aismover_pixel_length; sd++) {
-        colors_array[sd] = "000000";
-		let keyframe_aismover_effect = "none";
-		
-		
-        for (let tl = 0; tl < aismover_time_line.length; tl++) {
-            if (aismover_time_line[tl].start_at * 33 <= sd && sd <= aismover_time_line[tl].end_at * 33) {
-                let start_color_array = aismover_split_solor(aismover_time_line[tl].color_start);
-                let end_color_array = aismover_split_solor(aismover_time_line[tl].color_end);
-					
-					keyframe_aismover_effect = "none";
-                
-                let calculated_color = [];
+        this.time_line = JSON.parse(data.raw_data_points);
+        this.pixel_length = data.seconds_length * 33;
+        this.effect_len = data.effect_len;
+        this.activate_effect(data.effect);
 
-                for (let cind = 0; cind < start_color_array.length; cind++) {
-                    let x = parseInt(start_color_array[cind], 16);
-                    let y = parseInt(end_color_array[cind], 16);
-                    let w = sd - aismover_time_line[tl].start_at * 33;
-                    let z = parseInt(aismover_time_line[tl].end_at * 33) - aismover_time_line[tl].start_at * 33;
+        this.colors_array.length = 0;
 
-                    calculated_color[cind] = normalize_ambient(linear_flow(x, y, z, w));
+        this.calculate_data();
 
-                    try {
-                        keyframe_aismover_effect = aismover_time_line[tl].keyframe_aismover_effect;
-                        keyframe_aismover_effect_len = parseFloat(aismover_time_line[tl].keyframe_aismover_effect_len);
+        return this.colors_array;
+    },
 
-                        if (keyframe_aismover_effect === "pulse") {
-                            calculated_color[cind] = normalize_ambient(
-                                parseInt(calculated_color[cind] * pulsed_ambient(keyframe_aismover_effect_len, true))
-                            );
-                        } else if (keyframe_aismover_effect === "strobe") {
-                            calculated_color[cind] = parseInt(
-                                calculated_color[cind] * strobed_ambient(keyframe_aismover_effect_len, true)
-                            );
+    calculate_data: function () {
+        for (let sd = 0; sd <= this.pixel_length; sd++) {
+            this.colors_array[sd] = "000000:~:~";
+            let keyframe_effect = "none";
+
+            for (let tl = 0; tl < this.time_line.length; tl++) {
+                if (this.time_line[tl].start_at * 33 <= sd && sd <= this.time_line[tl].end_at * 33) {
+                    let start_color_array = this.split_color(this.time_line[tl].color_start);
+                    let end_color_array = this.split_color(this.time_line[tl].color_end);
+
+                    
+                    
+                    keyframe_effect = "none";
+
+                    let calculated_color = [];
+                    
+                    
+                    let calculated_position;
+                    calculated_position = this.generatePositionData(this.time_line[tl], sd);
+                    
+                    //loop through all 3 hex color value
+                    for (let cind = 0; cind < start_color_array.length; cind++) {
+                        let x = parseInt(start_color_array[cind], 16);
+                        let y = parseInt(end_color_array[cind], 16);
+                        let w = sd - this.time_line[tl].start_at * 33;
+                        let z = parseInt(this.time_line[tl].end_at * 33) - this.time_line[tl].start_at * 33;
+
+                        calculated_color[cind] = this.normalize_ambient(this.linear_flow(x, y, z, w));
+
+                        try {
+                            keyframe_effect = this.time_line[tl].keyframe_aismover_effect;
+                            this.keyframe_effect_len = parseFloat(this.time_line[tl].keyframe_aismover_effect_len);
+
+                            if (keyframe_effect === "pulse") {
+                                calculated_color[cind] = this.normalize_ambient(
+                                    parseInt(calculated_color[cind] * this.pulsed_ambient(this.keyframe_effect_len, true))
+                                );
+                            } else if (keyframe_effect === "strobe") {
+                                calculated_color[cind] = parseInt(
+                                    calculated_color[cind] * this.strobed_ambient(this.keyframe_effect_len, true)
+                                );
+                            }
+                        } catch (e) {
+                            console.log(e);
                         }
-                    } catch (e) {
-                        console.log(e);
+
+                        let bypass_global = this.time_line[tl].bypass_global_effect;
+                        if (bypass_global !== true) {
+                            if (this.pulse_effect) {
+                                calculated_color[cind] = this.normalize_ambient(
+                                    parseInt(calculated_color[cind] * this.pulsed_ambient(this.effect_len))
+                                );
+                            } else if (this.strobe_effect) {
+                                calculated_color[cind] = parseInt(
+                                    calculated_color[cind] * this.strobed_ambient(this.effect_len)
+                                );
+                            } else if (this.other_effect === "beating") {
+                                calculated_color[cind] = parseInt(
+                                    calculated_color[cind] * this.beating_effect.get_beat(this.effect_len / 33)
+                                );
+                            }
+                        }
                     }
 
-                    let bypass_global_effect = aismover_time_line[tl].bypass_global_effect;
-                    if (bypass_global_effect !== true) {
-                        if (aismover_pulse_effect) {
-                            calculated_color[cind] = normalize_ambient(
-                                parseInt(calculated_color[cind] * pulsed_ambient(aismover_effect_len))
-                            );
-                        } else if (aismover_strobe_effect) {
-                            calculated_color[cind] = parseInt(
-                                calculated_color[cind] * strobed_ambient(aismover_effect_len)
-                            );
-                        } else if (other_effect === "beating") {
-                            calculated_color[cind] = parseInt(
-                                calculated_color[cind] * beating_aismover_effect.get_beat(aismover_effect_len / 33)
-                            );
-                        }
-                    }
+                    this.colors_array[sd] = this.combined_hex(calculated_color)+":"+calculated_position;
                 }
-
-                colors_array[sd] = aismover_combined_hex(calculated_color);
             }
-        }
 
-        if (["pulse", "strobe"].includes(keyframe_aismover_effect)) {
-            if (
-                keyframe_aismover_fade_counter < 1 ||
-                keyframe_aismover_fade_counter > keyframe_aismover_effect_len
-            ) {
-                keyframe_aismover_fade_amount = -keyframe_aismover_fade_amount;
+            if (["pulse", "strobe"].includes(keyframe_effect)) {
+                if (this.keyframe_fade_counter < 1 || this.keyframe_fade_counter > this.keyframe_effect_len) {
+                    this.keyframe_fade_amount = -this.keyframe_fade_amount;
+                }
+                this.keyframe_fade_counter += this.keyframe_fade_amount;
             }
-            keyframe_aismover_fade_counter += keyframe_aismover_fade_amount;
-        }
 
-        if (aismover_pulse_effect || aismover_strobe_effect) {
-            if (aismover_fade_counter < 1 || aismover_fade_counter > aismover_effect_len) {
-                aismover_fade_amount = -aismover_fade_amount;
+            if (this.pulse_effect || this.strobe_effect) {
+                if (this.fade_counter < 1 || this.fade_counter > this.effect_len) {
+                    this.fade_amount = -this.fade_amount;
+                }
             }
+
+            if (this.other_effect === "beating") {
+                this.beating_effect.beat(this.effect_len / 33);
+            }
+
+            this.fade_counter += this.fade_amount;
         }
-
-        if (other_effect === "beating") {
-            beating_aismover_effect.beat(aismover_effect_len / 33);
+    },
+    
+    
+    //function that generated Position Data with Time Derivative
+    generatePositionData: function(data,time){
+        let position_data = data.position_data ? data.position_data : undefined;
+        if(typeof(position_data) != "object"){
+            return undefined;
         }
+        let positionArrays = [];
+        
+        let posStart = position_data.position_set[0] ? position_data.position_set[0]:
+        {"pan": 50, "tilt": 50};
+        
+        let posEnd = position_data.position_set[1] ? position_data.position_set[1]:
+         {"pan": 50, "tilt": 50};
+        
+        let w = time - data.start_at * 33;
+        let z = parseInt(data.end_at * 33) - data.start_at * 33;
 
-        aismover_fade_counter += aismover_fade_amount;
-    }
-}
+        let PAN = this.linear_flow(posStart.pan, posEnd.pan,z, w);
+        let TILT = this.linear_flow(posStart.tilt, posEnd.tilt,z, w);
 
-function linear_flow(x, y, z, w) {
-    return x + ((y - x) * (w / z));
-}
+        // To-Do://Applying Effects at this block
+        
+        
 
-function aismover_combined_hex(fg) {
-    return fg.map(val => aismover_format_zero(parseInt(val).toString(16))).join("");
-}
-
-function aismover_split_solor(cl) {
-    try {
-        return [cl.slice(0, 2), cl.slice(2, 4), cl.slice(4, 6)];
-    } catch (e) {
-        return ["00", "00", "00"];
-    }
-}
-
-function aismover_format_zero(st) {
-    return st.length < 2 ? "0" + st : st;
-}
-
-function normalize_ambient(num) {
-    return Math.max(0, Math.min(255, parseInt(num)));
-}
-
-// Effects
-function pulsed_ambient(fade_length, keyframed) {
-    return keyframed
-        ? keyframe_aismover_fade_counter / fade_length
-        : aismover_fade_counter / fade_length;
-}
-
-function strobed_ambient(fade_length, keyframed) {
-    let fade = keyframed ? keyframe_aismover_fade_amount : aismover_fade_amount;
-    return fade < 0 ? 0 : 1;
-}
-
-let beating_aismover_effect = {
-    beat_time: 0,
-    thresehold: 33,
-    effect_amount: 35,
-
-    beat: function (interval) {
-        this.beat_time += 1 / interval;
+        //Transform from percentage into hex
+        PAN = this.normalize_ambient(parseInt(PAN * 2.55)).toString(16);
+        TILT = this.normalize_ambient(parseInt(TILT * 2.55)).toString(16);
+        
+        PAN = this.format_zero(PAN);        
+        TILT = this.format_zero(TILT);        
+        
+        let generated_data = (PAN+":"+TILT);
+        
+        
+        return generated_data;
+        // console.log(position_data, posStart, posEnd);
+        
+        
+    },
+    
+    
+    linear_flow: function (x, y, z, w) {
+        return x + ((y - x) * (w / z));
     },
 
-    get_beat: function () {
-        if (this.beat_time > this.thresehold) this.beat_time = 0;
-        return 1 - ((this.beat_time / this.thresehold) * this.effect_amount * 0.01);
+    combined_hex: function (fg) {
+        return fg.map(val => this.format_zero(parseInt(val).toString(16))).join("");
     },
 
-    auto_beat: function (inter) {
-        this.beat(inter);
-        return this.get_beat();
+    split_color: function (cl) {
+        try {
+            return [cl.slice(0, 2), cl.slice(2, 4), cl.slice(4, 6)];
+        } catch (e) {
+            return ["00", "00", "00"];
+        }
     },
 
-    reset_clk: function () {
-        this.beat_time = 0;
+    format_zero: function (st) {
+        return st.length < 2 ? "0" + st : st;
+    },
+
+    normalize_ambient: function (num) {
+        return Math.max(0, Math.min(255, parseInt(num)));
+    },
+
+    pulsed_ambient: function (fade_length, keyframed = false) {
+        return keyframed
+            ? this.keyframe_fade_counter / fade_length
+            : this.fade_counter / fade_length;
+    },
+
+    strobed_ambient: function (fade_length, keyframed = false) {
+        let fade = keyframed ? this.keyframe_fade_amount : this.fade_amount;
+        return fade < 0 ? 0 : 1;
+    },
+
+    activate_effect: function (f) {
+        this.pulse_effect = f === "pulse";
+        this.strobe_effect = f === "strobe";
+        this.other_effect = f === "beating" ? "beating" : "none";
+
+        try {
+            let el = _("effect_selector");
+            if (el) el.value = f;
+        } catch (e) {
+            // UI element may not exist
+        }
     }
 };
 
-function aismover_activate_effect(f) {
-    aismover_pulse_effect = f === "pulse";
-    aismover_strobe_effect = f === "strobe";
-    other_effect = f === "beating" ? "beating" : "none";
 
-    try {
-        _("effect_selector").value = f;
-    } catch (e) {
-        // UI element may not exist
-    }
+//this is called by LiSyQ for data regen outside of namespace
+function regen_82943e2512849395c30065395b94669a(data){
+	return aismover.main(data);	
 }

@@ -43,7 +43,7 @@
                     <div class="number_picker">
                         <span> FX Interval: </span><input type="number" max="1" min="0.01" class="seconds_select" id="seconds_len_effect" step="0.01" value="0.1" onchange="change_effect_len(this.value)" /> <span>Secs.</span>
 
-                        <select class="effect_choice" onchange="ambient_activate_effect(this.value)" id="effect_selector" title="Effect applied for this whole template">
+                        <select class="effect_choice" onchange="aismover.activate_effect(this.value)" id="effect_selector" title="Effect applied for this whole template">
                             <option value="none">No effects</option>
                             <option value="pulse">Pulse</option>
                             <option value="strobe">Strobe</option>
@@ -234,6 +234,33 @@
     </div>
 
     <!-- plugins js -->
-    <script src="js/aismover.js"></script>
     <script src="js/generator.js"></script>
+    <script src="js/aismover.js"></script>
+    
+    
+    
+    <!-- Dummy -->
+    <script>
+    let dummy = {
+    "length": 34,
+    "type": "ambient",
+    "content": [
+
+    ],
+    "name": "No name",
+    "color": "#000000",
+    "misc": {
+        "raw_data_points": "[{\"start_at\":\"0.00\",\"end_at\":\"1\",\"color_start\":\"ffffff\",\"color_end\":\"ff0000\",\"bypass_global_effect\":false,\"keyframe_aismover_effect\":\"none\",\"keyframe_aismover_effect_len\":3.3000000000000003,\"position_data\":{\"mode\":\"raw\",\"position_set\":[{\"pan\":0.2105978260869565,\"tilt\":45.65217391304348},{\"pan\":99.77581521739131,\"tilt\":43.47826086956522}],\"effect\":\"\"}}]",
+        "seconds_length": 1,
+        "effect": "none",
+        "effect_len": 1
+    }
+}
+
+load_from_host(dummy);
+play_template();
+    </script>
+    
+    
+    
 </html>

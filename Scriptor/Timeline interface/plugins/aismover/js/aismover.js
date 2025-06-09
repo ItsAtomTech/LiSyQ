@@ -13,7 +13,7 @@ var clicktimes = 1;
 var coords = 0;
 var mode;
 
-var aismover_time_line = [];
+var aismover_time_line = aismover.time_line;
 var selected_stabs;
 var idf;
 
@@ -323,6 +323,8 @@ function save_key(){
 	
 	save_prev_colors([_("c_start").value , _("c_end").value])
 	
+	aismover.time_line = aismover_time_line;
+	
 	close_key_man();
 	positionsSets.length;
 }
@@ -354,8 +356,6 @@ function refresh_timeline(){
 		
 	
 }
-
-// To-Do: Load Position Data to Position Options Panel
 
 function show_keyframe_man(fr){
 	
@@ -444,31 +444,31 @@ function close_key_man(){
 function generate_template(){
 	// console.clear();
 	
-	aismover_fade_amount = 1;
-	aismover_fade_counter = 1;
-	keyframe_aismover_fade_counter = 1;
-	keyframe_aismover_fade_amount = 1;
-	beating_aismover_effect.reset_clk();
+	aismover.fade_amount = 1;
+	aismover.fade_counter = 1;
+	aismover.keyframe_fade_counter = 1;
+	aismover.keyframe_fade_amount = 1;
+	aismover.beating_effect.reset_clk();
 	
-	aismover_pixel_length = amb_seconds * 33;
+	aismover.pixel_length = amb_seconds * 33;
 	
-	colors_array.length = 0;
+	aismover.colors_array.length = 0;
 	
-	aismover_calculate_data();
+	aismover.calculate_data();
 
 	
 	var tm_data = {
 						
-		"length":colors_array.length,
+		"length":aismover.colors_array.length,
 		"type":"ambient",
-		"content": colors_array,
+		"content": aismover.colors_array,
 		"name": _("template_name").value,
 		"color": _("panel_color").value,
 		"misc": {
 			"raw_data_points": JSON.stringify(aismover_time_line),
 			"seconds_length": amb_seconds,
 			"effect": _("effect_selector").value,
-			"effect_len": aismover_effect_len
+			"effect_len": aismover.effect_len
 			
 		}
 				
@@ -544,14 +544,16 @@ function playon(){
 	
 	if(preview_play){
 		
-		_("preview").style.backgroundColor = "#"+colors_array[at_point];
+		_("preview").style.backgroundColor = "#"+aismover.colors_array[at_point].split(":")[0];
+		
+		// To-Do: Preview 3D Output
 		
 		preview_head(at_point);
 		
 		at_point++;
 	}
 	
-	if(at_point > colors_array.length){
+	if(at_point > aismover.colors_array.length){
 		preview_play = false;
 		at_point = 0;
 		sendTo("stop_media_prev");
@@ -849,7 +851,7 @@ function pos_options(m){
 
 function change_effect_len(g){
 	
-	aismover_effect_len =  parseFloat(g) * 33;
+	aismover.effect_len =  parseFloat(g) * 33;
 	
 }
 
@@ -858,12 +860,13 @@ function change_effect_len(g){
 function load_from_host(df){
 	
 	amb_seconds = df.misc.seconds_length;
+	aismover.time_line = JSON.parse(df.misc.raw_data_points);
 	aismover_time_line = JSON.parse(df.misc.raw_data_points);
 	
 	_("seconds_len").value = amb_seconds;
 	_("template_name").value = df.name;
 	_("panel_color").value = df.color;
-	aismover_activate_effect(df.misc.effect);
+	aismover.activate_effect(df.misc.effect);
 	_("seconds_len_effect").value = df.misc.effect_len / 33;
 	change_effect_len(df.misc.effect_len/33);
 	
@@ -1092,6 +1095,11 @@ function updateEffectParams(elm, disp){
 	}
 }
 
+
+function modeChange(){
+	console.log("Mode Change Triggered");
+	return;
+}
 
 
 // Shorcuts
