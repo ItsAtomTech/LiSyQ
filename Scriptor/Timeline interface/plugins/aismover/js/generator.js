@@ -178,6 +178,12 @@ let aismover = {
 
         // To-Do://Applying Effects at this block
         
+        let effectType = position_data.effect;
+        if(effectType){
+            let effected = this.applyEffect([PAN,TILT],effectType,position_data, time);
+            PAN = effected[0];
+            TILT = effected[1];
+        }
         
 
         //Transform from percentage into hex
@@ -243,8 +249,48 @@ let aismover = {
         } catch (e) {
             // UI element may not exist
         }
+    },
+    
+    
+    // ====================
+    //effect Applying Helper
+    
+    applyEffect: function(pos, type, data, time,invert=false){
+        let speed = data.speed;
+        let size = data.size;
+
+        if(aimoveeffects[type]){
+            let generatedOut = aimoveeffects[type](pos, size, speed, time,invert);
+            return generatedOut;
+        }else{
+            return pos; //return original pos if effect is not found
+        }
     }
+    
+    
 };
+
+
+//effects bank for that comes with aismover plugin
+const aimoveeffects = {
+    
+    wave: function(coord=[0,0], size=1,speed=0.10,time=0, invert=false){
+		let pans = coord[0];
+		let tilt = (Math.sin(time * speed/100) * size) + coord[1];
+        return [pans,tilt];
+        
+        
+    },
+    
+    circle: function(coord=[0,0], size=1,speed=0.10,time=0, invert=false){
+            let pans = (Math.cos(time * speed/100) * size) + coord[0];
+            let tilt = (Math.sin(time * speed/100) * size) + coord[1];
+            return [pans,tilt];
+    },
+    
+    
+}
+
 
 
 //this is called by LiSyQ for data regen outside of namespace

@@ -543,8 +543,22 @@ function start_at_prev(coords){
 function playon(){
 	
 	if(preview_play){
+		let playData = aismover.colors_array[at_point] ? aismover.colors_array[at_point].split(":"): false;
 		
-		_("preview").style.backgroundColor = "#"+aismover.colors_array[at_point].split(":")[0];
+		if(aismover.colors_array[at_point]){
+			updateLightColor("#"+playData[0]);
+			
+			let convertedPan =  parseInt(playData[1],16) / 255 * MAX_PAN;
+			updatePan3D(convertedPan);		
+			
+			let convertedTilt =  parseInt(playData[2],16) / 255 * MAX_TILT;
+			updateTilt3D(convertedTilt);
+			
+		}
+		
+		
+		
+		
 		
 		// To-Do: Preview 3D Output
 		
@@ -1105,5 +1119,237 @@ function modeChange(){
 // Shorcuts
 
 	
+	
+//=================
+// 3D Display Prev
+//=================
 
+
+function updateLightColor(hexColor) {
+  const styleEl = document.getElementById("color_display_data");
+  if (!styleEl) return;
+
+  // Replace the
+  styleEl.innerHTML = styleEl.innerHTML.replace(
+    /--color_light:\s*#[0-9a-fA-F]{3,6}/,
+    `--color_light: ${hexColor}`
+  );
+}	
+	
+
+function updatePan3D(deg) {
+  const el = document.getElementById("pan_3d");
+  
+  deg = deg - 270;
+  
+  const updateTransform = (transform) => {
+    return transform
+      .split(" ")
+      .filter(part => !part.startsWith("rotateY"))
+      .join(" ") + ` rotateY(${deg}deg)`;
+  };
+
+  const currentTransform = el.style.transform || "";
+  const currentWebkitTransform = el.style.webkitTransform || "";
+
+  el.style.transform = updateTransform(currentTransform);
+  el.style.webkitTransform = updateTransform(currentWebkitTransform);
+}
+
+
+function updateTilt3D(deg) {
+  const el = document.getElementById("tilt_3d");
+
+  deg = 135  - deg;
+
+  const updateTransform = (transform) => {
+    return transform
+      .split(" ")
+      .filter(part => !part.startsWith("rotateX"))
+      .join(" ") + ` rotateX(${deg}deg)`;
+  };
+
+  const currentTransform = el.style.transform || "";
+  const currentWebkitTransform = el.style.webkitTransform || "";
+
+  el.style.transform = updateTransform(currentTransform);
+  el.style.webkitTransform = updateTransform(currentWebkitTransform);
+}
+
+
+
+	
 setPosition(50, 50); //Default pos
+
+
+//Dummmy test
+
+let intervals = 0;
+
+
+let dummySize = 20;
+let dummySpeed = 0.25;
+
+
+//oval Pattern
+function testPatternsOval() {
+    // console.log(intervals);
+    intervals++;
+    if (intervals >= 50) intervals = 0;
+
+    let ovalWidth = 30;   // Horizontal stretch
+    let ovalHeight = 15;  // Vertical stretch
+    let speed = dummySpeed; // Keep your speed value
+
+    let pans = (Math.cos(intervals * speed) * ovalWidth) + 50;
+    let tilt = (Math.sin(intervals * speed) * ovalHeight) + 50;
+
+    setPosition(pans, tilt); // Muku moves it gracefully 💫
+}
+
+// Square Pattern
+function testPatternsSquare () {
+ 
+    // Increase with speed
+    intervals += dummySpeed;
+    if (intervals >= 100) intervals = 0;
+
+    let centerX = 50;
+    let centerY = 50;
+    let halfSize = dummySize; // Square from center ± dummySize
+
+    let phase = intervals % 100;//length of keyframe
+    let pans, tilt;
+
+    if (phase < 25) {
+        // Move right
+        pans = centerX - halfSize + (phase / 25) * (halfSize * 2);
+        tilt = centerY - halfSize;
+    } else if (phase < 50) {
+        // Move down
+        pans = centerX + halfSize;
+        tilt = centerY - halfSize + ((phase - 25) / 25) * (halfSize * 2);
+    } else if (phase < 75) {
+        // Move left
+        pans = centerX + halfSize - ((phase - 50) / 25) * (halfSize * 2);
+        tilt = centerY + halfSize;
+    } else {
+        // Move up
+        pans = centerX - halfSize;
+        tilt = centerY + halfSize - ((phase - 75) / 25) * (halfSize * 2);
+    }
+
+    setPosition(pans, tilt); // Muku sends the point dancing in a square~ 💫
+}
+
+
+function testPatternsDiamond() {
+    // console.log(intervals);
+    
+    // Increment using dummySpeed
+    intervals += dummySpeed;
+    if (intervals >= 100) intervals = 0;
+
+    const centerX = 50;
+    const centerY = 50;
+    const halfSize = dummySize;
+    const phase = intervals % 100;
+
+    // Determine the raw point on the square path (before rotation)
+    let rawX, rawY;
+
+    if (phase < 25) {
+        // Right
+        rawX = -halfSize + (phase / 25) * (halfSize * 2);
+        rawY = -halfSize;
+    } else if (phase < 50) {
+        // Down
+        rawX = halfSize;
+        rawY = -halfSize + ((phase - 25) / 25) * (halfSize * 2);
+    } else if (phase < 75) {
+        // Left
+        rawX = halfSize - ((phase - 50) / 25) * (halfSize * 2);
+        rawY = halfSize;
+    } else {
+        // Up
+        rawX = -halfSize;
+        rawY = halfSize - ((phase - 75) / 25) * (halfSize * 2);
+    }
+
+    // Apply rotation (angle also depends on intervals and speed)
+    let angle = (intervals / 100) * 5 * Math.PI; // 0 to 2π rotation
+    let rotatedX = rawX * Math.cos(angle) - rawY * Math.sin(angle);
+    let rotatedY = rawX * Math.sin(angle) + rawY * Math.cos(angle);
+
+    // Shift back to center
+    let pans = centerX + rotatedX;
+    let tilt = centerY + rotatedY;
+
+    setPosition(pans, tilt); // A square that twirls through space~ 🌌
+}
+
+function starPattern() {
+    // console.log(intervals);
+
+    intervals++;
+    if (intervals >= 33) intervals = 0;
+
+    const centerX = 50;
+    const centerY = 50;
+    const radius = dummySize;
+    const points = 5;
+
+    // Star vertex index path (for 5-pointed star)
+    const path = [0, 2, 4, 1, 3, 0];
+    const totalSegments = path.length - 1;
+    
+    const phase = ((intervals * dummySpeed) / 100) * totalSegments;
+    const currentSegment = Math.floor(phase);
+    const t = phase - currentSegment; // Interpolation factor
+
+    // Get start and end points of current star segment
+    const i1 = path[currentSegment];
+    const i2 = path[currentSegment + 1];
+
+    const angle1 = (2 * Math.PI / points) * i1 - Math.PI / 2;
+    const angle2 = (2 * Math.PI / points) * i2 - Math.PI / 2;
+
+    const x1 = centerX + radius * Math.cos(angle1);
+    const y1 = centerY + radius * Math.sin(angle1);
+    const x2 = centerX + radius * Math.cos(angle2);
+    const y2 = centerY + radius * Math.sin(angle2);
+
+    // Interpolate between the two points
+    const pans = x1 + (x2 - x1) * t;
+    const tilt = y1 + (y2 - y1) * t;
+
+    setPosition(pans, tilt); 
+}
+
+
+function infinityPattern() {
+    // console.log(intervals);
+
+    intervals++;
+    if (intervals >= 360) intervals = 0;
+
+    const centerX = 50;
+    const centerY = 50;
+    const A = dummySize;
+
+    const t = ((intervals * dummySpeed ) * Math.PI) / 180; // Convert to radians
+
+    const x = A * Math.cos(t);
+    const y = A * Math.sin(t) * Math.cos(t);
+
+    const pans = centerX + x;
+    const tilt = centerY + y;
+
+    setPosition(pans, tilt); 
+}
+
+// function startTest(){
+	// window.setInterval(testPatterns(), 33);
+// }
+
+
