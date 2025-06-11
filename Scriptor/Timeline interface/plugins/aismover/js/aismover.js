@@ -552,24 +552,26 @@ function start_at_prev(coords){
 function playon(){
 	
 	if(preview_play){
-		let playData = aismover.colors_array[at_point] ? aismover.colors_array[at_point].split(":"): false;
 		
-		if(aismover.colors_array[at_point]){
-			updateLightColor("#"+playData[0]);
-			
-			let convertedPan =  parseInt(playData[1],16) / 255 * MAX_PAN;
-			updatePan3D(convertedPan);		
-			
-			let convertedTilt =  parseInt(playData[2],16) / 255 * MAX_TILT;
-			updateTilt3D(convertedTilt);
-			
+		try{
+			let playData = aismover.colors_array[at_point] ? aismover.colors_array[at_point].split(":"): false;
+		
+			if(aismover.colors_array[at_point]){
+				updateLightColor("#"+playData[0]);
+				
+				let convertedPan =  parseInt(playData[1],16) / 255 * MAX_PAN;
+				updatePan3D(convertedPan);		
+				
+				let convertedTilt =  parseInt(playData[2],16) / 255 * MAX_TILT;
+				updateTilt3D(convertedTilt);
+				
+			}	
+		}catch(e){
+			//---
 		}
 		
+
 		
-		
-		
-		
-		// To-Do: Preview 3D Output
 		
 		preview_head(at_point);
 		
@@ -844,6 +846,25 @@ function color_command(c){
 }
 
 
+function pos_command(c){
+	let posData = positionKeyData.position_set;
+		switch(c){		
+			case "a":
+				posData[1] = posData[0];
+			break;	
+			
+			case "b":
+				posData[0] = posData[1];
+			break;
+						
+			case "swap":
+				posData.reverse();
+			break;		
+		}	
+	setPositionPoint(selectedPositionPoint);
+	pos_options("hide");
+}
+
 //pos options
 
 function pos_options(m){
@@ -1053,13 +1074,23 @@ function updateFromRange(){
 let prevSelectedPosIndex = 0;
 function setPositionPoint(index){
 	selectedPositionPoint = index;
+	let targetButton = event.target;
+	
+	for(each of document.getElementsByClassName("pos_buttons")){
+		each.classList.remove("active");
+	}
 	
 	if(positionsSets[index] && hasPosChanges == false){
 		setPosition(positionsSets[index].pan, positionsSets[index].tilt);
 	}
 	
 	if(index == prevSelectedPosIndex){
-			positionsSets[index] = decople({"pan":crosshairPercent.x, "tilt": crosshairPercent.y});
+		positionsSets[index] = decople({"pan":crosshairPercent.x, "tilt": crosshairPercent.y});
+		
+		if(targetButton.classList.contains("pos_buttons")){
+			targetButton.classList.add("active");
+		}
+			
 	}
 
 	prevSelectedPosIndex = index;
@@ -1128,8 +1159,8 @@ function modeChange(){
 }
 
 function resetToCenter(){
-	
 	setPosition(50, 50);
+	hasPosChanges = true;
 }
 
 
@@ -1226,41 +1257,6 @@ function testPatternsOval() {
     setPosition(pans, tilt); // Muku moves it gracefully 💫
 }
 
-// Square Pattern
-function testPatternsSquare () {
- 
-    // Increase with speed
-    intervals += dummySpeed;
-    if (intervals >= 100) intervals = 0;
-
-    let centerX = 50;
-    let centerY = 50;
-    let halfSize = dummySize; // Square from center ± dummySize
-
-    let phase = intervals % 100;//length of keyframe
-    let pans, tilt;
-
-    if (phase < 25) {
-        // Move right
-        pans = centerX - halfSize + (phase / 25) * (halfSize * 2);
-        tilt = centerY - halfSize;
-    } else if (phase < 50) {
-        // Move down
-        pans = centerX + halfSize;
-        tilt = centerY - halfSize + ((phase - 25) / 25) * (halfSize * 2);
-    } else if (phase < 75) {
-        // Move left
-        pans = centerX + halfSize - ((phase - 50) / 25) * (halfSize * 2);
-        tilt = centerY + halfSize;
-    } else {
-        // Move up
-        pans = centerX - halfSize;
-        tilt = centerY + halfSize - ((phase - 75) / 25) * (halfSize * 2);
-    }
-
-    setPosition(pans, tilt); // Muku sends the point dancing in a square~ 💫
-}
-
 
 function testPatternsDiamond() {
     // console.log(intervals);
@@ -1345,27 +1341,6 @@ function starPattern() {
     setPosition(pans, tilt); 
 }
 
-
-function infinityPattern() {
-    // console.log(intervals);
-
-    intervals++;
-    if (intervals >= 360) intervals = 0;
-
-    const centerX = 50;
-    const centerY = 50;
-    const A = dummySize;
-
-    const t = ((intervals * dummySpeed ) * Math.PI) / 180; // Convert to radians
-
-    const x = A * Math.cos(t);
-    const y = A * Math.sin(t) * Math.cos(t);
-
-    const pans = centerX + x;
-    const tilt = centerY + y;
-
-    setPosition(pans, tilt); 
-}
 
 // function startTest(){
 	// window.setInterval(testPatterns(), 33);

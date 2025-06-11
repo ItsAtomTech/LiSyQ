@@ -362,7 +362,7 @@
 
             <!-- Modals -->
 
-            <div class="modal_view" style="display: initial;" id="key_man">
+            <div class="modal_view" style="display: none;" id="key_man">
          
                 <div class="modal_title">Manage Keyframe 
 				       <div class="close_button_amb" onclick="close_key_man()">&times;</div>
@@ -408,11 +408,11 @@
                         
                         
 						<div class="modal_panel pos_options_col">
-							<div class="my_buttons" onclick="setPositionPoint(0)">A</div>
+							<div class="my_buttons pos_buttons" onclick="setPositionPoint(0)">A</div>
 							
 							<span class="color_option_button" title="Options" onclick="pos_options('show')"> &hArr; </span>
 							
-							<div class="my_buttons" onclick="setPositionPoint(1)">B</div>
+							<div class="my_buttons pos_buttons" onclick="setPositionPoint(1)">B</div>
                             
                             <label class="button_center" onclick="resetToCenter()" title="Reset to Center"> &#10034; </label>
                             
@@ -432,6 +432,9 @@
                                 <option value="" >None</option>
                                 <option value="wave" >Wave</option>
                                 <option value="circle" >Circle</option>
+                                <option value="infinity" >8finity</option>
+                                <option value="square" >Square</option>
+                                <option value="oval" >Oval</option>
                                 <option value="????" disabled>Coming Soon</option>
                             </select>
                             

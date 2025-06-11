@@ -280,6 +280,11 @@ body{
 	
 }
 
+.my_buttons.active{
+	outline:dashed white 1px;
+	
+}
+
 .slick_button{
 	
 	color:inherit;
@@ -570,7 +575,7 @@ opacity:0.8;
 	min-width:45px;
 	opacity:0.7;
 	overflow:hidden;
-	max-width:120px;
+	max-width:130px;
 	flex-shrink:1;
 	padding:10px;
 	
@@ -663,6 +668,7 @@ opacity:0.8;
 }
 
 
+
 .crosshair_elm{
 	width:10px;
 	height:10px;
@@ -671,10 +677,12 @@ opacity:0.8;
 	opacity:0.7;
 	transform:scale(0.7, 0.7);
 	border-radius:100%;
-	
-	
+	transition:0.2s;
 }
 
+.position_pad_elm:hover > .crosshair_elm{
+	transition:0s;
+}
 .crosshair_elm:hover{
 	opacity:1;
 	transform:scale(1, 1);

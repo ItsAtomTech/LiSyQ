@@ -143,11 +143,12 @@ let aismover = {
                     }
                     
                     this.colors_array[sd] = [this.combined_hex(calculated_color), calculated_position];                    
-                    this.colors_array[sd] = this.colors_array[sd].join(":");
                     
                 }
             }
-
+            
+            this.colors_array[sd] = this.colors_array[sd].join(":");
+            
             if (["pulse", "strobe"].includes(keyframe_effect)) {
                 if (this.keyframe_fade_counter < 1 || this.keyframe_fade_counter > this.keyframe_effect_len) {
                     this.keyframe_fade_amount = -this.keyframe_fade_amount;
@@ -274,7 +275,7 @@ let aismover = {
     
     
     // ====================
-    //effect Applying Helper
+    //movement effects Applying Helper function
     
     applyEffect: function(pos, type, data, time,invert=false){
         let speed = data.speed;
@@ -309,8 +310,67 @@ const aimoveeffects = {
             return [pans,tilt];
     },
     
+    infinity: function(coord=[0,0], size=1,speed=0.10,time=0, invert=false){
+
+            const centerX = coord[0];
+            const centerY = coord[1];
+            const A = size;
+            const t = ((time * speed ) * Math.PI) / 180; // Convert to radians
+            const x = A * Math.cos(t);
+            const y = A * Math.sin(t) * Math.cos(t);
+
+            const pans = centerX + x;
+            const tilt = centerY + y;
+
+            return [pans,tilt]; 
+    },    
+    
+    
+    square: function(coord=[0,0], size=1,speed=0.10,time=0, invert=false){
+
+            const centerX = coord[0];
+            const centerY = coord[1];
+
+            let halfSize = size; // Square from center ± dummySize
+
+            let phase = time % 100;//length of keyframe
+            let pans, tilt;
+
+            if (phase < 25) {
+                // Move right
+                pans = centerX - halfSize + (phase / 25) * (halfSize * 2);
+                tilt = centerY - halfSize;
+            } else if (phase < 50) {
+                // Move down
+                pans = centerX + halfSize;
+                tilt = centerY - halfSize + ((phase - 25) / 25) * (halfSize * 2);
+            } else if (phase < 75) {
+                // Move left
+                pans = centerX + halfSize - ((phase - 50) / 25) * (halfSize * 2);
+                tilt = centerY + halfSize;
+            } else {
+                // Move up
+                pans = centerX - halfSize;
+                tilt = centerY + halfSize - ((phase - 75) / 25) * (halfSize * 2);
+            }
+            
+            return [pans,tilt]; 
+    },    
+    
+    oval: function(coord=[0,0], size=1,speed=0.10,time=0, invert=false){
+            const centerX = coord[0];
+            const centerY = coord[1];
+            let ovalWidth = 15 * (size / 10);   // Horizontal stretch
+            let ovalHeight = 7.5 * (size / 10);  // Vertical stretch
+            let pans = (Math.cos(time * (speed / 100)) * ovalWidth) + centerX;
+            let tilt = (Math.sin(time * (speed / 100)) * ovalHeight) + centerY;
+            
+            return [pans,tilt]; 
+    },
     
 }
+
+
 
 
 
