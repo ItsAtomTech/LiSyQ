@@ -43,7 +43,7 @@
                 </div>
 
                 <div class="panel_con">
-                    <div class="normal">Global effects:</div>
+                    <div class="normal">Global Color effects:</div>
                     <div class="number_picker">
                         <span> FX Interval: </span><input type="number" max="1" min="0.01" class="seconds_select" id="seconds_len_effect" step="0.01" value="0.1" onchange="change_effect_len(this.value)" /> <span>Secs.</span>
 
@@ -356,12 +356,8 @@
 
 
                 
-                
-                
-            </div>
-
-
-
+                            
+</div>
 
 
             <!-- Modals -->
@@ -376,12 +372,18 @@
 				
 					<div class="modal_colm position_panel">
                     
-                        <div class="modal_panel pos_options_range">
-                        
+                        <div class="modal_panel pos_options_range rowed_view">
+                                
+                         
+                                
                                 <select class="effect_choice" id="position_mode" onclick="modeChange(this)">
                                     <option value="raw" selected>Raw</option>
                                     <option value="????" disabled>Coming Soon</option>
                                 </select>
+                                
+                                <label class="small"> Enable: <input type="checkbox" id="movement_enabled" checked title="Enable or Disable Movement Data" /></label>
+                                
+                                
                         </div>
                     
                     <div>
@@ -395,6 +397,7 @@
                         
                         
 						<div class="modal_panel pos_options_range">
+                            
 							<div> <label> Pan </label><input oninput="updateFromRange()" type="range" min="0" id="pan_slider" /> <span class="value_disp" id="pan_disp"> 0 </span></div>
                             
 							<div> <label> Tilt</label><input type="range" oninput="updateFromRange()" id="tilt_slider" /> <span class="value_disp" id="tilt_disp"> 0 </span></div>
@@ -410,6 +413,9 @@
 							<span class="color_option_button" title="Options" onclick="pos_options('show')"> &hArr; </span>
 							
 							<div class="my_buttons" onclick="setPositionPoint(1)">B</div>
+                            
+                            <label class="button_center" onclick="resetToCenter()" title="Reset to Center"> &#10034; </label>
+                            
 						</div>
 						
 						<div class="position_options_drawer primary_color primary_background" id="pos_options" style="display: none;">
@@ -481,7 +487,7 @@
 
                     <div class="modal_colm other_panel">
                         <div class="modal_panel">
-                            <span class="small"> Keyframe effects: </span>
+                            <span class="small">Keyframe Color effects: </span>
                         </div>
 
                         <div class="modal_panel">
@@ -539,12 +545,11 @@
     "length": 34,
     "type": "ambient",
     "content": [
-
     ],
     "name": "No name",
     "color": "#000000",
     "misc": {
-        "raw_data_points": "[{\"start_at\":\"0.00\",\"end_at\":\"1\",\"color_start\":\"ffffff\",\"color_end\":\"ff0000\",\"bypass_global_effect\":false,\"keyframe_aismover_effect\":\"none\",\"keyframe_aismover_effect_len\":3.3000000000000003,\"position_data\":{\"mode\":\"raw\",\"position_set\":[{\"pan\":0.2105978260869565,\"tilt\":45.65217391304348},{\"pan\":99.77581521739131,\"tilt\":43.47826086956522}],\"effect\":\"wave\",\"speed\":10,\"size\":10}}]",
+        "raw_data_points": "[{\"start_at\":\"0.00\",\"end_at\":\"1\",\"color_start\":\"ffffff\",\"color_end\":\"ff0000\",\"bypass_global_effect\":false,\"keyframe_aismover_effect\":\"none\",\"keyframe_aismover_effect_len\":3.3000000000000003,\"position_data\":{\"mode\":\"raw\",\"enabled\":true,\"position_set\":[{\"pan\":0.2105978260869565,\"tilt\":45.65217391304348},{\"pan\":99.77581521739131,\"tilt\":43.47826086956522}],\"effect\":\"wave\",\"speed\":10,\"size\":10}},{\"start_at\":\"0.37\",\"end_at\":\"0.67\",\"color_start\":\"000000\",\"color_end\":\"00ff2a\",\"bypass_global_effect\":false,\"keyframe_aismover_effect\":\"none\",\"keyframe_aismover_effect_len\":3.3000000000000003,\"position_data\":{\"mode\":\"raw\",\"position_set\":[{\"pan\":50,\"tilt\":50}],\"effect\":\"\",\"enabled\":false}}]",
         "seconds_length": 1,
         "effect": "",
         "effect_len": 1
@@ -553,8 +558,7 @@
 
 load_from_host(dummy);
 play_template();
-close_key_man();
- updateTilt3D(34);
+<!-- close_key_man(); -->
 
  
     </script>

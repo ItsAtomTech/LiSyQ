@@ -67,8 +67,9 @@ let aismover = {
     },
 
     calculate_data: function () {
+        const defaultData = ["000000","~","~"];
         for (let sd = 0; sd <= this.pixel_length; sd++) {
-            this.colors_array[sd] = "000000:~:~";
+            this.colors_array[sd] = defaultData;
             let keyframe_effect = "none";
 
             for (let tl = 0; tl < this.time_line.length; tl++) {
@@ -130,7 +131,20 @@ let aismover = {
                         }
                     }
 
-                    this.colors_array[sd] = this.combined_hex(calculated_color)+":"+calculated_position;
+                    
+                    if(calculated_position == false){
+                        // console.log(this.colors_array[sd]);
+                        try{
+                            let rawData = this.colors_array[sd].split(":"); 
+                            calculated_position = rawData[1]+":"+rawData[2];
+                        }catch(e){
+                            calculated_position = defaultData[1]+":"+defaultData[2];
+                        }
+                    }
+                    
+                    this.colors_array[sd] = [this.combined_hex(calculated_color), calculated_position];                    
+                    this.colors_array[sd] = this.colors_array[sd].join(":");
+                    
                 }
             }
 
@@ -152,17 +166,24 @@ let aismover = {
             }
 
             this.fade_counter += this.fade_amount;
+            
+           
         }
     },
     
     
-    //function that generated Position Data with Time Derivative
+    //function that generates Position Data with Time Derivative
     generatePositionData: function(data,time){
         let position_data = data.position_data ? data.position_data : undefined;
         if(typeof(position_data) != "object"){
             return undefined;
         }
         let positionArrays = [];
+        let isEnabled = position_data.enabled == undefined ? true: position_data.enabled;
+        
+        if(!isEnabled){
+            return false;
+        }
         
         let posStart = position_data.position_set[0] ? position_data.position_set[0]:
         {"pan": 50, "tilt": 50};

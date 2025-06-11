@@ -281,9 +281,9 @@ function save_key(){
 		var end = gen_coords(_("s_end").value);
 		
 		var width = end - start;
+			positionKeyData.enabled = _("movement_enabled").checked;
 		
 		var key_frame = {
-			
 			"start_at": cap(_("s_start").value),
 			"end_at": cap(_("s_end").value),
 			"color_start": (_("c_start").value).replace(/#/gi, ""),
@@ -296,9 +296,11 @@ function save_key(){
 		
 		add_time_stab(start,width,aismover_time_line.length);
 		
+		
 		aismover_time_line.push(key_frame);	
 		
 	}else if(mode == "edit"){
+			positionKeyData.enabled = _("movement_enabled").checked;
 			
 		var key_frame = {
 			
@@ -313,6 +315,7 @@ function save_key(){
 			
 		}
 		
+		positionKeyData.enabled = _("movement_enabled").checked;
 		aismover_time_line[idf] = key_frame;
 		
 		refresh_timeline();
@@ -324,6 +327,7 @@ function save_key(){
 	save_prev_colors([_("c_start").value , _("c_end").value])
 	
 	aismover.time_line = aismover_time_line;
+	
 	
 	close_key_man();
 	positionsSets.length;
@@ -436,6 +440,11 @@ function close_key_man(){
 	color_options('hide');
 	pos_options('hide');
 	
+	hasPosChanges = false;
+	prevSelectedPosIndex = 0;
+	_("movement_enabled").checked = true;
+	
+	
 }
 
 // var colors_array = [];
@@ -460,7 +469,7 @@ function generate_template(){
 	var tm_data = {
 						
 		"length":aismover.colors_array.length,
-		"type":"ambient",
+		"type":"aismover",
 		"content": aismover.colors_array,
 		"name": _("template_name").value,
 		"color": _("panel_color").value,
@@ -901,9 +910,10 @@ let crosshairPercent = { x: 0, y: 0 }; // 💚 Percentage position
 let positionsSets = [];
 let selectedPositionPoint = 0;
 let positionMode = "raw"
+let positionEnabled = true;
 
 
-let positionKeyData = {"mode":positionMode, "position_set": positionsSets, "effect": "",}
+let positionKeyData = {"mode":positionMode, "position_set": positionsSets, "effect": "",enabled:positionEnabled,}
 
 let hasPosChanges = false;
 
@@ -1077,6 +1087,7 @@ function loadPosFromData(index=0){
 		_("effect_size").value = positionKeyData.size;		
 		_("effect_speed_disp").innerText = positionKeyData.speed;
 		_("effect_size_disp").innerText = positionKeyData.size;
+		_("movement_enabled").checked = positionKeyData.enabled;
 	}else{
 		_("effect_selection").value = "";
 		_("effect_speed").value = 0;
@@ -1084,6 +1095,7 @@ function loadPosFromData(index=0){
 		
 		_("effect_speed_disp").innerText = 0;
 		_("effect_size_disp").innerText = 0;
+		_("movement_enabled").checked = positionKeyData.enabled;
 	}
 	
 	
@@ -1113,6 +1125,11 @@ function updateEffectParams(elm, disp){
 function modeChange(){
 	console.log("Mode Change Triggered");
 	return;
+}
+
+function resetToCenter(){
+	
+	setPosition(50, 50);
 }
 
 
@@ -1175,6 +1192,8 @@ function updateTilt3D(deg) {
   el.style.transform = updateTransform(currentTransform);
   el.style.webkitTransform = updateTransform(currentWebkitTransform);
 }
+
+
 
 
 
