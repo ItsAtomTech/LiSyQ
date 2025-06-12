@@ -17,6 +17,14 @@ var plugins = [{
 	"default_value": "0",
 	"regenerator_src": "plugins/aipexil/js/generator.js",
 	"regen_function": "regen_f3e9cc2243ff902c80b908829745750d",
+},{
+	"plugin_name": "Aismover Plugin v1",
+	"plugin_src": "aismover/aismover.html",
+	"type_name": "aismover",
+	"thumbnail_src": "aipexil/images/rgb_plug_square.jpg",
+	"default_value": "000000:~:~",
+	"regenerator_src": "plugins/aismover/js/generator.js",
+	"regen_function": "regen_82943e2512849395c30065395b94669a",
 }];
 
 
