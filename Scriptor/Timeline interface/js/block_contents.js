@@ -21,7 +21,7 @@ var plugins = [{
 	"plugin_name": "Aismover Plugin v1",
 	"plugin_src": "aismover/aismover.html",
 	"type_name": "aismover",
-	"thumbnail_src": "aipexil/images/rgb_plug_square.jpg",
+	"thumbnail_src": "aismover/images/aismover_thumb.webp",
 	"default_value": "000000:~:~",
 	"regenerator_src": "plugins/aismover/js/generator.js",
 	"regen_function": "regen_82943e2512849395c30065395b94669a",
