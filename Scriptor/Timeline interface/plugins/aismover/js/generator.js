@@ -333,7 +333,7 @@ const aimoveeffects = {
 
             let halfSize = size; // Square from center ± dummySize
 
-            let phase = time % 100;//length of keyframe
+            let phase = (time * (speed * 0.10)) % 100;//length of keyframe
             let pans, tilt;
 
             if (phase < 25) {
