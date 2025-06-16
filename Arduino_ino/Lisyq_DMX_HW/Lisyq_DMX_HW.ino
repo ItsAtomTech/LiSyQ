@@ -8,22 +8,25 @@ localStorage storage;
 const int jsonStartIndex = 0;        // EEPROM start position
 const int jsonMaxLength = 675;       // Max bytes to reserve (for writing only)
 
+#define MAX_CHANNELS_LS 20
+//LiSyQ Based channels
+int channels[MAX_CHANNELS_LS];
+
+//DMX Channel Configs
+String DMX_CONFIG[MAX_CHANNELS_LS];
+
+//Count of Channel configured for Translation
+int CONFIGURED_CHANNEL = 0;
+
 void setup() {
   Serial.begin(115200);
   coms.setResponder(processCommands);
   delay(500);//wait for initialization
   
-
-
   loadCondigData();
-
-
 }
 
 
-//To-Do: parse Config from Serial which starts with "DX" 
-//Format: DX-channels:configs:counts
-//Sample: DX-0,1,2:c12|f15|p16,...:3
 
 
 void loop() {
@@ -34,9 +37,12 @@ void loop() {
 }
 
 
+//parsing Config from Serial which starts with "DX" 
+//Format: DX-channels:configs:counts
+//Sample: DX-0,1,2:c12|f15|p16,...:3
 
 //save Data from Config
-void saveFromConfig(String data){
+bool saveFromConfig(String data){
   
   String channelsData =  getValue(data, ':', 0);
   String configsData =  getValue(data, ':', 1);
@@ -49,7 +55,7 @@ void saveFromConfig(String data){
   || configsData.length() <= 1 
   || countsData.length() <= 0){
       Serial.println("ER-Config err");  
-      return;
+      return false;
   }  
 
   // Dummy Create config JSON
@@ -72,7 +78,7 @@ void saveFromConfig(String data){
   storage.setItem(jsonStartIndex, jsonMaxLength, jsonString);
   
   delay(500); // Pause before doing a thing after save process
-
+  return true;
 }
 
 
@@ -93,10 +99,59 @@ void loadCondigData(){
     Serial.print("Failed to parse: ");
     Serial.println(error.c_str());
   } else {
-    Serial.println("Ch: " + String(loadedConfig["channels"].as<const char*>()));
-    Serial.println("Cn: " + String(loadedConfig["configs"].as<const char*>()));
-    Serial.println("Ct: " + String(loadedConfig["counts"].as<int>()));
-  } 
+    // Serial.println("Ch: " + String(loadedConfig["channels"].as<const char*>()));
+    putToChannels(String(loadedConfig["channels"].as<const char*>()));
+    //Serial.println("Cn: " + String(loadedConfig["configs"].as<const char*>()));
+    putToDMXConfig(String(loadedConfig["configs"].as<const char*>()));
+
+    CONFIGURED_CHANNEL = loadedConfig["counts"].as<int>();
+    Serial.println("Ct: " + String(CONFIGURED_CHANNEL)); 
+
+  }
+  
+  loadedData = ""; 
+  loadedConfig.clear();
+}
+
+
+int channelCount = 0;
+//Put to channel arrays
+void putToChannels(String data) {
+  channelCount = 0; // Reset count
+
+  int startIdx = 0;
+  int commaIdx = data.indexOf(',');
+
+  while (commaIdx != -1 && channelCount < MAX_CHANNELS_LS) {
+    channels[channelCount++] = data.substring(startIdx, commaIdx).toInt();
+    startIdx = commaIdx + 1;
+    commaIdx = data.indexOf(',', startIdx);
+  }
+
+  // Add the last number (or only one if no commas)
+  if (startIdx < data.length() && channelCount < MAX_CHANNELS_LS) {
+    channels[channelCount++] = data.substring(startIdx).toInt();
+  }
+}
+
+
+int dmxConfigCount = 0;
+void putToDMXConfig(String data) {
+  dmxConfigCount = 0; // reset count
+
+  int startIdx = 0;
+  int commaIdx = data.indexOf(',');
+
+  while (commaIdx != -1 && dmxConfigCount < MAX_CHANNELS_LS) {
+    DMX_CONFIG[dmxConfigCount++] = data.substring(startIdx, commaIdx);
+    startIdx = commaIdx + 1;
+    commaIdx = data.indexOf(',', startIdx);
+  }
+
+  // Last one
+  if (startIdx < data.length() && dmxConfigCount < MAX_CHANNELS_LS) {
+    DMX_CONFIG[dmxConfigCount++] = data.substring(startIdx);
+  }
 }
 
 
@@ -106,8 +161,10 @@ void processCommands(String cmd){
   String RAW_DATA = getValue(cmd, '-', 1);
 
   if(type == "DX"){
-      saveFromConfig(RAW_DATA);      
-          
+      if(saveFromConfig(RAW_DATA)){
+          loadCondigData();
+      };      
+
   }  
   Serial.println(RAW_DATA);  
 }
