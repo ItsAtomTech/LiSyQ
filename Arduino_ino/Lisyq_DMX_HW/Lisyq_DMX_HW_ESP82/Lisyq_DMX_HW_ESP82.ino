@@ -1,16 +1,19 @@
+// IMPORTANT!: ONLY USE FOR ESP8266 Boards, 
+// MIGHT not work on Avr boards etc
+// ===================================
 #include "modules/storage.cpp"
 #include "modules/communication.cpp"
 #include "modules/serialRecv.cpp"
 #include <ArduinoJson.h>
+
+#include <ESPDMX.h> //ESP8266 DMX Lib
+DMXESPSerial dmx;
 
 localStorage storage;
 
 const int jsonStartIndex = 0;        // EEPROM start position
 const int jsonMaxLength = 675;       // Max bytes to reserve (for writing only)
 
-#define MAX_CHANNELS_LS 20
-//LiSyQ Based channels
-int channels[MAX_CHANNELS_LS];
 
 //DMX Channel Configs
 String DMX_CONFIG[MAX_CHANNELS_LS];
@@ -21,8 +24,13 @@ int CONFIGURED_CHANNEL = 0;
 void setup() {
   Serial.begin(115200);
   coms.setResponder(processCommands);
+  dmx.init();  
+  storage.init(jsonMaxLength+2);
+
   delay(500);//wait for initialization
-  
+  dmx.write(1, 255); 
+  // DmxSimple.write(0, 0);
+  Serial.println("I: Initilaizing");
   loadCondigData();
 }
 
@@ -33,7 +41,7 @@ void loop() {
   recvWithEndMarker();  // Hardware Serial
   showNewData();
 
-
+  dmx.update();
 }
 
 
@@ -82,14 +90,13 @@ bool saveFromConfig(String data){
 }
 
 
-// To-Do: Load saved Config into Data Variables
 
 //Loads saved Data from eeprom
 void loadCondigData(){
   // 📤 Load from EEPROM (no size needed with improved getItem)
   String loadedData = storage.getItem(jsonStartIndex);
-  Serial.println("\nLoaded:");
-  Serial.println(loadedData);
+  // Serial.println("\nLoaded:");
+  // Serial.println(loadedData);
 
   // 🧪 Deserialize
   StaticJsonDocument<jsonMaxLength> loadedConfig;
@@ -106,6 +113,7 @@ void loadCondigData(){
 
     CONFIGURED_CHANNEL = loadedConfig["counts"].as<int>();
     Serial.println("Ct: " + String(CONFIGURED_CHANNEL)); 
+    Serial.println("Cc: " + String(channels[0])); 
 
   }
   
@@ -115,9 +123,9 @@ void loadCondigData(){
 
 
 int channelCount = 0;
-//Put to channel arrays
+
 void putToChannels(String data) {
-  channelCount = 0; // Reset count
+  channelCount = 0;
 
   int startIdx = 0;
   int commaIdx = data.indexOf(',');
@@ -128,9 +136,13 @@ void putToChannels(String data) {
     commaIdx = data.indexOf(',', startIdx);
   }
 
-  // Add the last number (or only one if no commas)
   if (startIdx < data.length() && channelCount < MAX_CHANNELS_LS) {
     channels[channelCount++] = data.substring(startIdx).toInt();
+  }
+
+  // 🌌 Clear the rest of the array
+  for (int i = channelCount; i < MAX_CHANNELS_LS; i++) {
+    channels[i] = -1;
   }
 }
 
@@ -159,15 +171,99 @@ void putToDMXConfig(String data) {
 void processCommands(String cmd){
   String type = getValue(cmd, '-', 0);
   String RAW_DATA = getValue(cmd, '-', 1);
-
+  Serial.println(RAW_DATA);  
   if(type == "DX"){
       if(saveFromConfig(RAW_DATA)){
           loadCondigData();
       };      
 
+  }else{
+      
+      processLSData(cmd);
+         
   }  
-  Serial.println(RAW_DATA);  
+  // 
 }
+
+void processData(String data, String config, int faderValue = 255) {
+  int sep1 = data.indexOf(':');
+  int sep2 = data.indexOf(':', sep1 + 1);
+
+  String colorHex = data.substring(0, sep1);
+  String pos1Hex = (sep2 != -1) ? data.substring(sep1 + 1, sep2) : "";
+  String pos2Hex = (sep2 != -1) ? data.substring(sep2 + 1) : "";
+
+  int colorR = strtol(colorHex.substring(0, 2).c_str(), NULL, 16);
+  int colorG = strtol(colorHex.substring(2, 4).c_str(), NULL, 16);
+  int colorB = strtol(colorHex.substring(4, 6).c_str(), NULL, 16);
+
+  // Defaults
+  int colorAddr = -1, faderAddr = -1, posAddr = -1;
+
+  // Parse config parts
+  int cIndex = config.indexOf("c");
+  int fIndex = config.indexOf("f");
+  int pIndex = config.indexOf("p");
+
+  if (cIndex != -1) {
+    int cEnd = config.indexOf('|', cIndex);
+    colorAddr = config.substring(cIndex + 1, cEnd != -1 ? cEnd : config.length()).toInt();
+  }
+
+  if (fIndex != -1) {
+    int fEnd = config.indexOf('|', fIndex);
+    faderAddr = config.substring(fIndex + 1, fEnd != -1 ? fEnd : config.length()).toInt();
+  }
+
+  if (pIndex != -1) {
+    posAddr = config.substring(pIndex + 1).toInt();
+  }
+
+  // Write color
+  if (colorAddr >= 0) {
+    writeToAddress(colorAddr + 0, colorR);
+    writeToAddress(colorAddr + 1, colorG);
+    writeToAddress(colorAddr + 2, colorB);
+  }
+
+  // Write fader
+  if (faderAddr >= 0) {
+    writeToAddress(faderAddr, faderValue);
+  }
+
+  // Only write positions if both config and values exist
+  if (posAddr >= 0 && pos1Hex.length() > 0 && pos2Hex.length() > 0) {
+    int pos1 = strtol(pos1Hex.c_str(), NULL, 16);
+    int pos2 = strtol(pos2Hex.c_str(), NULL, 16);
+    writeToAddress(posAddr + 0, pos1);
+    writeToAddress(posAddr + 1, pos2);
+  }
+}
+
+
+//function helper for writing
+void writeToAddress(int address, int value) {
+  // Serial.print("Writing "); Serial.print(value);
+  // Serial.print(" to address "); Serial.println(address);
+
+  dmx.write(address, value); 
+
+}
+
+//To-Do: Process The Data for each channel
+void processLSData(String dt){
+
+  // Serial.print("Dat: "+ dt); 
+  if(isInChannels(currentChannel)){
+    // Serial.print(" <- "+ String(currentChannel) + " "); 
+    String CONFIG_DATA = DMX_CONFIG[currentChannel];
+    Serial.println(CONFIG_DATA);
+    processData(dt,CONFIG_DATA,250);
+
+  }
+  Serial.println("->");
+}
+
 
 
 

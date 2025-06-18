@@ -131,16 +131,20 @@ let aismover = {
                         }
                     }
 
-                    
+                    //Layering if top frame pos is disabled
                     if(calculated_position == false){
-                        // console.log(this.colors_array[sd]);
                         try{
-                            let rawData = this.colors_array[sd].split(":"); 
+                            if(typeof(this.colors_array[sd]) == "object"){
+                                rawData = this.colors_array[sd];
+                            }else{
+                                rawData = this.colors_array[sd].split(":"); 
+                            }
                             calculated_position = rawData[1]+":"+rawData[2];
                         }catch(e){
                             calculated_position = defaultData[1]+":"+defaultData[2];
                         }
                     }
+                    
                     
                     this.colors_array[sd] = [this.combined_hex(calculated_color), calculated_position];                    
                     
@@ -198,7 +202,7 @@ let aismover = {
         let PAN = this.linear_flow(posStart.pan, posEnd.pan,z, w);
         let TILT = this.linear_flow(posStart.tilt, posEnd.tilt,z, w);
 
-        // To-Do://Applying Effects at this block
+        //Applying Effects at this block
         
         let effectType = position_data.effect;
         if(effectType){
