@@ -139,7 +139,7 @@ let aismover = {
                             }else{
                                 rawData = this.colors_array[sd].split(":"); 
                             }
-                            calculated_position = rawData[1]+":"+rawData[2];
+                            calculated_position = rawData[1];
                         }catch(e){
                             calculated_position = defaultData[1]+":"+defaultData[2];
                         }

@@ -6,7 +6,8 @@
 #include "modules/serialRecv.cpp"
 #include <ArduinoJson.h>
 
-#include <ESPDMX.h> //ESP8266 DMX Lib
+#include <ESPDMX.h>
+// #include "modules/ESPDMX.h" //A modefied ESP8266 DMX Lib
 DMXESPSerial dmx;
 
 localStorage storage;
@@ -24,7 +25,7 @@ int CONFIGURED_CHANNEL = 0;
 void setup() {
   Serial.begin(115200);
   coms.setResponder(processCommands);
-  dmx.init();  
+  dmx.init(512);  
   storage.init(jsonMaxLength+2);
 
   delay(500);//wait for initialization
@@ -32,16 +33,25 @@ void setup() {
   // DmxSimple.write(0, 0);
   Serial.println("I: Initilaizing");
   loadCondigData();
+
+  
 }
 
 
+unsigned long prevUpdateTime = 0;
+int updateInterval = 5;
 
 
 void loop() {
   recvWithEndMarker();  // Hardware Serial
   showNewData();
 
-  dmx.update();
+  if(millis() - prevUpdateTime >= updateInterval){
+    dmx.update(true);
+    prevUpdateTime = millis(); 
+  }
+  
+
 }
 
 
@@ -247,16 +257,18 @@ void writeToAddress(int address, int value) {
   // Serial.print(" to address "); Serial.println(address);
 
   dmx.write(address, value); 
-
+  dmx.update(true);
 }
 
 //To-Do: Process The Data for each channel
 void processLSData(String dt){
 
+  int channelIndex = isInChannels(currentChannel);
+
   // Serial.print("Dat: "+ dt); 
-  if(isInChannels(currentChannel)){
-    // Serial.print(" <- "+ String(currentChannel) + " "); 
-    String CONFIG_DATA = DMX_CONFIG[currentChannel];
+  if(channelIndex >= 0){
+    Serial.print(" <- "+ String(currentChannel) + " "); 
+    String CONFIG_DATA = DMX_CONFIG[channelIndex];
     Serial.println(CONFIG_DATA);
     processData(dt,CONFIG_DATA,250);
 

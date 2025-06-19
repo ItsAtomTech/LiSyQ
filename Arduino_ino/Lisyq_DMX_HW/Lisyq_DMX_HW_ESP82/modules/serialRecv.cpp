@@ -9,7 +9,7 @@ Communicator coms;
 bool newData = false;
 bool isConfig = false;
 
-#define MAX_CHANNELS_LS 3
+#define MAX_CHANNELS_LS 50
 
 int channel_interval = 0;
 char channelMarker = ',';
@@ -17,11 +17,12 @@ char channelMarker = ',';
 int channels[MAX_CHANNELS_LS];
 int currentChannel = 0;
 
-bool isInChannels(int value) {
+//return -1 if channel is not found
+int isInChannels(int value) {
   for (int i = 0; i < MAX_CHANNELS_LS; i++) {
-    if (channels[i] == value) return true;
+    if (channels[i] == value) return i;
   }
-  return false;
+  return -1;
 }
 
 
@@ -44,7 +45,7 @@ void recvWithEndMarker() {
 
       if (!isConfig && rc == channelMarker) {
         receivedChars[ndx - 1] = '\0';  // remove comma
-        if (isInChannels(currentChannel)) {
+        if (isInChannels(currentChannel) >= 0) {
           String SData = receivedChars;
           coms.processCommands(SData);
         }
@@ -54,7 +55,7 @@ void recvWithEndMarker() {
 
     } else {
       receivedChars[ndx] = '\0';
-      if (isConfig || isInChannels(currentChannel)) {
+      if (isConfig || isInChannels(currentChannel) >= 0) {
         String SData = receivedChars;
         coms.processCommands(SData);
       }
