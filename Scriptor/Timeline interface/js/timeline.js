@@ -599,7 +599,7 @@ function add_sub_tracks(data,com,mode,sub_index){
 	}
 	
 	content_id++;
-	
+	optimizedData = false;
 	
 	gen_ruler();
 }
@@ -1461,6 +1461,7 @@ function remove_content(id,com){
 	selected_contents.length = 0;
 	
 	
+	optimizedData = false;
 	
 	return timeline_data;
 	
@@ -1506,6 +1507,9 @@ function remove_multiple(com,id){
 		
 		selected_content = null;
 		selected_contents.length = 0;
+		
+		optimizedData = false;
+		
 		return timeline_data;
 		
 
@@ -1557,6 +1561,9 @@ function remove_track(id,com){
 	selected_track_index = null;
 	_("track_disp").value = 0;
 	_("total_tracks").innerHTML = timeline_data.length;
+	
+	optimizedData = false;
+	
 	return timeline_data;
 	
 	

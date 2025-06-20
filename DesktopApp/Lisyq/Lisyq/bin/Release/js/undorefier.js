@@ -295,4 +295,6 @@ function push_undo(type, action_command, index, data, subtrack_index) {
             return false;
     }
     add_undo(udata);
+    
+    optimizedData=false;
 }

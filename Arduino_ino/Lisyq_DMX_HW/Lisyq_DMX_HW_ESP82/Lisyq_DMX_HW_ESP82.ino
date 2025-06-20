@@ -6,8 +6,9 @@
 #include "modules/serialRecv.cpp"
 #include <ArduinoJson.h>
 
-#include <ESPDMX.h>
-// #include "modules/ESPDMX.h" //A modefied ESP8266 DMX Lib
+#include <ESPDMX.h>//Uses a modified ESP8266 DMX Lib, Lib is located on the 
+// modules folder of this project.
+
 DMXESPSerial dmx;
 
 localStorage storage;
@@ -39,7 +40,7 @@ void setup() {
 
 
 unsigned long prevUpdateTime = 0;
-int updateInterval = 5;
+int updateInterval = 20;
 
 
 void loop() {
@@ -103,12 +104,10 @@ bool saveFromConfig(String data){
 
 //Loads saved Data from eeprom
 void loadCondigData(){
-  // 📤 Load from EEPROM (no size needed with improved getItem)
+  // Load from EEPROM (no size needed with improved getItem)
   String loadedData = storage.getItem(jsonStartIndex);
-  // Serial.println("\nLoaded:");
-  // Serial.println(loadedData);
 
-  // 🧪 Deserialize
+  // Deserialize
   StaticJsonDocument<jsonMaxLength> loadedConfig;
   DeserializationError error = deserializeJson(loadedConfig, loadedData);
 
@@ -150,7 +149,7 @@ void putToChannels(String data) {
     channels[channelCount++] = data.substring(startIdx).toInt();
   }
 
-  // 🌌 Clear the rest of the array
+  // Clear the rest of the array
   for (int i = channelCount; i < MAX_CHANNELS_LS; i++) {
     channels[i] = -1;
   }
@@ -229,8 +228,10 @@ void processData(String data, String config, int faderValue = 255) {
     posAddr = config.substring(pIndex + 1).toInt();
   }
 
+  //Writes to dmx based on Configs, ignores writing if ~ notation is detected 
+
   // Write color
-  if (colorAddr >= 0) {
+  if (colorAddr >= 0 && colorHex.indexOf('~') < 0) {
     writeToAddress(colorAddr + 0, colorR);
     writeToAddress(colorAddr + 1, colorG);
     writeToAddress(colorAddr + 2, colorB);
@@ -245,8 +246,17 @@ void processData(String data, String config, int faderValue = 255) {
   if (posAddr >= 0 && pos1Hex.length() > 0 && pos2Hex.length() > 0) {
     int pos1 = strtol(pos1Hex.c_str(), NULL, 16);
     int pos2 = strtol(pos2Hex.c_str(), NULL, 16);
-    writeToAddress(posAddr + 0, pos1);
-    writeToAddress(posAddr + 1, pos2);
+
+    if(pos1Hex.indexOf('~') < 0){
+      writeToAddress(posAddr + 0, pos1);
+    }
+
+
+    if(pos2Hex.indexOf('~') < 0){
+      writeToAddress(posAddr + 1, pos2);
+    }
+    
+    
   }
 }
 
@@ -260,20 +270,20 @@ void writeToAddress(int address, int value) {
   dmx.update(true);
 }
 
-//To-Do: Process The Data for each channel
+//Process The Data for each channel
 void processLSData(String dt){
 
   int channelIndex = isInChannels(currentChannel);
 
   // Serial.print("Dat: "+ dt); 
   if(channelIndex >= 0){
-    Serial.print(" <- "+ String(currentChannel) + " "); 
+    // Serial.print(" <- "+ String(currentChannel) + " "); 
     String CONFIG_DATA = DMX_CONFIG[channelIndex];
-    Serial.println(CONFIG_DATA);
+    // Serial.println(CONFIG_DATA);
     processData(dt,CONFIG_DATA,250);
 
   }
-  Serial.println("->");
+  // Serial.println("->");
 }
 
 
