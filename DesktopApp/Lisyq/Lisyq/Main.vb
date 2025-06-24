@@ -316,6 +316,14 @@ Public Class Main
             Return True
         End Function
 
+        'Triggers New File Save intead of writing to an existing file
+        Public Function AsNewTrigger()
+            Main.asNew = True
+            Main.SavePath = ""
+            Return True
+        End Function
+
+
         Public msgChache As String
         Public Function set_toastMessage(ms As String)
             msgChache = ms
@@ -767,6 +775,32 @@ Public Class Main
         NestMain.WindowState = FormWindowState.Normal
 
         Me.WindowState = FormWindowState.Minimized
+
+
+    End Sub
+
+    Private Sub ToolStripMenuItem23_Click_1(sender As Object, e As EventArgs) Handles ToolStripMenuItem23.Click
+
+
+        Dim confirm_newproject As DialogResult
+
+        If SavePath.Length > 0 Then
+            confirm_newproject = MessageBox.Show("Are you sure to start a new Project File? This will clear your current work so make sure to save it.", "New Project", MessageBoxButtons.YesNo)
+        Else
+            Return
+        End If
+
+
+        If confirm_newproject = DialogResult.Yes Then
+            SavePath = ""
+            asNew = True
+            WebView21.ExecuteScriptAsync("new_refresh(true)")
+
+        Else
+            NotificationManager.Show(Me, "Action Canceled", Color.Yellow, 1500)
+
+        End If
+
 
 
     End Sub

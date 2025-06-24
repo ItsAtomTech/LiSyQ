@@ -2150,6 +2150,36 @@ async function load_from_file(df){
 }
 
 
+//Clear Current Timeline Project
+function new_refresh(noConfirm = false){
+	if(!noConfirm){
+		let isOkay = window.confirm("Clear Current Project Data?");
+		if(!isOkay){
+			return false;
+		}
+			
+	}
+	
+	loaded_from_data = false;	
+	timeline_data = [];
+	templates = [];
+	markers = [];
+	fileOptions = {};
+	
+	load_all_templates();	
+	reset_undo_redo();
+	
+		
+	const myNode = _("timeline_");
+		while (myNode.lastElementChild) {
+    myNode.removeChild(myNode.lastElementChild);
+  }
+  
+  add_track();
+	
+}
+
+
 function refresh_track(tr_id){
 	if(tr_id >= timeline_data.length || tr_id == null){
 		
@@ -2170,6 +2200,8 @@ function refresh_track(tr_id){
 	
 	loaded_from_data = false;
 	updateTrackBounds();
+	_("total_tracks").innerHTML = timeline_data.length;
+	
 }
 
 

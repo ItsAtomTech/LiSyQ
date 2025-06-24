@@ -35,13 +35,14 @@ void setup() {
   Serial.println("I: Initilaizing");
   loadCondigData();
 
+  dmx.update(true);
   
 }
 
 
 unsigned long prevUpdateTime = 0;
-int updateInterval = 20;
-
+int updateInterval = 5;
+bool writingTo = false;
 
 void loop() {
   recvWithEndMarker();  // Hardware Serial
@@ -187,9 +188,9 @@ void processCommands(String cmd){
       };      
 
   }else{
-      
+      writingTo = true;
       processLSData(cmd);
-         
+      writingTo = false;
   }  
   // 
 }
@@ -267,7 +268,7 @@ void writeToAddress(int address, int value) {
   // Serial.print(" to address "); Serial.println(address);
 
   dmx.write(address, value); 
-  dmx.update(true);
+  
 }
 
 //Process The Data for each channel
@@ -283,6 +284,7 @@ void processLSData(String dt){
     processData(dt,CONFIG_DATA,250);
 
   }
+  dmx.update(true);
   // Serial.println("->");
 }
 

@@ -170,6 +170,15 @@ function openFileSelector(){
 }
 
 
+function trigerNewFile(){
+		try{	
+		window.chrome.webview.hostObjects.NativeObject.AsNewTrigger();	
+        
+	}catch(e){
+        console.warn("Running on WEB interface only!");
+	}
+}
+
 
 
 //Generated Outputs
@@ -458,3 +467,4 @@ function showToast(message=""){
 
 
 
+trigerNewFile();

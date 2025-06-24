@@ -86,6 +86,7 @@ Partial Class Main
         Me.ToolStripMenuItem19 = New System.Windows.Forms.ToolStripMenuItem()
         Me.SaveFileDialog2 = New System.Windows.Forms.SaveFileDialog()
         Me.directoryPicker = New System.Windows.Forms.OpenFileDialog()
+        Me.ToolStripMenuItem23 = New System.Windows.Forms.ToolStripMenuItem()
         CType(Me.WebView21, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.template_menu.SuspendLayout()
         Me.content_menu.SuspendLayout()
@@ -357,7 +358,7 @@ Partial Class Main
         '
         'FileToolStripMenuItem
         '
-        Me.FileToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.OpenToolStripMenuItem, Me.ToolStripMenuItem15, Me.SaveToolStripMenuItem, Me.SaveAsToolStripMenuItem})
+        Me.FileToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.ToolStripMenuItem23, Me.OpenToolStripMenuItem, Me.ToolStripMenuItem15, Me.SaveToolStripMenuItem, Me.SaveAsToolStripMenuItem})
         Me.FileToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlLightLight
         Me.FileToolStripMenuItem.Name = "FileToolStripMenuItem"
         Me.FileToolStripMenuItem.Size = New System.Drawing.Size(37, 23)
@@ -601,6 +602,14 @@ Partial Class Main
         '
         Me.directoryPicker.Title = "Directory Picker"
         '
+        'ToolStripMenuItem23
+        '
+        Me.ToolStripMenuItem23.BackColor = System.Drawing.SystemColors.ControlDarkDark
+        Me.ToolStripMenuItem23.ForeColor = System.Drawing.SystemColors.ControlLightLight
+        Me.ToolStripMenuItem23.Name = "ToolStripMenuItem23"
+        Me.ToolStripMenuItem23.Size = New System.Drawing.Size(184, 22)
+        Me.ToolStripMenuItem23.Text = "New"
+        '
         'Main
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -687,4 +696,5 @@ Partial Class Main
     Friend WithEvents ToolStripMenuItem22 As ToolStripMenuItem
     Friend WithEvents directoryPicker As OpenFileDialog
     Friend WithEvents openNest As Button
+    Friend WithEvents ToolStripMenuItem23 As ToolStripMenuItem
 End Class
