@@ -302,6 +302,7 @@ function deboundKeyByMove(elm){
 		selected_stabs.end_at = gen_time(stabCoord);
 	}
 	
+	
 	refresh_timeline();
 }
 

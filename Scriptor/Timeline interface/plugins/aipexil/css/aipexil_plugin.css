@@ -202,6 +202,7 @@ body{
 	border:dashed white 1px;
 	position:absolute;
 	top:-10px;
+	padding-top:5px;
 	
 }
 .active_tabs{
@@ -213,6 +214,64 @@ body{
 }
 
 
+
+
+/* Key stab Handles */
+
+.keyframe_stab:focus{
+	z-index:2;
+	
+}
+
+.keyframe_stab > span.key_handle{
+	width:10px;
+	position:absolute;
+	display:inline-block;
+	border:solid white 1px;
+	border-radius:100%;
+	background:gray;
+	height:10px;
+	cursor:grab;
+	cursor: -webkit-grab;
+}
+
+.keyframe_stab > span.key_handle.num_0{
+	left:0;
+	
+	
+}
+.keyframe_stab > span.key_handle.num_1{
+	right:0;
+	
+	
+}
+
+.keyframe_stab > span.key_handle{
+	display:none;
+	
+}
+
+.keyframe_stab > span.key_handle:hover{
+	-webkit-transform:scale(1.4,1.4);
+	transform:scale(1.4,1.4);
+}
+
+
+.keyframe_stab:hover > span{
+	display:inline-block;
+	
+}
+
+.keyframe_stab:active > span{
+	display:inline-block;	
+}
+
+.keyframe_stab:focus > span{
+	display:inline-block;	
+}
+
+
+/* Key Stab Handles End */
 
 
 
