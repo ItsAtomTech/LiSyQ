@@ -1,5 +1,5 @@
 // =================================
-// Aipexil neopexil controller plugin v1.0.0
+// Aipexil neopexil controller plugin v1.0.2
 // by Atomtech 
 // =================================
 
@@ -435,10 +435,88 @@ function add_time_stab(crds,width,id){
 		key_stab.style.width = width+"px";
 		key_stab.setAttribute("key_id",id);
 		key_stab.setAttribute("id","key_"+id);
+		key_stab.setAttribute("tabindex",0);
+		
+		//Generate keyframe handles here
+		
+		key_stab.appendChild(makeKeyHandle(0));
+		key_stab.appendChild(makeKeyHandle(1));
 		
 		line_key_time.appendChild(key_stab);
+		
+				
+		function makeKeyHandle(num = 0){
+			let handle = document.createElement("span");
+				handle.classList.add("key_handle");
+				handle.classList.add("num_"+num);
+				handle.setAttribute("key",num);
+				handle.setAttribute("onmousemove","adjustKeyByMove(this)");
+				handle.setAttribute("onmousedown","initKeyByMove(this)");
+				handle.setAttribute("onmouseup","deboundKeyByMove(this)");
+				
+			return handle;
+		}
+		
 	
 }
+
+
+
+let isDraggingKey = false;
+let activeElm = null;
+
+function adjustKeyByMove(elm) {
+	
+	
+	if (!isDraggingKey || !activeElm) return;
+	
+  const parent = elm.parentElement;
+  const rect = parent.getBoundingClientRect();
+  const key = elm.getAttribute("key");
+
+  if (key === "0") {
+    const mouseX = event.clientX - rect.left;
+    const newLeft = mouseX - 5;
+    elm.style.left = `${newLeft}px`;
+    elm.style.right = ''; // Clear right if previously set
+  } else {
+    const mouseX = event.clientX - rect.left;
+    const newRight = (parent.offsetWidth - mouseX) - 5;
+    elm.style.right = `${newRight}px`;
+    elm.style.left = ''; // Clear left if previously set
+  }
+}
+
+
+function initKeyByMove(elm) {
+  isDraggingKey = true;
+  activeElm = elm;
+}
+
+
+function deboundKeyByMove(elm){
+	isDraggingKey = false;
+	activeElm = null;
+	
+	let stabCoord = (event.clientX - _("line_key_time").getBoundingClientRect().left);
+	
+	let skey = elm.getAttribute("key");
+	
+	if(skey == 0){
+		selected_stabs.time_start = gen_time(stabCoord);
+	}else{
+		selected_stabs.time_end = gen_time(stabCoord);
+	}
+	
+	//reflect changes to selected keyframe
+	let kyID = (elm.parentElement.getAttribute("key_id"));
+	open_keyframe_manager(kyID, "stabs");
+	
+	refresh_timeline();
+}
+
+
+
 
 
 //User clicked on a keyframe
@@ -447,7 +525,7 @@ function click_on_stabs(t){
 	click_on_stab = true;		
 	idf = t.getAttribute("key_id");
 	
-	if(prev_id != idf){	
+	if(prev_id != idf ){	
 		
 		refresh_timeline(); //refreshes if new id was detected
 	}
@@ -459,8 +537,11 @@ function click_on_stabs(t){
 	prev_id = idf;		
 	selected_stabs = aipexil_time_line[idf];
 	
-	open_keyframe_manager(t, "stabs");
+	if(event.target.classList.contains("key_handle")){
+		return;
+	};
 	
+	open_keyframe_manager(t, "stabs");
 	
 }
 
