@@ -232,7 +232,7 @@ function add_time_stab(crds,width,id){
 		key_stab.setAttribute("key_id",id);
 		key_stab.setAttribute("tabindex",0);
 		
-		//To-Do: Generate keyframe handles here
+		//Generate keyframe handles here
 		
 		key_stab.appendChild(makeKeyHandle(0));
 		key_stab.appendChild(makeKeyHandle(1));
