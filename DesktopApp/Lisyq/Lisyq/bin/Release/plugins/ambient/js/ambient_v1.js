@@ -278,6 +278,7 @@ function add_time_stab(crds,width,id){
 				handle.setAttribute("onmousemove","adjustKeyByMove(this)");
 				handle.setAttribute("onmousedown","initKeyByMove(this)");
 				handle.setAttribute("onmouseup","deboundKeyByMove(this)");
+				handle.setAttribute("onmouseleave","deboundKeyByMove(this)");
 				
 			return handle;
 		}
@@ -321,8 +322,13 @@ function initKeyByMove(elm) {
 
 
 function deboundKeyByMove(elm){
-	isDraggingKey = false;
+	
 	activeElm = null;
+		
+	if(!isDraggingKey){
+		return;
+	}
+	
 	
 	let stabCoord = (event.clientX - _("line_key_time").getBoundingClientRect().left);
 	
@@ -333,6 +339,7 @@ function deboundKeyByMove(elm){
 	}else{
 		selected_stabs.end_at = gen_time(stabCoord);
 	}
+	isDraggingKey = false;
 	
 	refresh_timeline();
 }
