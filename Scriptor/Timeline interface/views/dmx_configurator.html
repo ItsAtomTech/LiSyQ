@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html> 
+<head> 
+	<title>LiSyQ - DMX Configurator</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, user-scalable=0">
+	<!-- <link rel="stylesheet" href="font-awesome/css/solid.min.css"> -->
+	<!-- <link rel="stylesheet" href="font-awesome/css/fontawesome.min.css"> -->
+		<link rel="stylesheet" href="../css/default.css">
+		<link rel="stylesheet" href="../css/dmxview.css">
+		<link rel="stylesheet" id="color" href="../css/coloring.css">
+		<link rel="stylesheet" href="../css/dailoge.css">
+		<link rel="stylesheet" href="../css/bottom_bar.css">
+		<link rel="stylesheet" href="../css/template_player.css">
+		<link rel="icon" type="image/png" href="../images/favicon.ico"/>
+	
+	<style id='dyna_scaler'>
+		:root {
+			--scale: 1;
+		}
+	</style>
+				
+</head>
+
+<body>
+
+
+  <div class="main_container_dx">
+	  <div class="container_box">
+	  
+	  <!-- Title Section and Close -->
+		<div class="title_bar_section">
+		  <span class="title_text big">DMX Config Patcher</span>
+		  <span class="close_button big">&times;</span>
+		</div>
+	  
+	  
+	  <div class="action_bar flexed">
+		<div class="button_box actions small grad_dark_button auto_width" onclick="" title="Writes the Configuration to the Adapter"> &#10004; Upload  </div>
+		
+		<div class="button_box small grad_dark_button auto_width" onclick="" title="COM port Attached" id="comport_disp"> COM X  </div>
+		
+		<span class="flexed center_separator">   </span>
+		
+		<div class="button_box actions small grad_dark_button auto_width" onclick="" title=""> &#128190; Save  </div>
+		
+		<div class="button_box actions small grad_dark_button auto_width" onclick="" title=""> &#128194; Load  </div>
+		
+		<span class="flexed center_separator">   </span>
+		
+		<div class="button_box actions small grad_dark_button auto_width" onclick="" title=""> Import  </div>
+		<div class="button_box actions small grad_dark_button auto_width" onclick="" title=""> Export  </div>
+		
+		<span class="flexed center_separator"> </span>
+		
+		<input type="text" class="plane_input save_name_input primary_background primary_color" id="conf_save_name" placeholder="No name">
+		
+	  </div>
+	  
+	  
+	  </div>
+  
+  </div>
+
+
+  <script defer src="../js/dialogue.js"></script>
+
+</body>
+</html>

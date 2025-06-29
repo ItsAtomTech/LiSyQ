@@ -1,0 +1,102 @@
+body{
+	background:transparent;
+}
+
+
+.main_container_dx{
+	width:100%;
+	font-family:Comfortaa;
+	/* border:solid red 1px; */
+	bottom:0;
+	top:0;
+	left:0;
+	right:0;
+	position:absolute;
+	display:flex;
+	align-items:center;
+	justify-content:center;
+	background:transparent;
+	color:var(--primary_color);
+	
+}
+
+.main_container_dx >.container_box{
+	position:relative;
+	width:100%;
+	max-width:700px;
+	min-width:300px;
+	min-height:500px;
+	/* border:solid lime 1px; */
+	border-radius:10px;
+	background:var(--primary_background);
+	box-shadow:2px 2px 0px 0px rgba(34,34,34,0.4);
+}
+
+
+
+/* Title Bar Section */
+
+.title_bar_section{
+	position:relative;
+	/* border:solid yellow 1px; */
+	width:100%;
+	padding:10px;
+	min-height:40px;
+	font-family:Arial;
+	background:var(--secondary_background);
+}
+
+
+
+.title_bar_section > .close_button{
+	width:20px;
+	height:20px;
+	display:inline-block;
+	text-align:center;
+	float:right;
+	font-weight:bold;
+	cursor:pointer;
+	
+}
+
+
+.title_bar_section > .title_text{
+	padding:10px;
+	font-weight:bold;
+}
+
+
+/* Title Bar Section End */
+
+
+
+/* Actions Bar Section Start */
+
+.container_box > .action_bar{
+	width:100%;
+	min-height:30px;
+	padding:2px;
+	gap:5px;
+	border-bottom:1px solid gray;
+	/* box-shadow:0px 2px 2px 2px rgba(34,34,34,0.6); */
+}
+
+.center_separator{
+	align-items:center;
+	justify-content:center;
+	user-select:none;
+	border-left:1px solid gray;
+}
+
+.save_name_input{
+	min-width:100px;
+	padding-left:5px;
+	border-bottom:dashed gray 1px !important;
+	
+}
+
+#comport_disp{
+	min-width:80px;
+	
+}
+
