@@ -47,6 +47,8 @@
 		
 		<span class="flexed center_separator">   </span>
 		
+		<div class="button_box actions small grad_dark_button hidden auto_width" onclick="" title="">    </div>	
+		
 		<div class="button_box actions small grad_dark_button auto_width" onclick="" title=""> Import  </div>
 		<div class="button_box actions small grad_dark_button auto_width" onclick="" title=""> Export  </div>
 		
@@ -57,6 +59,21 @@
 	  </div>
 	  
 	  
+	  <div class="configs_tab_section">
+		  <div class="dx_tab_container">
+			<div class="channel_text" tag="channel_config"> 0 </div>
+			
+			<div class="dmx_channel_con" tag="dmx_config"> 
+			  <span>a0</span>
+			</div>
+			
+			<div class="tabs_action"> <span class="remove_tab button_box "> - </span> </div>
+		  </div>
+	  </div>
+	  
+	  
+	  <div class="add_config button_box"> + </div>
+	  
 	  </div>
   
   </div>
@@ -65,4 +82,23 @@
   <script defer src="../js/dialogue.js"></script>
 
 </body>
+
+
+
+<template id="config_tab_template">
+
+		  <div class="dx_tab_container">
+			<div class="channel_text" tag="channel_config"> 0 </div>
+			
+			<div class="dmx_channel_con" tag="dmx_config"> 
+			  <span>a0</span>
+			</div>
+			
+			<div class="tabs_action"> <span class="remove_tab button_box "> - </span> </div>
+		  </div>
+			  
+</template>
+
+
+
 </html>

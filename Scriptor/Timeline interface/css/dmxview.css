@@ -95,8 +95,136 @@ body{
 	
 }
 
+.button_box.hidden{
+	visibility:hidden;
+	
+}
+
+.action_bar > .button_box{
+	white-space:nowrap;
+	overflow:hidden;
+	
+}
+
 #comport_disp{
 	min-width:80px;
 	
 }
+
+
+/* Actions Bar Section Start End*/
+
+
+.configs_tab_section{
+	width:100%;
+	min-height:200px;
+	/* border:solid red 1px; */
+	padding:10px;
+	max-height:500px;
+	overflow-y:auto;
+	
+}
+
+
+.configs_tab_section > .dx_tab_container{
+	display:flex;
+	width:100%;
+	min-width:200px;
+	max-width:500px;
+	border:dashed gray 1px;
+	min-height:50px;	
+	position:relative;
+	padding:3px;
+	margin-top:5px;
+}
+
+
+
+.dx_tab_container > .channel_text{
+	width:100%;
+	max-width:50px;
+	min-height:50px;
+	/* border:solid yellow 1px; */
+	text-align:center;
+	padding:10px;
+	padding-top:15px;
+}
+
+
+
+.dx_tab_container > .dmx_channel_con{
+	width:100%;
+	max-width:400px;
+	min-height:50px;
+	border:solid transparent 1px;
+	text-align:center;
+	padding:10px;
+	padding-top:15px;
+	overflow-x:auto;
+	background-color:var(--primary_background_darker);
+	border-radius:10px;
+}
+
+
+.dx_tab_container > .tabs_action{
+	width:100%;
+	max-width:40px;
+	min-height:50px;
+	/* border:solid yellow 1px; */
+	text-align:center;
+	padding:10px;
+	display:flex;
+	justify-content:center;
+	align-items:center;
+	
+}
+
+
+.dx_tab_container > .tabs_action >span.remove_tab{
+	padding:5px;
+	aspect-ratio:1/1;
+	width:25px;
+	height:25px;
+	font-weight:bold;
+	line-height:12px;
+	cursor:pointer;
+	background:#d81b60;
+	border-radius:100%;
+	box-shadow:2px 2px 0px 0px rgba(34,34,34,0.7);
+	margin-left:0px;
+	user-select:none;
+}
+
+
+.dx_tab_container > .dmx_channel_con > span{
+	padding:5px;
+	min-width:25px;
+	height:25px;
+	font-weight:bold;
+	line-height:12px;
+	border:dashed gray 1px;
+	cursor:pointer;
+	background:var(--primary_background);
+	border-radius:10px;
+	box-shadow:2px 2px 0px 0px rgba(34,34,34,0.7);
+	margin-left:3px;
+	user-select:none;
+}
+
+.container_box > .add_config{
+	position:absolute;
+	bottom:10px;
+	right:10px;
+	display:flex;
+	align-items:center;
+	justify-content:center;
+	width:50px;
+	height:50px;
+	font-size:2.1em;
+	background:var(--secondary_color);
+	border-radius:10px;
+	user-select:none;
+}
+
+
 
