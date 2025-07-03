@@ -80,17 +80,47 @@
 
 <dialog id="configModal" class="modal_container">
 	<div class="title_bar_section primary_color">
-		  <span class="title_text normal">Config Editor</span>
+		  <span class="title_text big">Config Editor</span>
 		  <span class="close_button big" onclick="DMX_CONF.closeModal()">×</span>
 	</div>
 	
-	<div class="input_method_con">
-		<input type="number" class="plane_input primary_background primary_color" id="conf_save_name" placeholder="Channel Target" value="0" min="0">
+	<div class="input_method_con primary_color">
+		<label class="normal"> Target Channel: </label><input type="number" class="plane_input primary_background primary_color" id="conf_save_name" placeholder="Channel Target" value="0" min="0">
 	</div>
 	
-	<div class="input_method_con">
+	<div class="input_method_con" id="configs_input">
+		
+		<div class="config_div">
+			<select class="plane_input primary_background primary_color" tag="ctype" >
+				<option> Color </option>
+				<option> Position </option>
+				<option> Fader </option>
+				<option> Feature A </option>
+				<option> Feature B </option>
+				<option> Feature D </option>
+				<option> Feature E </option>
+				<option> Feature G </option>
+				<option> Feature H </option>
+				<option> Feature I </option>
+				<option> Feature J </option>
+				<option> Feature K </option>
+				<option> Feature H </option>
+			</select>
+			
+			<input tag="target" type="number" class="plane_input primary_background primary_color" id="conf_save_name" placeholder="Channel Target" value="1" min="1" max="512">
+			
+			<div class="button_box normal primary_color grad_dark_button" onclick="" title=""> - </div>
+		</div>
 	
+	</div>
 	
+	<div class="action_buttons_modal"> 
+		<div class="button_box actions auto_width normal primary_color grad_dark_button" onclick="" title=""> + Add </div>
+	</div>
+		
+	<div class="action_buttons_modal bottom"> 
+		<div class="button_box actions auto_width normal primary_color grad_dark_button" onclick="" title=""> Okay </div>
+		<div class="button_box actions auto_width normal primary_color grad_dark_button" onclick="" title=""> Cancel </div>
 	</div>
 	
 	
@@ -119,6 +149,29 @@
 			  
 </template>
 
-
+<template id="configs_input_template">
+		<div class="config_div">
+			<select class="plane_input primary_background primary_color" tag="ctype" >
+				<option> Color </option>
+				<option> Position </option>
+				<option> Fader </option>
+				<option> Feature A </option>
+				<option> Feature B </option>
+				<option> Feature D </option>
+				<option> Feature E </option>
+				<option> Feature G </option>
+				<option> Feature H </option>
+				<option> Feature I </option>
+				<option> Feature J </option>
+				<option> Feature K </option>
+				<option> Feature H </option>
+			</select>
+			
+			<input tag="target" type="number" class="plane_input primary_background primary_color" id="conf_save_name" placeholder="Channel Target" value="1" min="1" max="512">
+			
+						
+			<div class="button_box normal primary_color grad_dark_button" onclick="" title=""> - </div>
+		</div>
+</template>
 
 </html>

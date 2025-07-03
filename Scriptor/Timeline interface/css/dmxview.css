@@ -230,7 +230,7 @@ body{
 /* Config Window Styles */
 
 .modal_container::backdrop{
-	background:rgba(34,34,34,0.3);
+	background:rgba(34,34,34,0.5);
 	
 }
 
@@ -244,6 +244,7 @@ body{
 	border-radius:10px;
 	box-shadow:2px 2px 1px 1px rgba(64,64,64,0.8);
 	background:var(--primary_background);
+	
 }
 
 .modal_container > .title_bar_section{
@@ -256,15 +257,77 @@ body{
 .input_method_con{
 	padding:5px;
 	border-bottom:dashed 1px gray;
+	font-family:Comfortaa;
+	max-height:350px;
+	overflow:auto;
 }
+
+.action_buttons_modal{
+	padding:5px;
+	/* border-bottom:dashed 1px gray; */
+	font-family:Comfortaa;
+	max-height:350px;
+	overflow:auto;
+	padding-bottom:50px;
+}
+
+.action_buttons_modal.bottom{
+	padding:5px;
+	width:100%;
+	display:flex;
+	/* border-bottom:dashed 1px gray; */
+	font-family:Comfortaa;
+	overflow:auto;
+	align-items:center;
+	justify-content:center;
+	position:absolute;
+	bottom:0;
+}
+
 
 .input_method_con > input{
 	padding:10px;
 	border-bottom:;
-	border: solid rgba(20,20,20,1) 1px;
+	border: solid rgba(30,30,30,1) 1px;
     background: rgba(15,15,15,0.1);
     box-shadow: 3px 3px 0px 0px inset rgba(0,0,0,0.4);
 	border-radius:5px;
 	max-width:140px;
 }
 
+.input_method_con > div > select{
+	padding:10px;
+	border-bottom:;
+	border: solid rgba(30,30,30,1) 1px;
+    background: rgba(15,15,15,0.1);
+    box-shadow: 3px 3px 0px 0px inset rgba(0,0,0,0.4);
+	border-radius:5px;
+	max-width:150px;
+}
+.input_method_con > div > select > *{
+	background:var(--primary_background);
+}
+
+.input_method_con > div > input{
+	padding:10px;
+	border-bottom:;
+	border: solid rgba(30,30,30,1) 1px;
+    background: rgba(15,15,15,0.1);
+    box-shadow: 3px 3px 0px 0px inset rgba(0,0,0,0.4);
+	border-radius:5px;
+	max-width:60px;
+}
+
+
+.config_div{
+	margin-bottom:5px;
+	display:flex;
+	justify-content:flex-start;
+	align-items:center;
+	gap:5px;
+	
+}
+
+.config_div > .button_box{
+	user-select:none;
+}
