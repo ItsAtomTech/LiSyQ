@@ -33,7 +33,7 @@ let configs = [];
 let options = {};
 
 let SAVES = []; //stores the saves data
-
+let selectedIndex = 0;
 
 // ========================
 //Constant data structure
@@ -113,6 +113,65 @@ const DMX_CONF = {
 		
 	},
 	
+	// Save or Add the Config data into Config array
+	save_ConfigEdits: function(){
+		let stab_container = _('configs_input');
+		let elm_collections = (stab_container.getElementsByClassName("config_div"));
+		let configData = clone(CONFIG_DATA);
+		
+		for(each of elm_collections){
+			
+			let select_type = each.querySelector('[tag="ctype"]');
+			let targetc = each.querySelector('[tag="target"]');
+			let channel = _("conf_channel");
+			
+				configData.channel = channel.value;
+			
+			
+			let objectConf = {
+				type: select_type.value,
+				target: targetc.value,
+			}
+			
+			configData.dmx_config.push(objectConf);
+			configs[selectedIndex] = configData;
+			
+			// To-Do: Close Modal and Reset it
+			
+		}
+		
+
+		
+	},
+	
+	//Config Editor Section
+	
+	//Adds the Config tab into the editor, if data is passed, it puts the value as well
+	addConfigEdit: function(data){
+		let tabs_container = _("configs_input");
+		let configs_input_template = _("configs_input_template").cloneNode(true);
+			if(data !=undefined){
+				
+				let select_type = (configs_input_template.content.querySelector('[tag="ctype"]'));
+				let target = (configs_input_template.content.querySelector('[tag="target"]'));
+				
+				if(data.type) select_type.value = data.type;
+				if(data.target) target.value = data.target;				
+			}
+		tabs_container.appendChild(configs_input_template.content);
+	},
+	
+	
+	removeInputTabSelf: function(elm){
+		elm.parentNode.remove();
+	},
+	
+	
+	clearAllEditTabs: function(){
+		let tabs_container = _("configs_input");
+		tabs_container.innerHTML = "";
+		
+	},
 	
 }
 
@@ -125,7 +184,7 @@ DMX_CONF.loadAllSaved();
 
 
 DMX_CONF.openConfigWindow();
-
+DMX_CONF.addConfigEdit();
 
 
 
