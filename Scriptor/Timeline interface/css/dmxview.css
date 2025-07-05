@@ -331,3 +331,16 @@ body{
 .config_div > .button_box{
 	user-select:none;
 }
+
+
+
+/* Other Modals */
+
+
+.dialogue_con.hidden{
+	display:none;
+	
+}
+
+
+

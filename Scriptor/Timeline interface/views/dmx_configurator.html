@@ -41,7 +41,9 @@
 		
 		<span class="flexed center_separator">   </span>
 		
-		<div class="button_box actions small grad_dark_button auto_width" onclick="" title=""> &#128190; Save  </div>
+		<div class="button_box actions small grad_dark_button auto_width" onclick="" title=""> &star; New  </div>
+		
+		<div class="button_box actions small grad_dark_button auto_width" onclick="DMX_CONF.addToSaves();" title=""> &#128190; Save  </div>
 		
 		<div class="button_box actions small grad_dark_button auto_width" onclick="" title=""> &#128194; Load  </div>
 		
@@ -59,7 +61,7 @@
 	  </div>
 	  
 	  
-	  <div class="configs_tab_section">
+	  <div class="configs_tab_section" id="configs_tab_section">
 		  <div class="dx_tab_container">
 			<div class="channel_text" tag="channel_config"> 0 </div>
 			
@@ -72,11 +74,33 @@
 	  </div>
 	  
 	  
-	  <div class="add_config button_box"> + </div>
+	  <div class="add_config button_box" onclick="DMX_CONF.openConfigWindow();"> + </div>
 	  
 	  </div>
   
   </div>
+
+
+
+<div class="dialogue_con primary_color hidden" id="saves_loader">
+	<div class="dialogue_box primary_background"><span class="close_dia primary_color" onclick="">×</span>  
+	
+	<div class="live_player_load_main"> 
+	  <div class="title_label big">Load Local Saves </div> 
+		<div class="saved_tabs_con" id="saved_local_con">
+		
+
+		</div>
+	
+	</div> 
+	
+	</div>
+
+</div>
+
+
+
+
 
 <dialog id="configModal" class="modal_container">
 	<div class="title_bar_section primary_color">
@@ -100,7 +124,7 @@
 		
 	<div class="action_buttons_modal bottom"> 
 		<div class="button_box actions auto_width normal primary_color grad_dark_button" onclick="DMX_CONF.save_ConfigEdits()" title=""> Okay </div>
-		<div class="button_box actions auto_width normal primary_color grad_dark_button" onclick="" title=""> Cancel </div>
+		<div class="button_box actions auto_width normal primary_color grad_dark_button" onclick="DMX_CONF.closeModal();" title=""> Cancel </div>
 	</div>
 	
 	
@@ -120,11 +144,10 @@
 		  <div class="dx_tab_container">
 			<div class="channel_text" tag="channel_config"> 0 </div>
 			
-			<div class="dmx_channel_con" tag="dmx_config"> 
-			  <span>a0</span>
+			<div class="dmx_channel_con" onclick="DMX_CONF.openForEdit(this)" tag="dmx_config"> 
 			</div>
 			
-			<div class="tabs_action"> <span class="remove_tab button_box "> - </span> </div>
+			<div class="tabs_action"> <span  tag="remove_thistab" class="remove_tab button_box " onclick="DMX_CONF.removeThistab(this)"> - </span> </div>
 		  </div>
 			  
 </template>
@@ -153,5 +176,17 @@
 			<div class="button_box normal primary_color grad_dark_button" onclick="DMX_CONF.removeInputTabSelf(this)" title=""> - </div>
 		</div>
 </template>
+
+<template id="save_tab_template">
+		<div class="saved_tab">
+		  <div class="saved_name" tag="save_name"> No name </div>
+			<div class="saved_actions small" tag="index_refrence"> 
+				<div class="button_box button_xz" onclick=""> Open </div>
+				<div class="button_box button_xz" onclick=""> Remove </div>
+			</div>
+		</div>
+
+</template>
+
 
 </html>
