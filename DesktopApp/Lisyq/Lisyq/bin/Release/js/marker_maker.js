@@ -197,4 +197,3 @@ function generateUUID8() {
 //dummy 
 Marker_Maker.renderMarkers();
 
-//To-Do: removing of marker

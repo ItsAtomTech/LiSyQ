@@ -92,7 +92,7 @@ const DMX_CONF = {
 	},
 	
 	//Add data to save items
-	addToSaves: function(silent=false){
+	addToSaves: function(){
 		let DataOptions = clone(OPTIONS_DATA);
 		let configsData = clone(CONFIG_DATA);
 		
@@ -113,10 +113,8 @@ const DMX_CONF = {
 		}
 		
 		let saves = localStorage.setItem("DMX_SAVES", JSON.stringify(SAVES));
-		silent == false ? createDialogue("info","<center> Changes Saved! </center>"): false;
+		createDialogue("info","<center> Changes Saved! </center>");
 		hasChanges = false;
-		
-		return selectedSaveIndex || SAVES.length;
 	},
 	
 	//Will load a selected Saved data into list view and working variables.
@@ -403,77 +401,30 @@ const DMX_CONF = {
 	
 	
 	exportConfig: function(){
-		
-		let data = {
-			'options': options,
-			'configs': configs,
-		}
-		
-		if(!configs.length >= 1){
-			return;
-		}
-		
-		
-		data = JSON.stringify(data);
-		let filename = options.name + ".dmxp"; 
+		const data = "This is the content of the file~☆"; // your string here
+		const filename = "config.txt"; // you can name it however you want
 
-		let blob = new Blob([data], { type: 'text/plain' });
+		const blob = new Blob([data], { type: 'text/plain' });
 		const url = URL.createObjectURL(blob);
+
 		const link = document.createElement("a");
-		
 		link.href = url;
 		link.download = filename;
+
 		document.body.appendChild(link); // necessary for Firefox
 		link.click();
 		document.body.removeChild(link);
+
 		URL.revokeObjectURL(url); // clean up
-		console.log("Data have been Exported");
-	},
-	
-	
-	//import data from a save file
-	importConfig: function() {
-		const input = document.createElement("input");
-		input.type = "file";
-		input.accept = ".dmxp,.json"; 
 
-		input.onchange = function(event) {
-			const file = event.target.files[0];
-			if (!file) return;
-
-			const reader = new FileReader();
-			reader.onload = function(e) {
-				const content = e.target.result;
-				console.log("File Content Loaded!");
-				
-				try{
-					let data = JSON.parse(content);
-					selectedSaveIndex = undefined;					
-					configs = data.configs;
-					options = data.options;
-					_("conf_save_name").value = options.name;
-					
-					selectedSaveIndex = SAVES.length;
-					
-					DMX_CONF.addToSaves(true);
+		console.log("Muku has exported the config for you, noshi-sama~ 💾");
 		
-					DMX_CONF.renderConfigs();
-					DMX_CONF.clearAllEditTabs();
-					
-				}catch(e){
-					//--
-					console.log(e);
-				}
-				console.log(content);
-				
-			};
-			reader.readAsText(file);
-		};
-		input.click(); // trigger the file picker
-	},
-	
+		
 	
 		
+		
+	}
+	
 	
 	
 	
@@ -498,4 +449,8 @@ DMX_CONF.loadAllSaved();
 
 
 // DMX_CONF.openConfigWindow();
+
 DMX_CONF.addConfigEdit();
+
+
+// dummy 
