@@ -473,11 +473,144 @@ const DMX_CONF = {
 	},
 	
 	
-		
-	
-	
 	
 }
+
+
+
+
+const CONFIG_WRITER = {
+	
+	port: undefined,
+	writer: undefined, // <- store the writer
+	encoder: undefined, // <- store encoder for reuse
+	isUploading: false,
+	
+  connectPort: async function (elm) {
+	if (!("serial" in navigator)) {
+	  alert("Web Serial API not supported in this browser.");
+	  return;
+	}
+	
+	//If already connected, prompt.
+	
+	if (this.port && this.port.readable && this.port.writable) {
+	  const shouldDisconnect = window.confirm("Disconnect and select another?");
+	  if (shouldDisconnect) {
+			await this.port.forget();
+	  }else{
+		  return false;
+	  }
+	}
+				
+				
+	try {
+	  this.port = await navigator.serial.requestPort();
+	  await this.port.open({ baudRate: 115200 });
+
+	  console.log("Connected to serial port at 115200 baud!");
+	if(typeof(elm) == "object"){
+		elm.title = "Connected to a port";
+	}
+		
+	  // Set up writer ONCE
+	  this.encoder = new TextEncoderStream();
+	  this.encoder.readable.pipeTo(this.port.writable);
+	  this.writer = this.encoder.writable.getWriter();
+
+	  // Reader (optional)
+	  const textDecoder = new TextDecoderStream();
+	  this.port.readable.pipeTo(textDecoder.writable);
+	  const reader = textDecoder.readable.getReader();
+
+	  while (true) {
+		const { value, done } = await reader.read();
+		if (done) break;
+		if (value) this.receiver(value);
+		
+		
+		
+	  }
+
+	  reader.releaseLock();
+	} catch (err) {
+	  console.error("Error:", err);
+	}
+  },
+
+
+  sendData: async function (data) {
+	if (!this.writer) {
+	  console.error("Writer not available! Connect to the port first.");
+	  return;
+	}
+
+	await this.writer.write(data + "\n");
+	console.log("->:", data);
+  },
+  
+  
+  
+  receiver: function(data){
+	console.log(data);
+
+	if(data.indexOf("ER-Config") >= 0 && this.isUploading){
+		console.log("Error uploading");
+		createDialogue("info", "<center> Failed to upload Config! </center>");
+		this.isUploading = false;
+
+	}else if(data.indexOf("Saving:" && this.isUploading)){
+		createDialogue("info", "<center> Config have been written </center>");
+		this.isUploading = false;
+	}
+
+	  
+	  
+	  
+  },
+	
+	
+		
+	// ========================	
+	// Config Generator Logics	
+	// ========================	
+		
+	uploadConfig: function(){
+		let confData = this.generateDXCommand();
+		if(confData){
+			this.isUploading = true;
+		}
+		
+		this.sendData(confData);
+	},	
+	
+	 generateDXCommand: function(){
+		const channelList = [];
+		const configStrings = [];
+		let configCounts = 0;
+
+		if(configs.length <= 0){
+				return false;
+		}
+
+
+		for (const item of configs) {
+		channelList.push(item.channel);
+
+		const configPart = item.dmx_config
+		  .map(cfg => `${cfg.type}${cfg.target}`)
+		  .join('|');
+
+		configStrings.push(configPart);
+		configCounts = configs.length;
+		}
+
+		const dxString = `DX-${channelList.join(',')}:${configStrings.join(',')}:${configCounts}`;
+		return dxString;
+	}	
+};
+
+
 
 //Misc function
 
@@ -499,3 +632,10 @@ DMX_CONF.loadAllSaved();
 
 // DMX_CONF.openConfigWindow();
 DMX_CONF.addConfigEdit();
+
+
+
+
+
+
+
