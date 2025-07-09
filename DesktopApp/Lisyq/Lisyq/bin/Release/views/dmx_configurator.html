@@ -30,14 +30,14 @@
 	  <!-- Title Section and Close -->
 		<div class="title_bar_section">
 		  <span class="title_text big">DMX Config Patcher</span>
-		  <span class="close_button big">&times;</span>
+		  <span onclick="closeConfigurator();" class="close_button big">&times;</span>
 		</div>
 	  
 	  
 	  <div class="action_bar flexed">
-		<div class="button_box actions small grad_dark_button auto_width" onclick="" title="Writes the Configuration to the Adapter"> &#10004; Upload  </div>
+		<div class="button_box actions small grad_dark_button auto_width" onclick="CONFIG_WRITER.uploadConfig();" title="Writes the Configuration to the Adapter"> &#10004; Upload  </div>
 		
-		<div class="button_box small grad_dark_button auto_width" onclick="" title="COM port Attached" id="comport_disp"> COM X  </div>
+		<div class="button_box small grad_dark_button auto_width" onclick="CONFIG_WRITER.connectPort(this);" title="No COM port selected." id="comport_disp"> COM  </div>
 		
 		<span class="flexed center_separator">   </span>
 		
@@ -51,8 +51,8 @@
 		
 		<div class="button_box actions small grad_dark_button hidden auto_width" onclick="" title="">    </div>	
 		
-		<div class="button_box actions small grad_dark_button auto_width" onclick="" title=""> Import  </div>
-		<div class="button_box actions small grad_dark_button auto_width" onclick="" title=""> Export  </div>
+		<div class="button_box actions small grad_dark_button auto_width" onclick="DMX_CONF.importConfig();" title=""> Import  </div>
+		<div class="button_box actions small grad_dark_button auto_width" onclick="DMX_CONF.exportConfig();" title=""> Export  </div>
 		
 		<span class="flexed center_separator"> </span>
 		

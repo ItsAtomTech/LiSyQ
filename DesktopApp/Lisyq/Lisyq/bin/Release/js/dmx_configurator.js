@@ -92,7 +92,7 @@ const DMX_CONF = {
 	},
 	
 	//Add data to save items
-	addToSaves: function(){
+	addToSaves: function(silent=false){
 		let DataOptions = clone(OPTIONS_DATA);
 		let configsData = clone(CONFIG_DATA);
 		
@@ -113,8 +113,10 @@ const DMX_CONF = {
 		}
 		
 		let saves = localStorage.setItem("DMX_SAVES", JSON.stringify(SAVES));
-		createDialogue("info","<center> Changes Saved! </center>");
+		silent == false ? createDialogue("info","<center> Changes Saved! </center>"): false;
 		hasChanges = false;
+		
+		return selectedSaveIndex || SAVES.length;
 	},
 	
 	//Will load a selected Saved data into list view and working variables.
@@ -401,34 +403,214 @@ const DMX_CONF = {
 	
 	
 	exportConfig: function(){
-		const data = "This is the content of the file~☆"; // your string here
-		const filename = "config.txt"; // you can name it however you want
+		
+		let data = {
+			'options': options,
+			'configs': configs,
+		}
+		
+		if(!configs.length >= 1){
+			return;
+		}
+		
+		
+		data = JSON.stringify(data);
+		let filename = options.name + ".dmxp"; 
 
-		const blob = new Blob([data], { type: 'text/plain' });
+		let blob = new Blob([data], { type: 'text/plain' });
 		const url = URL.createObjectURL(blob);
-
 		const link = document.createElement("a");
+		
 		link.href = url;
 		link.download = filename;
-
 		document.body.appendChild(link); // necessary for Firefox
 		link.click();
 		document.body.removeChild(link);
-
 		URL.revokeObjectURL(url); // clean up
+		console.log("Data have been Exported");
+	},
+	
+	
+	//import data from a save file
+	importConfig: function() {
+		const input = document.createElement("input");
+		input.type = "file";
+		input.accept = ".dmxp,.json"; 
 
-		console.log("Muku has exported the config for you, noshi-sama~ 💾");
+		input.onchange = function(event) {
+			const file = event.target.files[0];
+			if (!file) return;
+
+			const reader = new FileReader();
+			reader.onload = function(e) {
+				const content = e.target.result;
+				console.log("File Content Loaded!");
+				
+				try{
+					let data = JSON.parse(content);
+					selectedSaveIndex = undefined;					
+					configs = data.configs;
+					options = data.options;
+					_("conf_save_name").value = options.name;
+					
+					selectedSaveIndex = SAVES.length;
+					
+					DMX_CONF.addToSaves(true);
 		
-		
-	
-		
-		
-	}
-	
+					DMX_CONF.renderConfigs();
+					DMX_CONF.clearAllEditTabs();
+					
+				}catch(e){
+					//--
+					console.log(e);
+				}
+				console.log(content);
+				
+			};
+			reader.readAsText(file);
+		};
+		input.click(); // trigger the file picker
+	},
 	
 	
 	
 }
+
+
+
+
+const CONFIG_WRITER = {
+	
+	port: undefined,
+	writer: undefined, // <- store the writer
+	encoder: undefined, // <- store encoder for reuse
+	isUploading: false,
+	
+  connectPort: async function (elm) {
+	if (!("serial" in navigator)) {
+	  alert("Web Serial API not supported in this browser.");
+	  return;
+	}
+	
+	//If already connected, prompt.
+	
+	if (this.port && this.port.readable && this.port.writable) {
+	  const shouldDisconnect = window.confirm("Disconnect and select another?");
+	  if (shouldDisconnect) {
+			await this.port.forget();
+	  }else{
+		  return false;
+	  }
+	}
+				
+				
+	try {
+	  this.port = await navigator.serial.requestPort();
+	  await this.port.open({ baudRate: 115200 });
+
+	  console.log("Connected to serial port at 115200 baud!");
+	if(typeof(elm) == "object"){
+		elm.title = "Connected to a port";
+	}
+		
+	  // Set up writer ONCE
+	  this.encoder = new TextEncoderStream();
+	  this.encoder.readable.pipeTo(this.port.writable);
+	  this.writer = this.encoder.writable.getWriter();
+
+	  // Reader (optional)
+	  const textDecoder = new TextDecoderStream();
+	  this.port.readable.pipeTo(textDecoder.writable);
+	  const reader = textDecoder.readable.getReader();
+
+	  while (true) {
+		const { value, done } = await reader.read();
+		if (done) break;
+		if (value) this.receiver(value);
+		
+		
+		
+	  }
+
+	  reader.releaseLock();
+	} catch (err) {
+	  console.error("Error:", err);
+	}
+  },
+
+
+  sendData: async function (data) {
+	if (!this.writer) {
+	  console.error("Writer not available! Connect to the port first.");
+	  return;
+	}
+
+	await this.writer.write(data + "\n");
+	console.log("->:", data);
+  },
+  
+  
+  
+  receiver: function(data){
+	console.log(data);
+
+	if(data.indexOf("ER-Config") >= 0 && this.isUploading){
+		console.log("Error uploading");
+		createDialogue("info", "<center> Failed to upload Config! </center>");
+		this.isUploading = false;
+
+	}else if(data.indexOf("Saving:" && this.isUploading)){
+		createDialogue("info", "<center> Config have been written </center>");
+		this.isUploading = false;
+	}
+
+	  
+	  
+	  
+  },
+	
+	
+		
+	// ========================	
+	// Config Generator Logics	
+	// ========================	
+		
+	uploadConfig: function(){
+		let confData = this.generateDXCommand();
+		if(confData){
+			this.isUploading = true;
+		}
+		
+		this.sendData(confData);
+	},	
+	
+	 generateDXCommand: function(){
+		const channelList = [];
+		const configStrings = [];
+		let configCounts = 0;
+
+		if(configs.length <= 0){
+				return false;
+		}
+
+
+		for (const item of configs) {
+		channelList.push(item.channel);
+
+		const configPart = item.dmx_config
+		  .map(cfg => `${cfg.type}${cfg.target}`)
+		  .join('|');
+
+		configStrings.push(configPart);
+		configCounts = configs.length;
+		}
+
+		const dxString = `DX-${channelList.join(',')}:${configStrings.join(',')}:${configCounts}`;
+		return dxString;
+	}	
+};
+
+
 
 //Misc function
 
@@ -443,14 +625,45 @@ function showLoadList(hide = false){
 }
 
 
+function closeConfigurator(){
+	
+	  if(hasChanges && configs.length > 0){
+		  let cf = confirm("Are you sure to exit? Unsaved changes would be lost.");
+		  if(!cf){
+			  return console.log("Exit Aborted!");
+		  }
+	  }
+  
+	if(CONFIG_WRITER.port){CONFIG_WRITER.port.forget();
+	};
+	sendTo("close_configurator","");
+	
+}
+
+
+
+
+//For Communicating into LiSyQ main
+function sendTo(fn,data){
+	window.parent.postMessage({
+    'func': fn,
+    'message': data
+}, "*");
+
+} 
+
+
 
 //Try load all saves to list and Memory
 DMX_CONF.loadAllSaved();
 
 
 // DMX_CONF.openConfigWindow();
-
 DMX_CONF.addConfigEdit();
 
 
-// dummy 
+
+
+
+
+

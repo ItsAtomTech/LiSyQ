@@ -804,4 +804,8 @@ Public Class Main
 
 
     End Sub
+
+    Private Sub ToolStripMenuItem24_Click(sender As Object, e As EventArgs) Handles DMX_Patcher.Click
+        WebView21.ExecuteScriptAsync("openDMXConfig()")
+    End Sub
 End Class
