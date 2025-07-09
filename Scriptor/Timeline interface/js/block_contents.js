@@ -171,7 +171,6 @@ function close_plugin(){
 }
 
 
-
 function sendToI(fn,data){
 	_("plugin").contentWindow.postMessage({
     'func': fn,
@@ -588,6 +587,44 @@ function regen_from_plugin(plug_id,data){
 
 }
 
+
+// ==========================
+// DMX Configurator Functions
+// ==========================
+
+function close_configurator(){
+	_("dmx_config").remove();
+	
+}
+
+
+function openDMXConfig(l, timeout=1500) {
+	let conf = make("iframe");
+	conf.classList.add("plugin_view", "show_");
+	conf.src = l || "views/dmx_configurator.html";
+	conf.setAttribute("id", "dmx_config");
+
+	let didLoad = false;
+
+	conf.onload = function () {
+		didLoad = true;
+	};
+
+	conf.addEventListener('error', function () {
+		console.log("Config Window Open Error (caught via error event)");
+		close_configurator(); 
+	});
+
+	//Its Fallback timeout in case error doesn't fire
+	setTimeout(function () {
+		if (!didLoad) {
+			console.log("Huh, Muku thinks the config iframe might not have loaded...");
+			close_configurator(); 
+		}
+	}, timeout); // Adjust the timeout if needed
+
+	document.body.appendChild(conf);
+}
 
 
 

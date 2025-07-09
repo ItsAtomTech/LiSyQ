@@ -625,6 +625,34 @@ function showLoadList(hide = false){
 }
 
 
+function closeConfigurator(){
+	
+	  if(hasChanges && configs.length > 0){
+		  let cf = confirm("Are you sure to exit? Unsaved changes would be lost.");
+		  if(!cf){
+			  return console.log("Exit Aborted!");
+		  }
+	  }
+  
+	if(CONFIG_WRITER.port){CONFIG_WRITER.port.forget();
+	};
+	sendTo("close_configurator","");
+	
+}
+
+
+
+
+//For Communicating into LiSyQ main
+function sendTo(fn,data){
+	window.parent.postMessage({
+    'func': fn,
+    'message': data
+}, "*");
+
+} 
+
+
 
 //Try load all saves to list and Memory
 DMX_CONF.loadAllSaved();
