@@ -6,17 +6,6 @@ var canvas = document.getElementById("canvas_ruler");
 canvas.setAttribute("width", rulerWidth);
 canvas.setAttribute("height", rulerHeight);
 
-function setupCanvas(canvas) {
-    var dpr = window.devicePixelRatio || 1;
-    var rect = canvas.getBoundingClientRect();
-    canvas.width = rect.width * dpr;
-    canvas.height = rect.height * dpr;
-    canvas.style.width = rect.width + "px";
-    canvas.style.height = rect.height + "px";
-    var ctx = canvas.getContext("2d");
-    ctx.scale(dpr, dpr);
-    return ctx;
-}
 
 let timeFormatDevider = 100;
 function addScaleLineText(ctx, startX, text) {
@@ -136,6 +125,8 @@ function paint_ruler() {
 }
 
 function clear_ruler() {
+	setDPI(canvas);
+	
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 }
 
@@ -170,3 +161,34 @@ let curOriginPointX;
 let curZeroScaleLinePosX = zeroScaleLinePosX;
 
 paint_ruler();
+
+
+
+let prevHieght;
+let prevWidth;
+let prevWidth_Rendered;
+
+function setDPI(canvas, dpi) {
+	// clear_ruler();
+    // Set up CSS size.
+    canvas.style.width = canvas.style.width || canvas.width + 'px';
+    canvas.style.height = canvas.style.height || canvas.height + 'px';
+	
+	
+    // Resize canvas and scale future draws.
+    let scaleFactor = dpi ? dpi / 96 : window.devicePixelRatio || 1;
+	prevHieght = rulerHeight;
+	
+	prevWidth =  get_size(document.body)[0];
+	canvas.style.width = prevWidth + 'px';
+	
+	canvas.width = Math.ceil(prevWidth * scaleFactor);
+	canvas.height = Math.ceil(prevHieght * scaleFactor);
+		
+	
+	prevWidth_Rendered = prevWidth
+
+    var ctx = canvas.getContext('2d');
+    ctx.scale(scaleFactor, scaleFactor);
+	paint_ruler();
+}
