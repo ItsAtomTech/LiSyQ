@@ -18,6 +18,7 @@ Public Class Main
 
     Dim OpenQuePath As String
 
+    Dim FromOpenFile As Boolean = False
 
 
     Private Async Sub Main_Load(sender As Object, e As EventArgs) Handles MyBase.Load
@@ -318,6 +319,11 @@ Public Class Main
 
         'Triggers New File Save intead of writing to an existing file
         Public Function AsNewTrigger()
+
+            If Main.FromOpenFile Then
+                Return False
+            End If
+
             Main.asNew = True
             Main.SavePath = ""
             Return True
@@ -422,7 +428,7 @@ Public Class Main
             'MsgBox("File saved! to " + SavePath)
         End If
 
-
+        FromOpenFile = False
 
     End Sub
 
@@ -480,7 +486,8 @@ Public Class Main
             SavePath = OpenFileDialog1.FileName
 
             NotificationManager.Show(Me, "File: " & OpenFileDialog1.FileName & "is Now Loading.", Color.Green, 2000)
-
+            FromOpenFile = False
+            asNew = False
 
         End If
 
@@ -510,12 +517,12 @@ Public Class Main
         WebView21.ExecuteScriptAsync("load_from_file('" + fileReader + "')")
         SavePath = filepath
         NotificationManager.Show(Me, "File: " & OpenFileDialog1.FileName & "is Now Loading.", Color.Green, 2000)
-
+        FromOpenFile = False
 
     End Sub
 
     Public Sub queOpenFrom(filePath As String)
-
+        FromOpenFile = True
         OpenQuePath = filePath
 
 
