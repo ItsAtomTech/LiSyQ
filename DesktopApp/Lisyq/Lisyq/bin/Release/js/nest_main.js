@@ -1815,7 +1815,7 @@ function saveCurrentTimelineProject(){
 		'track_data': trackData,
 	}
 	
-	return stateForSaving = JSON.stringify(DataForSaving);
+	return stateForSaving = encode(JSON.stringify(DataForSaving));
 }
 
 
@@ -1906,11 +1906,11 @@ async function loadTimelineProject(){
 
 
 
+//loads a nested saved file from the passed data param 
 function load_from_file_nt(data){
-	
-	let nest_data = JSON.parse(replaceBackslashes(data));
+	let nest_data = JSON.parse(replaceBackslashes(decode(data)));
 	projectDataRawNT = nest_data;
-	
+
 	loadTimelineProject();
 }
 
