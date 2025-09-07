@@ -467,4 +467,61 @@ function showToast(message=""){
 
 
 
-trigerNewFile();
+trigerNewFile(); //tieggers new file every load of this script
+
+
+// =================================
+// COMPORT AND UDP MANAGEMENT Logics 
+// =================================
+
+
+function addComport(index,name){
+	
+	if(index == undefined || name == undefined){
+		return console.error("Supply an index or name of the comport");
+	}
+	
+	try{
+		window.chrome.webview.hostObjects.NativeObject.add_comport(index, name);
+		// window.chrome.webview.hostObjects.NativeObject. 
+	}catch(e){
+	//
+	}
+	
+	
+}
+
+// adding a UDP Channel
+function addUDPChannel(index,address,port=22218){
+	
+	if(index == undefined || name == undefined){
+		return console.error("Supply an index and address/port");
+	}
+	
+	try{
+		window.chrome.webview.hostObjects.NativeObject.add_udpchannel(index,address, port);
+		// window.chrome.webview.hostObjects.NativeObject. 
+	}catch(e){
+	//
+	}
+	
+	
+}
+
+
+
+
+async function getUDPList() {
+    try {
+        // Call VB function and parse JSON
+        const jsonStr = await window.chrome.webview.hostObjects.NativeObject.get_udplist_json();
+        const udpList = JSON.parse(jsonStr);
+        console.log(udpList);
+        return udpList;
+    } catch (e) {
+        console.error("Failed to get UDP list:", e);
+        return [];
+    }
+}
+
+

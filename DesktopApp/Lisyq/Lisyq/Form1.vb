@@ -99,6 +99,20 @@
 
     End Sub
 
+    Public Sub InsertAt(Of T)(lst As List(Of T), index As Integer, value As T)
+        While lst.Count < index
+            lst.Add(Nothing)
+        End While
+        If lst.Count = index Then
+            lst.Add(value)
+        Else
+            lst.Insert(index, value)
+        End If
+    End Sub
+
+
+
+
 
     Private Sub Update_table()
 
@@ -106,17 +120,25 @@
 
         For xc = 0 To Cports.Ports.Count - 1
 
-            Dim Port_name As String
+            Try
+                Dim Port_name As String
 
-            If Cports.Ports(xc).IsOpen Then
-                Port_name = Cports.Ports(xc).PortName
-            Else
-                Port_name = Cports.Ports(xc).PortName & " (Not Connected)"
-            End If
+                If Cports.Ports(xc).IsOpen Then
+                    Port_name = Cports.Ports(xc).PortName
+                Else
+                    Port_name = Cports.Ports(xc).PortName & " (Not Connected)"
+                End If
 
-            Dim Data = {Port_name, xc}
+                Dim Data = {Port_name, xc}
 
-            DataGridView1.Rows.Add(Data)
+                DataGridView1.Rows.Add(Data)
+            Catch ex As Exception
+                Dim Data = {"Null", xc}
+
+                DataGridView1.Rows.Add(Data)
+            End Try
+
+
 
 
         Next
@@ -126,24 +148,27 @@
 
 
     Private Sub discon_Click(sender As Object, e As EventArgs) Handles discon.Click
-
         If DataGridView1.SelectedRows.Count() <= 0 Then
-
             NotificationManager.Show(Me, "Select Channel First!", Color.Red, 1000)
-
-
             Return
         End If
 
         Dim idx As Integer = DataGridView1.CurrentRow.Index
         Dim port_h As Integer = DataGridView1.Item(1, idx).Value
 
+        If port_h >= 0 AndAlso port_h < Cports.Ports.Count Then
+            Dim sp = Cports.Ports(port_h)
 
-        Cports.Ports(port_h).Close()
-        Cports.Ports.RemoveAt(port_h)
+            ' Close if valid
+            If sp IsNot Nothing AndAlso sp.IsOpen Then
+                sp.Close()
+            End If
+
+            ' Force remove slot
+            Cports.Ports.RemoveAt(port_h)
+        End If
+
         Update_table()
-
-
     End Sub
 
     Private Sub Button1_Click(sender As Object, e As EventArgs)
@@ -168,7 +193,7 @@
             NotificationManager.Show(Me, "Test Data Sent!", Color.Black, 800)
 
         Catch ex As Exception
-
+            NotificationManager.Show(Me, ex.Message, Color.Red, 1000)
         End Try
     End Sub
 

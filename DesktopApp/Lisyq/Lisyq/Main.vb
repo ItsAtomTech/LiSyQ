@@ -340,6 +340,34 @@ Public Class Main
         End Function
 
 
+        ' ================================================
+        'New Implementation of PORT Channel managment ====
+        ' ================================================
+
+
+
+        Public Function add_comport(index As Integer, portname As String)
+            AddComPortAt(index, portname, Main)
+            Return True
+        End Function
+
+
+        ' UDP
+
+
+        Public Function add_udpchannel(index As Integer, address As String, port As Integer)
+            AddUdpChannelAt(index, address, port, Main)
+            Return True
+        End Function
+
+
+        Public Function get_udplist_json() As String
+
+            Return GetUdpListJson()
+        End Function
+
+
+
 
     End Class
 
