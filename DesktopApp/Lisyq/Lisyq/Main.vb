@@ -139,8 +139,12 @@ Public Class Main
 
 
 
-        ' Process output string to be sent to Ouput mediums
+        ' *Legacy - Process output string to be sent to Ouput mediums
         Public Function outputs() As String
+
+            outputs_v2() ' calls the new function, comment this function call to debug if needed
+            Return True ' also comment this one
+
             Dim pchd As Integer = 0
             Dim arrayLists() As String = Main.df.Split("|")
 
@@ -170,6 +174,64 @@ Public Class Main
 
 
 
+
+        End Function
+
+        'New Implementation of output process that supports UDP packets and others
+        Public Function outputs_v2()
+            Dim pchd As Integer = 0
+            Dim arrayLists() As String = Main.df.Split("|")
+
+            For Each strg In arrayLists
+
+                'For Comports goes here
+                Try
+                    If pchd >= 0 AndAlso pchd < Cports.Ports.Count Then
+                        Dim port = Cports.Ports(pchd)
+
+                        If port IsNot Nothing AndAlso port.IsOpen Then
+                            port.WriteTimeout = 34
+                            ' port.WriteLine(strg)
+
+                            Dim Df = port.BytesToWrite
+
+                            If Df <= 1 OrElse strg = "" OrElse strg = " " Then
+                                Dim ParObject As Object = {pchd, strg}
+                                Dim Th = New System.Threading.Thread(
+                                     New Threading.ThreadStart(Sub() Cports.SendToCOM(ParObject))
+                                 )
+                                Th.Priority = Threading.ThreadPriority.Normal
+                                Th.IsBackground = True
+                                Th.Start()
+                            End If
+                        End If
+                    End If
+
+
+                Catch ex As Exception
+
+                End Try
+
+                'For UDP Channel Goes here
+
+                Try
+                    If pchd >= 0 AndAlso pchd < Cports.UdpChannels.Count Then
+                        If Not String.IsNullOrWhiteSpace(strg) Then
+                            Dim idx = pchd
+                            Dim msg = strg
+                            Dim Th = New System.Threading.Thread(
+                                New Threading.ThreadStart(Sub() Cports.SendUdp(idx, msg)))
+                            Th.Priority = Threading.ThreadPriority.Normal
+                            Th.IsBackground = True
+                            Th.Start()
+                        End If
+                    End If
+                Catch ex As Exception
+
+                End Try
+
+                pchd += 1
+            Next
 
         End Function
 
@@ -340,6 +402,7 @@ Public Class Main
         End Function
 
 
+
         ' ================================================
         'New Implementation of PORT Channel managment ====
         ' ================================================
@@ -364,6 +427,16 @@ Public Class Main
         Public Function get_udplist_json() As String
 
             Return GetUdpListJson()
+        End Function
+
+        Public Function get_comlist() As String
+
+            Return GetSystemComPortsJson()
+        End Function
+
+        Public Function get_comports() As String
+
+            Return GetManagedComPortsJson()
         End Function
 
 

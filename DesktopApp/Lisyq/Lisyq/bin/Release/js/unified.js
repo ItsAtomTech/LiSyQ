@@ -525,3 +525,32 @@ async function getUDPList() {
 }
 
 
+
+async function getComList() {
+    try {
+        // Call VB function and parse JSON
+        const jsonStr = await window.chrome.webview.hostObjects.NativeObject.get_comlist();
+        const udpList = JSON.parse(jsonStr);
+        console.log(udpList);
+        return udpList;
+    } catch (e) {
+        console.error("Failed to get UDP list:", e);
+        return [];
+    }
+}
+
+
+async function getComPortList() {
+    try {
+        // Call VB function and parse JSON
+        const jsonStr = await window.chrome.webview.hostObjects.NativeObject.get_comports();
+        const udpList = JSON.parse(jsonStr);
+        console.log(udpList);
+        return udpList;
+    } catch (e) {
+        console.error("Failed to get UDP list:", e);
+        return [];
+    }
+}
+
+
