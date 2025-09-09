@@ -334,6 +334,16 @@ body{
 
 
 
+/* Port Channel Configurator Styles */
+.ip_input{
+	max-width:150px !important;
+	
+	
+}
+
+
+
+
 /* Other Modals */
 
 
