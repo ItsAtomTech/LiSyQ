@@ -113,6 +113,22 @@ Module Cports
         Return sb.ToString()
     End Function
 
+
+    'Remove the Comport at specified index
+    Public Sub DisconnectComPortAt(index As Integer)
+        If index >= 0 AndAlso index < Ports.Count Then
+            Dim sp = Ports(index)
+
+            ' Close if valid and open
+            If sp IsNot Nothing AndAlso sp.IsOpen Then
+                sp.Close()
+            End If
+
+            ' Remove slot entirely
+            Ports.RemoveAt(index)
+        End If
+    End Sub
+
     ' For UDP Channel Managements =======================================
     Public Sub AddUdpChannelAt(index As Integer, address As String, port As Integer, ByRef Parent As Control)
         Try

@@ -467,4 +467,127 @@ function showToast(message=""){
 
 
 
-trigerNewFile();
+trigerNewFile(); //tieggers new file every load of this script
+
+
+// =================================
+// COMPORT AND UDP MANAGEMENT Logics 
+// =================================
+
+
+function addComport(index,name){
+	
+	if(index == undefined || name == undefined){
+		return console.error("Supply an index or name of the comport");
+	}
+	
+	try{
+		window.chrome.webview.hostObjects.NativeObject.add_comport(index, name);
+		// window.chrome.webview.hostObjects.NativeObject. 
+	}catch(e){
+	//
+	}
+	
+	
+}
+
+// adding a UDP Channel
+function addUDPChannel(index,address,port=22218){
+	
+	if(index == undefined || name == undefined){
+		return console.error("Supply an index and address/port");
+	}
+	
+	try{
+		window.chrome.webview.hostObjects.NativeObject.add_udpchannel(index,address, port);
+		// window.chrome.webview.hostObjects.NativeObject. 
+	}catch(e){
+	//
+	}
+	
+	
+}
+
+
+
+
+async function getUDPList() {
+    try {
+        // Call VB function and parse JSON
+        const jsonStr = await window.chrome.webview.hostObjects.NativeObject.get_udplist_json();
+        const udpList = JSON.parse(jsonStr);
+        console.log(udpList);
+        return udpList;
+    } catch (e) {
+        console.error("Failed to get UDP list:", e);
+        return [];
+    }
+}
+
+
+
+async function getComList() {
+    try {
+        // Call VB function and parse JSON
+        const jsonStr = await window.chrome.webview.hostObjects.NativeObject.get_comlist();
+        const udpList = JSON.parse(jsonStr);
+        console.log(udpList);
+        return udpList;
+    } catch (e) {
+        console.error("Failed to get UDP list:", e);
+        return [];
+    }
+}
+
+
+async function getComPortList() {
+    try {
+        // Call VB function and parse JSON
+        const jsonStr = await window.chrome.webview.hostObjects.NativeObject.get_comports();
+        const udpList = JSON.parse(jsonStr);
+        console.log(udpList);
+        return udpList;
+    } catch (e) {
+        console.error("Failed to get UDP list:", e);
+        return [];
+    }
+}
+
+
+//Disconnent a Comport
+function disconnectComport(index){
+	
+	if(index == undefined || name == undefined){
+		return console.error("Supply an index of the comport");
+	}
+	
+	try{
+		window.chrome.webview.hostObjects.NativeObject.disconnect_com(index);
+		// window.chrome.webview.hostObjects.NativeObject. 
+	}catch(e){
+	//
+	}
+	
+	
+}
+
+
+
+//Disconnect UDP
+function disconnectUDP(index){
+	
+	if(index == undefined || name == undefined){
+		return console.error("Supply an index of the udp channel");
+	}
+	
+	try{
+		window.chrome.webview.hostObjects.NativeObject.disconnect_udp(index);
+		// window.chrome.webview.hostObjects.NativeObject. 
+	}catch(e){
+	//
+	}
+	
+	
+}
+
+

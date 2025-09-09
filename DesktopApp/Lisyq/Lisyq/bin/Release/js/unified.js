@@ -554,3 +554,40 @@ async function getComPortList() {
 }
 
 
+//Disconnent a Comport
+function disconnectComport(index){
+	
+	if(index == undefined || name == undefined){
+		return console.error("Supply an index of the comport");
+	}
+	
+	try{
+		window.chrome.webview.hostObjects.NativeObject.disconnect_com(index);
+		// window.chrome.webview.hostObjects.NativeObject. 
+	}catch(e){
+	//
+	}
+	
+	
+}
+
+
+
+//Disconnect UDP
+function disconnectUDP(index){
+	
+	if(index == undefined || name == undefined){
+		return console.error("Supply an index of the udp channel");
+	}
+	
+	try{
+		window.chrome.webview.hostObjects.NativeObject.disconnect_udp(index);
+		// window.chrome.webview.hostObjects.NativeObject. 
+	}catch(e){
+	//
+	}
+	
+	
+}
+
+

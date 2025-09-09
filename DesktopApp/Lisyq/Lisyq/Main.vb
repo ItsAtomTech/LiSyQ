@@ -429,6 +429,12 @@ Public Class Main
             Return GetUdpListJson()
         End Function
 
+
+        Public Function disconnect_udp(index As Integer)
+            RemoveUdpChannelAt(index, Main)
+        End Function
+
+
         Public Function get_comlist() As String
 
             Return GetSystemComPortsJson()
@@ -439,7 +445,9 @@ Public Class Main
             Return GetManagedComPortsJson()
         End Function
 
-
+        Public Function disconnect_com(index As Integer)
+            DisconnectComPortAt(index)
+        End Function
 
 
     End Class
