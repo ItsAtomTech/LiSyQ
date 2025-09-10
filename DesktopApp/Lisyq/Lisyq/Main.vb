@@ -446,7 +446,7 @@ Public Class Main
         End Function
 
         Public Function disconnect_com(index As Integer)
-            DisconnectComPortAt(index)
+            DisconnectComPortAt(index, True)
         End Function
 
 
@@ -923,5 +923,9 @@ Public Class Main
 
     Private Sub ToolStripMenuItem24_Click(sender As Object, e As EventArgs) Handles DMX_Patcher.Click
         WebView21.ExecuteScriptAsync("openDMXConfig()")
+    End Sub
+
+    Private Sub ToolStripMenuItem24_Click_1(sender As Object, e As EventArgs) Handles ToolStripMenuItem24.Click
+        WebView21.ExecuteScriptAsync("openPortConfig()")
     End Sub
 End Class

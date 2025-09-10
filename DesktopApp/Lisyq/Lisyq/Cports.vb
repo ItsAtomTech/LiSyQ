@@ -115,7 +115,7 @@ Module Cports
 
 
     'Remove the Comport at specified index
-    Public Sub DisconnectComPortAt(index As Integer)
+    Public Sub DisconnectComPortAt(index As Integer, keep As Boolean)
         If index >= 0 AndAlso index < Ports.Count Then
             Dim sp = Ports(index)
 
@@ -124,8 +124,14 @@ Module Cports
                 sp.Close()
             End If
 
-            ' Remove slot entirely
-            Ports.RemoveAt(index)
+            If Not keep Then
+                ' Remove slot entirely
+                Ports.RemoveAt(index)
+            End If
+
+
+
+
         End If
     End Sub
 

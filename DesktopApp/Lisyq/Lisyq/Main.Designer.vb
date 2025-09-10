@@ -67,6 +67,7 @@ Partial Class Main
         Me.SaveAsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.ToolsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.PortConfigurationToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.DMX_Patcher = New System.Windows.Forms.ToolStripMenuItem()
         Me.ClearBuffersToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.ToolStripImportTemplate = New System.Windows.Forms.ToolStripMenuItem()
         Me.ToolStripMenuItem21 = New System.Windows.Forms.ToolStripMenuItem()
@@ -87,7 +88,7 @@ Partial Class Main
         Me.ToolStripMenuItem19 = New System.Windows.Forms.ToolStripMenuItem()
         Me.SaveFileDialog2 = New System.Windows.Forms.SaveFileDialog()
         Me.directoryPicker = New System.Windows.Forms.OpenFileDialog()
-        Me.DMX_Patcher = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ToolStripMenuItem24 = New System.Windows.Forms.ToolStripMenuItem()
         CType(Me.WebView21, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.template_menu.SuspendLayout()
         Me.content_menu.SuspendLayout()
@@ -411,7 +412,7 @@ Partial Class Main
         'ToolsToolStripMenuItem
         '
         Me.ToolsToolStripMenuItem.BackColor = System.Drawing.Color.FromArgb(CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer))
-        Me.ToolsToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.PortConfigurationToolStripMenuItem, Me.DMX_Patcher, Me.ClearBuffersToolStripMenuItem, Me.ToolStripImportTemplate, Me.ToolStripMenuItem21, Me.ToolStripMenuItem22, Me.LocalPathToolStripMenuItem, Me.UseWebEngine1ToolStripMenuItem, Me.UseWebEngine2ToolStripMenuItem})
+        Me.ToolsToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.ToolStripMenuItem24, Me.PortConfigurationToolStripMenuItem, Me.DMX_Patcher, Me.ClearBuffersToolStripMenuItem, Me.ToolStripImportTemplate, Me.ToolStripMenuItem21, Me.ToolStripMenuItem22, Me.LocalPathToolStripMenuItem, Me.UseWebEngine1ToolStripMenuItem, Me.UseWebEngine2ToolStripMenuItem})
         Me.ToolsToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlLightLight
         Me.ToolsToolStripMenuItem.Name = "ToolsToolStripMenuItem"
         Me.ToolsToolStripMenuItem.Size = New System.Drawing.Size(48, 23)
@@ -424,15 +425,23 @@ Partial Class Main
         Me.PortConfigurationToolStripMenuItem.Name = "PortConfigurationToolStripMenuItem"
         Me.PortConfigurationToolStripMenuItem.ShortcutKeys = CType(((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.Shift) _
             Or System.Windows.Forms.Keys.Q), System.Windows.Forms.Keys)
-        Me.PortConfigurationToolStripMenuItem.Size = New System.Drawing.Size(248, 22)
-        Me.PortConfigurationToolStripMenuItem.Text = "Port Configuration"
+        Me.PortConfigurationToolStripMenuItem.Size = New System.Drawing.Size(296, 22)
+        Me.PortConfigurationToolStripMenuItem.Text = "Port Configuration (Legacy)"
+        '
+        'DMX_Patcher
+        '
+        Me.DMX_Patcher.BackColor = System.Drawing.Color.DimGray
+        Me.DMX_Patcher.ForeColor = System.Drawing.SystemColors.ControlLightLight
+        Me.DMX_Patcher.Name = "DMX_Patcher"
+        Me.DMX_Patcher.Size = New System.Drawing.Size(296, 22)
+        Me.DMX_Patcher.Text = "DMX Config Patcher"
         '
         'ClearBuffersToolStripMenuItem
         '
         Me.ClearBuffersToolStripMenuItem.BackColor = System.Drawing.SystemColors.ControlDarkDark
         Me.ClearBuffersToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlLightLight
         Me.ClearBuffersToolStripMenuItem.Name = "ClearBuffersToolStripMenuItem"
-        Me.ClearBuffersToolStripMenuItem.Size = New System.Drawing.Size(248, 22)
+        Me.ClearBuffersToolStripMenuItem.Size = New System.Drawing.Size(296, 22)
         Me.ClearBuffersToolStripMenuItem.Text = "Clear Buffers"
         '
         'ToolStripImportTemplate
@@ -441,7 +450,7 @@ Partial Class Main
         Me.ToolStripImportTemplate.BackColor = System.Drawing.SystemColors.ControlDarkDark
         Me.ToolStripImportTemplate.ForeColor = System.Drawing.SystemColors.ControlLightLight
         Me.ToolStripImportTemplate.Name = "ToolStripImportTemplate"
-        Me.ToolStripImportTemplate.Size = New System.Drawing.Size(248, 22)
+        Me.ToolStripImportTemplate.Size = New System.Drawing.Size(296, 22)
         Me.ToolStripImportTemplate.Text = "Import Templates"
         Me.ToolStripImportTemplate.ToolTipText = "Import Templates from a file selected"
         '
@@ -450,7 +459,7 @@ Partial Class Main
         Me.ToolStripMenuItem21.BackColor = System.Drawing.SystemColors.ControlDarkDark
         Me.ToolStripMenuItem21.ForeColor = System.Drawing.SystemColors.ControlLightLight
         Me.ToolStripMenuItem21.Name = "ToolStripMenuItem21"
-        Me.ToolStripMenuItem21.Size = New System.Drawing.Size(248, 22)
+        Me.ToolStripMenuItem21.Size = New System.Drawing.Size(296, 22)
         Me.ToolStripMenuItem21.Text = "Plugin Manager"
         Me.ToolStripMenuItem21.ToolTipText = "Install and manage Plugins"
         '
@@ -459,7 +468,7 @@ Partial Class Main
         Me.ToolStripMenuItem22.BackColor = System.Drawing.SystemColors.ControlDarkDark
         Me.ToolStripMenuItem22.ForeColor = System.Drawing.SystemColors.ControlLight
         Me.ToolStripMenuItem22.Name = "ToolStripMenuItem22"
-        Me.ToolStripMenuItem22.Size = New System.Drawing.Size(248, 22)
+        Me.ToolStripMenuItem22.Size = New System.Drawing.Size(296, 22)
         Me.ToolStripMenuItem22.Text = "Local Path"
         '
         'LocalPathToolStripMenuItem
@@ -467,7 +476,7 @@ Partial Class Main
         Me.LocalPathToolStripMenuItem.BackColor = System.Drawing.SystemColors.ControlDarkDark
         Me.LocalPathToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlLight
         Me.LocalPathToolStripMenuItem.Name = "LocalPathToolStripMenuItem"
-        Me.LocalPathToolStripMenuItem.Size = New System.Drawing.Size(248, 22)
+        Me.LocalPathToolStripMenuItem.Size = New System.Drawing.Size(296, 22)
         Me.LocalPathToolStripMenuItem.Text = "Data Path"
         '
         'UseWebEngine1ToolStripMenuItem
@@ -475,7 +484,7 @@ Partial Class Main
         Me.UseWebEngine1ToolStripMenuItem.BackColor = System.Drawing.SystemColors.ControlDarkDark
         Me.UseWebEngine1ToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlLight
         Me.UseWebEngine1ToolStripMenuItem.Name = "UseWebEngine1ToolStripMenuItem"
-        Me.UseWebEngine1ToolStripMenuItem.Size = New System.Drawing.Size(248, 22)
+        Me.UseWebEngine1ToolStripMenuItem.Size = New System.Drawing.Size(296, 22)
         Me.UseWebEngine1ToolStripMenuItem.Text = "Use Web Engine 1 "
         '
         'UseWebEngine2ToolStripMenuItem
@@ -483,7 +492,7 @@ Partial Class Main
         Me.UseWebEngine2ToolStripMenuItem.BackColor = System.Drawing.SystemColors.ControlDarkDark
         Me.UseWebEngine2ToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlLight
         Me.UseWebEngine2ToolStripMenuItem.Name = "UseWebEngine2ToolStripMenuItem"
-        Me.UseWebEngine2ToolStripMenuItem.Size = New System.Drawing.Size(248, 22)
+        Me.UseWebEngine2ToolStripMenuItem.Size = New System.Drawing.Size(296, 22)
         Me.UseWebEngine2ToolStripMenuItem.Text = "Use Web Engine 2"
         '
         'TimelineToolStripMenuItem
@@ -612,13 +621,14 @@ Partial Class Main
         '
         Me.directoryPicker.Title = "Directory Picker"
         '
-        'DMX_Patcher
+        'ToolStripMenuItem24
         '
-        Me.DMX_Patcher.BackColor = System.Drawing.Color.DimGray
-        Me.DMX_Patcher.ForeColor = System.Drawing.SystemColors.ControlLightLight
-        Me.DMX_Patcher.Name = "DMX_Patcher"
-        Me.DMX_Patcher.Size = New System.Drawing.Size(248, 22)
-        Me.DMX_Patcher.Text = "DMX Config Patcher"
+        Me.ToolStripMenuItem24.BackColor = System.Drawing.Color.DimGray
+        Me.ToolStripMenuItem24.ForeColor = System.Drawing.SystemColors.ControlLightLight
+        Me.ToolStripMenuItem24.Name = "ToolStripMenuItem24"
+        Me.ToolStripMenuItem24.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.Q), System.Windows.Forms.Keys)
+        Me.ToolStripMenuItem24.Size = New System.Drawing.Size(296, 22)
+        Me.ToolStripMenuItem24.Text = "Port Configuration"
         '
         'Main
         '
@@ -708,4 +718,5 @@ Partial Class Main
     Friend WithEvents openNest As Button
     Friend WithEvents ToolStripMenuItem23 As ToolStripMenuItem
     Friend WithEvents DMX_Patcher As ToolStripMenuItem
+    Friend WithEvents ToolStripMenuItem24 As ToolStripMenuItem
 End Class

@@ -334,7 +334,7 @@ Public Class NestMain
         End Function
 
         Public Function disconnect_com(index As Integer)
-            DisconnectComPortAt(index)
+            DisconnectComPortAt(index, True)
         End Function
 
 
@@ -585,5 +585,9 @@ Public Class NestMain
 
     Private Sub ToolStripMenuItem1_Click(sender As Object, e As EventArgs) Handles ToolStripMenuItem1.Click
         ComingSoon()
+    End Sub
+
+    Private Sub ToolStripMenuItem5_Click(sender As Object, e As EventArgs) Handles ToolStripMenuItem5.Click
+        WebView21.ExecuteScriptAsync("openPortConfig('port_configurator.html')")
     End Sub
 End Class

@@ -42,7 +42,6 @@ Partial Class NestMain
         Me.Panel1 = New System.Windows.Forms.Panel()
         Me.manual_ = New System.Windows.Forms.Button()
         Me.template_menu_manual = New System.Windows.Forms.ContextMenuStrip(Me.components)
-        Me.ToolStripMenuItem16 = New System.Windows.Forms.ToolStripMenuItem()
         Me.ToolStripMenuItem17 = New System.Windows.Forms.ToolStripMenuItem()
         Me.ToolStripMenuItem18 = New System.Windows.Forms.ToolStripMenuItem()
         Me.ToolStripMenuItem19 = New System.Windows.Forms.ToolStripMenuItem()
@@ -52,7 +51,6 @@ Partial Class NestMain
         Me.ToolStripMenuItem9 = New System.Windows.Forms.ToolStripMenuItem()
         Me.WebView21 = New Microsoft.Web.WebView2.WinForms.WebView2()
         Me.template_menu = New System.Windows.Forms.ContextMenuStrip(Me.components)
-        Me.ToolStripMenuItem1 = New System.Windows.Forms.ToolStripMenuItem()
         Me.ToolStripMenuItem2 = New System.Windows.Forms.ToolStripMenuItem()
         Me.CancelToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.content_menu = New System.Windows.Forms.ContextMenuStrip(Me.components)
@@ -79,6 +77,9 @@ Partial Class NestMain
         Me.ToolStripSeparator1 = New System.Windows.Forms.ToolStripSeparator()
         Me.ToolStripMenuItem12 = New System.Windows.Forms.ToolStripMenuItem()
         Me.OpenFileDialog2 = New System.Windows.Forms.OpenFileDialog()
+        Me.ToolStripMenuItem16 = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ToolStripMenuItem1 = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ToolStripMenuItem5 = New System.Windows.Forms.ToolStripMenuItem()
         Me.MenuStrip1.SuspendLayout()
         Me.Panel1.SuspendLayout()
         Me.template_menu_manual.SuspendLayout()
@@ -153,7 +154,7 @@ Partial Class NestMain
         'ToolsToolStripMenuItem
         '
         Me.ToolsToolStripMenuItem.BackColor = System.Drawing.Color.FromArgb(CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer))
-        Me.ToolsToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.PortConfigurationToolStripMenuItem, Me.ClearBuffersToolStripMenuItem, Me.ToolStripMenuItem21, Me.ToolStripMenuItem22, Me.LocalPathToolStripMenuItem})
+        Me.ToolsToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.ToolStripMenuItem5, Me.PortConfigurationToolStripMenuItem, Me.ClearBuffersToolStripMenuItem, Me.ToolStripMenuItem21, Me.ToolStripMenuItem22, Me.LocalPathToolStripMenuItem})
         Me.ToolsToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlLightLight
         Me.ToolsToolStripMenuItem.Name = "ToolsToolStripMenuItem"
         Me.ToolsToolStripMenuItem.Size = New System.Drawing.Size(48, 23)
@@ -165,15 +166,15 @@ Partial Class NestMain
         Me.PortConfigurationToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlLightLight
         Me.PortConfigurationToolStripMenuItem.Name = "PortConfigurationToolStripMenuItem"
         Me.PortConfigurationToolStripMenuItem.ShortcutKeys = CType((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.Q), System.Windows.Forms.Keys)
-        Me.PortConfigurationToolStripMenuItem.Size = New System.Drawing.Size(216, 22)
-        Me.PortConfigurationToolStripMenuItem.Text = "Port Configuration"
+        Me.PortConfigurationToolStripMenuItem.Size = New System.Drawing.Size(264, 22)
+        Me.PortConfigurationToolStripMenuItem.Text = "Port Configuration (Legacy)"
         '
         'ClearBuffersToolStripMenuItem
         '
         Me.ClearBuffersToolStripMenuItem.BackColor = System.Drawing.SystemColors.ControlDarkDark
         Me.ClearBuffersToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlLightLight
         Me.ClearBuffersToolStripMenuItem.Name = "ClearBuffersToolStripMenuItem"
-        Me.ClearBuffersToolStripMenuItem.Size = New System.Drawing.Size(216, 22)
+        Me.ClearBuffersToolStripMenuItem.Size = New System.Drawing.Size(264, 22)
         Me.ClearBuffersToolStripMenuItem.Text = "Clear Buffers"
         '
         'ToolStripMenuItem21
@@ -181,7 +182,7 @@ Partial Class NestMain
         Me.ToolStripMenuItem21.BackColor = System.Drawing.SystemColors.ControlDarkDark
         Me.ToolStripMenuItem21.ForeColor = System.Drawing.SystemColors.ControlLightLight
         Me.ToolStripMenuItem21.Name = "ToolStripMenuItem21"
-        Me.ToolStripMenuItem21.Size = New System.Drawing.Size(216, 22)
+        Me.ToolStripMenuItem21.Size = New System.Drawing.Size(264, 22)
         Me.ToolStripMenuItem21.Text = "Plugin Manager"
         Me.ToolStripMenuItem21.ToolTipText = "Install and manage Plugins"
         '
@@ -190,7 +191,7 @@ Partial Class NestMain
         Me.ToolStripMenuItem22.BackColor = System.Drawing.SystemColors.ControlDarkDark
         Me.ToolStripMenuItem22.ForeColor = System.Drawing.SystemColors.ControlLight
         Me.ToolStripMenuItem22.Name = "ToolStripMenuItem22"
-        Me.ToolStripMenuItem22.Size = New System.Drawing.Size(216, 22)
+        Me.ToolStripMenuItem22.Size = New System.Drawing.Size(264, 22)
         Me.ToolStripMenuItem22.Text = "Local Path"
         '
         'LocalPathToolStripMenuItem
@@ -198,7 +199,7 @@ Partial Class NestMain
         Me.LocalPathToolStripMenuItem.BackColor = System.Drawing.SystemColors.ControlDarkDark
         Me.LocalPathToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlLight
         Me.LocalPathToolStripMenuItem.Name = "LocalPathToolStripMenuItem"
-        Me.LocalPathToolStripMenuItem.Size = New System.Drawing.Size(216, 22)
+        Me.LocalPathToolStripMenuItem.Size = New System.Drawing.Size(264, 22)
         Me.LocalPathToolStripMenuItem.Text = "Data Path"
         '
         'TimelineToolStripMenuItem
@@ -255,14 +256,6 @@ Partial Class NestMain
         Me.template_menu_manual.RenderMode = System.Windows.Forms.ToolStripRenderMode.System
         Me.template_menu_manual.Size = New System.Drawing.Size(203, 92)
         Me.template_menu_manual.Text = "Template Options"
-        '
-        'ToolStripMenuItem16
-        '
-        Me.ToolStripMenuItem16.ForeColor = System.Drawing.SystemColors.ControlLight
-        Me.ToolStripMenuItem16.Image = Global.Lisyq.My.Resources.Resources.edit1
-        Me.ToolStripMenuItem16.Name = "ToolStripMenuItem16"
-        Me.ToolStripMenuItem16.Size = New System.Drawing.Size(202, 22)
-        Me.ToolStripMenuItem16.Text = "Edit Template"
         '
         'ToolStripMenuItem17
         '
@@ -329,16 +322,8 @@ Partial Class NestMain
         Me.template_menu.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.ToolStripMenuItem1, Me.ToolStripMenuItem2, Me.CancelToolStripMenuItem})
         Me.template_menu.Name = "template_menu"
         Me.template_menu.RenderMode = System.Windows.Forms.ToolStripRenderMode.System
-        Me.template_menu.Size = New System.Drawing.Size(195, 92)
+        Me.template_menu.Size = New System.Drawing.Size(195, 70)
         Me.template_menu.Text = "Template Options"
-        '
-        'ToolStripMenuItem1
-        '
-        Me.ToolStripMenuItem1.ForeColor = System.Drawing.SystemColors.ControlLight
-        Me.ToolStripMenuItem1.Image = Global.Lisyq.My.Resources.Resources.edit1
-        Me.ToolStripMenuItem1.Name = "ToolStripMenuItem1"
-        Me.ToolStripMenuItem1.Size = New System.Drawing.Size(194, 22)
-        Me.ToolStripMenuItem1.Text = "Edit on Timeline Editor"
         '
         'ToolStripMenuItem2
         '
@@ -367,28 +352,28 @@ Partial Class NestMain
         '
         Me.ToolStripMenuItem4.ForeColor = System.Drawing.SystemColors.ControlLight
         Me.ToolStripMenuItem4.Name = "ToolStripMenuItem4"
-        Me.ToolStripMenuItem4.Size = New System.Drawing.Size(180, 22)
+        Me.ToolStripMenuItem4.Size = New System.Drawing.Size(148, 22)
         Me.ToolStripMenuItem4.Text = "Remove"
         '
         'ToolStripMenuItem3
         '
         Me.ToolStripMenuItem3.ForeColor = System.Drawing.SystemColors.ButtonFace
         Me.ToolStripMenuItem3.Name = "ToolStripMenuItem3"
-        Me.ToolStripMenuItem3.Size = New System.Drawing.Size(180, 22)
+        Me.ToolStripMenuItem3.Size = New System.Drawing.Size(148, 22)
         Me.ToolStripMenuItem3.Text = "Details"
         '
         'ToolStripMenuItem14
         '
         Me.ToolStripMenuItem14.ForeColor = System.Drawing.SystemColors.ControlLight
         Me.ToolStripMenuItem14.Name = "ToolStripMenuItem14"
-        Me.ToolStripMenuItem14.Size = New System.Drawing.Size(180, 22)
+        Me.ToolStripMenuItem14.Size = New System.Drawing.Size(148, 22)
         Me.ToolStripMenuItem14.Text = "Track Options"
         '
         'CancelToolStripMenuItem1
         '
         Me.CancelToolStripMenuItem1.ForeColor = System.Drawing.SystemColors.ControlLight
         Me.CancelToolStripMenuItem1.Name = "CancelToolStripMenuItem1"
-        Me.CancelToolStripMenuItem1.Size = New System.Drawing.Size(180, 22)
+        Me.CancelToolStripMenuItem1.Size = New System.Drawing.Size(148, 22)
         Me.CancelToolStripMenuItem1.Text = "Cancel"
         '
         'track_options
@@ -519,6 +504,32 @@ Partial Class NestMain
         Me.OpenFileDialog2.FileName = "LiSyQ Playlist"
         Me.OpenFileDialog2.Filter = "LyqFilesPl | *lips"
         '
+        'ToolStripMenuItem16
+        '
+        Me.ToolStripMenuItem16.ForeColor = System.Drawing.SystemColors.ControlLight
+        Me.ToolStripMenuItem16.Image = Global.Lisyq.My.Resources.Resources.edit1
+        Me.ToolStripMenuItem16.Name = "ToolStripMenuItem16"
+        Me.ToolStripMenuItem16.Size = New System.Drawing.Size(202, 22)
+        Me.ToolStripMenuItem16.Text = "Edit Template"
+        '
+        'ToolStripMenuItem1
+        '
+        Me.ToolStripMenuItem1.ForeColor = System.Drawing.SystemColors.ControlLight
+        Me.ToolStripMenuItem1.Image = Global.Lisyq.My.Resources.Resources.edit1
+        Me.ToolStripMenuItem1.Name = "ToolStripMenuItem1"
+        Me.ToolStripMenuItem1.Size = New System.Drawing.Size(194, 22)
+        Me.ToolStripMenuItem1.Text = "Edit on Timeline Editor"
+        '
+        'ToolStripMenuItem5
+        '
+        Me.ToolStripMenuItem5.BackColor = System.Drawing.Color.DimGray
+        Me.ToolStripMenuItem5.ForeColor = System.Drawing.SystemColors.ControlLightLight
+        Me.ToolStripMenuItem5.Name = "ToolStripMenuItem5"
+        Me.ToolStripMenuItem5.ShortcutKeys = CType(((System.Windows.Forms.Keys.Control Or System.Windows.Forms.Keys.Shift) _
+            Or System.Windows.Forms.Keys.Q), System.Windows.Forms.Keys)
+        Me.ToolStripMenuItem5.Size = New System.Drawing.Size(264, 22)
+        Me.ToolStripMenuItem5.Text = "Port Configuration"
+        '
         'NestMain
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -598,4 +609,5 @@ Partial Class NestMain
     Friend WithEvents ToolStripMenuItem12 As ToolStripMenuItem
     Friend WithEvents OpenFileDialog2 As OpenFileDialog
     Friend WithEvents ToolStripMenuItem3 As ToolStripMenuItem
+    Friend WithEvents ToolStripMenuItem5 As ToolStripMenuItem
 End Class

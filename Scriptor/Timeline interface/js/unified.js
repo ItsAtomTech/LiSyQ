@@ -482,7 +482,7 @@ function addComport(index,name){
 	}
 	
 	try{
-		window.chrome.webview.hostObjects.NativeObject.add_comport(index, name);
+		parent.window.chrome.webview.hostObjects.NativeObject.add_comport(index, name);
 		// window.chrome.webview.hostObjects.NativeObject. 
 	}catch(e){
 	//
@@ -499,7 +499,7 @@ function addUDPChannel(index,address,port=22218){
 	}
 	
 	try{
-		window.chrome.webview.hostObjects.NativeObject.add_udpchannel(index,address, port);
+		parent.window.chrome.webview.hostObjects.NativeObject.add_udpchannel(index,address, port);
 		// window.chrome.webview.hostObjects.NativeObject. 
 	}catch(e){
 	//
@@ -514,7 +514,7 @@ function addUDPChannel(index,address,port=22218){
 async function getUDPList() {
     try {
         // Call VB function and parse JSON
-        const jsonStr = await window.chrome.webview.hostObjects.NativeObject.get_udplist_json();
+        const jsonStr = await parent.window.chrome.webview.hostObjects.NativeObject.get_udplist_json();
         const udpList = JSON.parse(jsonStr);
         console.log(udpList);
         return udpList;
@@ -525,30 +525,40 @@ async function getUDPList() {
 }
 
 
-
-async function getComList() {
+//gets the available ports connected on the host device
+async function getComList(callback=undefined) {
     try {
         // Call VB function and parse JSON
-        const jsonStr = await window.chrome.webview.hostObjects.NativeObject.get_comlist();
-        const udpList = JSON.parse(jsonStr);
-        console.log(udpList);
-        return udpList;
+        const jsonStr = await parent.window.chrome.webview.hostObjects.NativeObject.get_comlist();
+        let comList = JSON.parse(jsonStr);
+		
+		if(callback){
+			callback(comList);
+		}
+		
+        console.log(comList);
+        return comList;
     } catch (e) {
-        console.error("Failed to get UDP list:", e);
+        console.error("Failed to get COM list:", e);
         return [];
     }
 }
 
 
-async function getComPortList() {
+async function getComPortList(callback=undefined) {
     try {
         // Call VB function and parse JSON
-        const jsonStr = await window.chrome.webview.hostObjects.NativeObject.get_comports();
-        const udpList = JSON.parse(jsonStr);
-        console.log(udpList);
-        return udpList;
+        const jsonStr = await parent.window.chrome.webview.hostObjects.NativeObject.get_comports();
+        const comList = JSON.parse(jsonStr);
+		
+		if(callback){
+			callback(comList);
+		}
+		
+        console.log(comList);
+        return comList;
     } catch (e) {
-        console.error("Failed to get UDP list:", e);
+        console.error("Failed to get COM list:", e);
         return [];
     }
 }
@@ -562,7 +572,7 @@ function disconnectComport(index){
 	}
 	
 	try{
-		window.chrome.webview.hostObjects.NativeObject.disconnect_com(index);
+		parent.window.chrome.webview.hostObjects.NativeObject.disconnect_com(index);
 		// window.chrome.webview.hostObjects.NativeObject. 
 	}catch(e){
 	//
@@ -581,7 +591,7 @@ function disconnectUDP(index){
 	}
 	
 	try{
-		window.chrome.webview.hostObjects.NativeObject.disconnect_udp(index);
+		parent.window.chrome.webview.hostObjects.NativeObject.disconnect_udp(index);
 		// window.chrome.webview.hostObjects.NativeObject. 
 	}catch(e){
 	//
@@ -589,5 +599,47 @@ function disconnectUDP(index){
 	
 	
 }
+
+
+
+//Other shared code goes here
+
+
+
+function close_port_configurator(){
+	_("port_config").remove();
+	
+}
+
+
+function openPortConfig(l, timeout=1500) {
+	let conf = make("iframe");
+	conf.classList.add("plugin_view", "show_");
+	conf.src = l || "views/port_configurator.html";
+	conf.setAttribute("id", "port_config");
+
+	let didLoad = false;
+
+	conf.onload = function () {
+		didLoad = true;
+	};
+
+	conf.addEventListener('error', function () {
+		console.log("Config Window Open Error (caught via error event)");
+		close_configurator(); 
+	});
+
+	//Its Fallback timeout in case error doesn't fire
+	setTimeout(function () {
+		if (!didLoad) {
+			console.log("The config iframe might not have loaded...");
+			close_configurator(); 
+		}
+	}, timeout); // Adjust the timeout if needed
+
+	document.body.appendChild(conf);
+}
+
+
 
 

@@ -618,7 +618,7 @@ function openDMXConfig(l, timeout=1500) {
 	//Its Fallback timeout in case error doesn't fire
 	setTimeout(function () {
 		if (!didLoad) {
-			console.log("Huh, Muku thinks the config iframe might not have loaded...");
+			console.log("The config iframe might not have loaded...");
 			close_configurator(); 
 		}
 	}, timeout); // Adjust the timeout if needed
