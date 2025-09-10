@@ -50,14 +50,14 @@ let hasChanges = true;
 
 const CONFIG_DATA = {
 	channel: 0,
-	dmx_config:[],
+	port_config:[],
 } 
 
 
 const OPTIONS_DATA = {
 	name : "No name",
 	date : undefined,
-	type: "DX_CONFIG",
+	type: "PORT_CONFIG",
 }
 
 //====================
@@ -70,7 +70,7 @@ const OPTIONS_DATA = {
 const CHANNEL_CONF = {
 	mode: "add",
 	loadAllSaved: function(){
-		let saves = localStorage.getItem("DMX_SAVES");
+		let saves = localStorage.getItem("PORT_SAVES");
 		if(saves == null || saves.length <= 0){
 			return;
 		}
@@ -112,7 +112,7 @@ const CHANNEL_CONF = {
 			SAVES[selectedSaveIndex] = data;
 		}
 		
-		let saves = localStorage.setItem("DMX_SAVES", JSON.stringify(SAVES));
+		let saves = localStorage.setItem("PORT_SAVES", JSON.stringify(SAVES));
 		silent == false ? createDialogue("info","<center> Changes Saved! </center>"): false;
 		hasChanges = false;
 		
@@ -162,22 +162,25 @@ const CHANNEL_CONF = {
 			
 			let channel_config = (config_tab_template.querySelector('[tag="channel_config"]'));
 			
-			let dmx_config = (config_tab_template.querySelector('[tag="dmx_config"]'));
+			let port_config = (config_tab_template.querySelector('[tag="port_config"]'));
 			
 			let remove_thistab = (config_tab_template.querySelector('[tag="remove_thistab"]'));
 			
 			
 			channel_config.innerText = confData.channel;
 			
-			for(each of confData.dmx_config){
+			for(each of confData.port_config){
 				let pods = make('span');
-					pods.innerText = each.type + each.target;
-					pods.title = this.getFeatureNameByChar(each.type);
-					dmx_config.appendChild(pods);
+					if(each.type == "ip"){
+						pods.innerText = "IP:  "+ each.ip_address; 
+					}else{
+						pods.innerText = "COM: " + " "+ each.comport; 
+					}
+					port_config.appendChild(pods);
 			}
 			
 			remove_thistab.setAttribute("index", z);
-			dmx_config.setAttribute("index", z);
+			port_config.setAttribute("index", z);
 			
 			_("configs_tab_section").appendChild(config_tab_template);
 			
@@ -200,7 +203,7 @@ const CHANNEL_CONF = {
 		}
 		SAVES.splice(targetIndex,1);
 		this.loadSaveList();
-		localStorage.setItem("DMX_SAVES", JSON.stringify(SAVES));
+		localStorage.setItem("PORT_SAVES", JSON.stringify(SAVES));
 		
 	},
 	
@@ -259,7 +262,7 @@ const CHANNEL_CONF = {
 		let confData = configs[selectedIndex];
 		
 		this.clearAllEditTabs();
-		for(each of confData.dmx_config){
+		for(each of confData.port_config){
 			this.addConfigEdit(each);
 		}
 		
@@ -281,25 +284,28 @@ const CHANNEL_CONF = {
 	
 	// Save or Add the Config data into Config array
 	save_ConfigEdits: function(){
-		let stab_container = _('configs_input');
+		let stab_container = _('port_inputs');
 		let elm_collections = (stab_container.getElementsByClassName("config_div"));
 		let configData = clone(CONFIG_DATA);
+		let channel = _("conf_channel");
 		
 		for(each of elm_collections){
 			
 			let select_type = each.querySelector('[tag="ctype"]');
-			let targetc = each.querySelector('[tag="target"]');
-			let channel = _("conf_channel");
+			let ip_address = each.querySelector('[tag="ip_address"]');
+			let comport = _("port_listing");
 			
 				configData.channel = channel.value;
 			
 			
 			let objectConf = {
 				type: select_type.value,
-				target: targetc.value,
+				comport: comport.value,
+				ip_address: ip_address.value,
+				status: null,
 			}
 			
-			configData.dmx_config.push(objectConf);
+			configData.port_config.push(objectConf);
 		}
 		
 				
@@ -352,7 +358,6 @@ const CHANNEL_CONF = {
 		}
 		
 		
-		console.log(ip_address, comports);
 		
 	},
 	
@@ -363,17 +368,21 @@ const CHANNEL_CONF = {
 	
 	//Adds the Config tab into the editor, if data is passed, it puts the value as well
 	addConfigEdit: function(data){
-		let tabs_container = _("configs_input");
-		let configs_input_template = _("configs_input_template").cloneNode(true);
-			if(data !=undefined){
-				
-				let select_type = (configs_input_template.content.querySelector('[tag="ctype"]'));
-				let target = (configs_input_template.content.querySelector('[tag="target"]'));
-				
-				if(data.type) select_type.value = data.type;
-				if(data.target) target.value = data.target;				
-			}
-		tabs_container.appendChild(configs_input_template.content);
+		let tabs_container = _("port_inputs");
+
+		
+		
+		let select_type = (tabs_container.querySelector('[tag="ctype"]'));
+		let ip_address = (tabs_container.querySelector('[tag="ip_address"]'));		
+		let comport = (tabs_container.querySelector('[tag="comports"]'));
+		
+		select_type.value = data.type;
+		ip_address.value = data.ip_address;
+		comport.value = data.comport;
+		
+		
+		this.change_type(_("ctype"));
+
 	},
 	
 	
@@ -384,7 +393,8 @@ const CHANNEL_CONF = {
 	
 	clearAllEditTabs: function(){
 		let tabs_container = _("configs_input");
-		tabs_container.innerHTML = "";
+		// tabs_container.innerHTML = "";
+		
 		
 	},
 	
@@ -433,7 +443,7 @@ const CHANNEL_CONF = {
 		
 		
 		data = JSON.stringify(data);
-		let filename = options.name + ".dmxp"; 
+		let filename = options.name + ".comcp"; 
 
 		let blob = new Blob([data], { type: 'text/plain' });
 		const url = URL.createObjectURL(blob);
@@ -453,7 +463,7 @@ const CHANNEL_CONF = {
 	importConfig: function() {
 		const input = document.createElement("input");
 		input.type = "file";
-		input.accept = ".dmxp,.json"; 
+		input.accept = ".comcp,.json"; 
 
 		input.onchange = function(event) {
 			const file = event.target.files[0];
@@ -473,10 +483,10 @@ const CHANNEL_CONF = {
 					
 					selectedSaveIndex = SAVES.length;
 					
-					DMX_CONF.addToSaves(true);
+					CHANNEL_CONF.addToSaves(true);
 		
-					DMX_CONF.renderConfigs();
-					DMX_CONF.clearAllEditTabs();
+					CHANNEL_CONF.renderConfigs();
+					CHANNEL_CONF.clearAllEditTabs();
 					
 				}catch(e){
 					//--
@@ -499,133 +509,7 @@ const CHANNEL_CONF = {
 
 const CONFIG_WRITER = {
 	
-	port: undefined,
-	writer: undefined, // <- store the writer
-	encoder: undefined, // <- store encoder for reuse
-	isUploading: false,
 	
-  connectPort: async function (elm) {
-	if (!("serial" in navigator)) {
-	  alert("Web Serial API not supported in this browser.");
-	  return;
-	}
-	
-	//If already connected, prompt.
-	
-	if (this.port && this.port.readable && this.port.writable) {
-	  const shouldDisconnect = window.confirm("Disconnect and select another?");
-	  if (shouldDisconnect) {
-			await this.port.forget();
-	  }else{
-		  return false;
-	  }
-	}
-				
-				
-	try {
-	  this.port = await navigator.serial.requestPort();
-	  await this.port.open({ baudRate: 115200 });
-
-	  console.log("Connected to serial port at 115200 baud!");
-	if(typeof(elm) == "object"){
-		elm.title = "Connected to a port";
-	}
-		
-	  // Set up writer ONCE
-	  this.encoder = new TextEncoderStream();
-	  this.encoder.readable.pipeTo(this.port.writable);
-	  this.writer = this.encoder.writable.getWriter();
-
-	  // Reader (optional)
-	  const textDecoder = new TextDecoderStream();
-	  this.port.readable.pipeTo(textDecoder.writable);
-	  const reader = textDecoder.readable.getReader();
-
-	  while (true) {
-		const { value, done } = await reader.read();
-		if (done) break;
-		if (value) this.receiver(value);
-		
-		
-		
-	  }
-
-	  reader.releaseLock();
-	} catch (err) {
-	  console.error("Error:", err);
-	}
-  },
-
-
-  sendData: async function (data) {
-	if (!this.writer) {
-	  console.error("Writer not available! Connect to the port first.");
-	  return;
-	}
-
-	await this.writer.write(data + "\n");
-	console.log("->:", data);
-  },
-  
-  
-  
-  receiver: function(data){
-	console.log(data);
-
-	if(data.indexOf("ER-Config") >= 0 && this.isUploading){
-		console.log("Error uploading");
-		createDialogue("info", "<center> Failed to upload Config! </center>");
-		this.isUploading = false;
-
-	}else if(data.indexOf("Saving:" && this.isUploading)){
-		createDialogue("info", "<center> Config have been written </center>");
-		this.isUploading = false;
-	}
-
-	  
-	  
-	  
-  },
-	
-	
-		
-	// ========================	
-	// Config Generator Logics	
-	// ========================	
-		
-	uploadConfig: function(){
-		let confData = this.generateDXCommand();
-		if(confData){
-			this.isUploading = true;
-		}
-		
-		this.sendData(confData);
-	},	
-	
-	 generateDXCommand: function(){
-		const channelList = [];
-		const configStrings = [];
-		let configCounts = 0;
-
-		if(configs.length <= 0){
-				return false;
-		}
-
-
-		for (const item of configs) {
-		channelList.push(item.channel);
-
-		const configPart = item.dmx_config
-		  .map(cfg => `${cfg.type}${cfg.target}`)
-		  .join('|');
-
-		configStrings.push(configPart);
-		configCounts = configs.length;
-		}
-
-		const dxString = `DX-${channelList.join(',')}:${configStrings.join(',')}:${configCounts}`;
-		return dxString;
-	}	
 };
 
 
@@ -634,7 +518,7 @@ const CONFIG_WRITER = {
 
 function showLoadList(hide = false){
 	if(hide){
-		DMX_CONF.loadAllSaved();
+		CHANNEL_CONF.loadAllSaved();
 		_("saves_loader").classList.add("hidden");
 	}else{
 		_("saves_loader").classList.remove("hidden");
@@ -673,11 +557,11 @@ function sendTo(fn,data){
 
 
 //Try load all saves to list and Memory
-DMX_CONF.loadAllSaved();
+CHANNEL_CONF.loadAllSaved();
 
 
-// DMX_CONF.openConfigWindow();
-DMX_CONF.addConfigEdit();
+// CHANNEL_CONF.openConfigWindow();
+// CHANNEL_CONF.addConfigEdit();
 
 
 

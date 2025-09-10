@@ -36,6 +36,8 @@
 	  
 	  <div class="action_bar flexed">
 		
+		<div class="button_box actions small grad_dark_button auto_width" onclick="CONFIG_WRITER.syncConfig()" title=""> &#8644; Sync  </div>
+		
 		<div class="button_box actions small grad_dark_button auto_width" onclick="CHANNEL_CONF.resetAsNew()" title=""> &star; New  </div>
 		
 		<div class="button_box actions small grad_dark_button auto_width" onclick="CHANNEL_CONF.addToSaves();" title=""> &#128190; Save  </div>
@@ -109,7 +111,7 @@
 			  <option value="ip"> IP Address </option>
 		  </select>
 		  
-		  <input tag="ip_address" type="text" class="plane_input primary_background primary_color ip_input" id="conf_save_name" placeholder="Channel Target" value="192.168.0.0:22218" style="display:none;">
+		  <input tag="ip_address" type="text" class="plane_input primary_background primary_color ip_input" id="ip_address" placeholder="Channel Target" value="192.168.0.0:22218" style="display:none;">
 		  
 		  <select class="plane_input primary_background primary_color" tag="comports" id="port_listing">
 			  <option value="COMXX"> COMXX </option>
@@ -135,6 +137,7 @@
 
 
   <script defer src="../js/dialogue.js"></script>
+  <script defer src="../js/unified.js"></script>
   <script defer src="../js/comport_configurator.js"></script>
 
 </body>
@@ -146,7 +149,7 @@
 		  <div class="dx_tab_container">
 			<div class="channel_text" tag="channel_config"> 0 </div>
 			
-			<div class="dmx_channel_con" onclick="CHANNEL_CONF.openForEdit(this)" tag="CHANNEL_CONFig"> 
+			<div class="dmx_channel_con" onclick="CHANNEL_CONF.openForEdit(this)" tag="port_config"> 
 			</div>
 			
 			<div class="tabs_action"> <span  tag="remove_thistab" class="remove_tab button_box " onclick="CHANNEL_CONF.removeThistab(this)"> - </span> </div>
