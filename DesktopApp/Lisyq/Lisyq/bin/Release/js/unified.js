@@ -511,12 +511,14 @@ function addUDPChannel(index,address,port=22218){
 
 
 
-async function getUDPList() {
+async function getUDPList(callback=undefined) {
     try {
         // Call VB function and parse JSON
         const jsonStr = await parent.window.chrome.webview.hostObjects.NativeObject.get_udplist_json();
         const udpList = JSON.parse(jsonStr);
-        console.log(udpList);
+		if(callback){
+			callback(udpList);
+		}
         return udpList;
     } catch (e) {
         console.error("Failed to get UDP list:", e);

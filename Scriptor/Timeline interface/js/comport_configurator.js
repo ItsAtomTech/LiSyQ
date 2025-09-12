@@ -172,15 +172,19 @@ const CHANNEL_CONF = {
 			for(each of confData.port_config){
 				let pods = make('span');
 					if(each.type == "ip"){
+						
 						pods.innerText = "IP:  "+ each.ip_address; 
 					}else{
 						pods.innerText = "COM: " + " "+ each.comport; 
-						
 						try{
-							if(each.status.toLowerCase() != "open" && each.status != null){
-							pods.innerText = pods.innerText + "(Disconnected)" 
+							if(each.status == "closed"){
+							pods.innerText = pods.innerText + "(Disconnected)"; 
+							}
+							else if(each.status == null || each.status == undefined){
+							pods.innerText = pods.innerText + "(Not Available)" ;
 							}
 						}catch(e){
+							console.log(e);
 							// -- 
 						}
 						
@@ -322,9 +326,24 @@ const CHANNEL_CONF = {
 			let select_type = each.querySelector('[tag="ctype"]');
 			let ip_address = each.querySelector('[tag="ip_address"]');
 			let comport = _("port_listing");
-			
+				
+				
+				//Disconnect Prev Connected Port Have been changed
+				if(this.mode != "add" && 
+				(configs[selectedIndex].port_config[0].type != select_type.value || 
+				configs[selectedIndex].channel != parseInt(channel.value))
+				){
+					console.log(configs[selectedIndex].port_config[0].type);
+					if(configs[selectedIndex].port_config[0].type == "com"){
+						disconnectComport(configs[selectedIndex].channel);
+					}else{
+						disconnectUDP(configs[selectedIndex].channel);
+					}
+				}
+				
+				
 				configData.channel = channel.value;
-			
+				
 			
 			let objectConf = {
 				type: select_type.value,
@@ -553,7 +572,9 @@ const CHANNEL_CONF = {
 
 
 const CONFIG_WRITER = {
-	syncConfig: function(){
+	syncConfig:async function(){
+		
+		
 		
 		for(each of configs){
 			
@@ -569,18 +590,23 @@ const CONFIG_WRITER = {
 			}
 		}
 		
+		hasChanges = false;
+		
 		try{
 			getComPortList(CONFIG_WRITER.updateLinksCOM);
 		}catch(e){
 			// --
 		}
 		
+		let removeAll = await CONFIG_WRITER.clearAllConnected();
 		
 	},
 	
 	updateLinksCOM: function(data) {
 		// Loop through configs
 		configs.forEach((config, configIndex) => {
+			// console.log(config.port_config[0]);
+			
 			config.port_config.forEach((portCfg, portIndex) => {
 				if (portCfg.type === "com") {
 					// Find matching entry in data
@@ -602,6 +628,73 @@ const CONFIG_WRITER = {
 	},
 	
 	
+	//try to clear all connected
+	clearAllConnected: function(){
+		try{
+			getComPortList(CONFIG_WRITER.removeAllCOM);
+		}catch(e){
+			// --
+		}
+		
+		try{
+			getUDPList(CONFIG_WRITER.removeAllIP);
+		}catch(e){
+			console.log(e);
+			// --
+		}
+		
+	},
+	
+	
+	//helper to remove ip all at index
+	removeAllIP: function(data) {
+		// Collect all allowed indices from configs with type "ip"
+		let allowedIndices = new Set();
+		try{
+			configs.forEach(cfg => {
+				cfg.port_config.forEach(port => {
+					if (port.type == "ip") {
+
+						allowedIndices.add(parseInt(cfg.channel));
+					}
+				});
+			});
+			
+		}catch(e){
+			//
+		}
+			// Now remove/disconnect those not in allowedIndices
+			for (let each of data) {
+				if (!allowedIndices.has(each.index)) {
+					disconnectUDP(each.index);
+				}
+			}
+	},
+	
+	//helper to remove all com at index
+	removeAllCOM: function(data) {
+		// Collect all allowed indices from configs with type "com"
+		let allowedIndices = new Set();
+		try{
+			configs.forEach(cfg => {
+				cfg.port_config.forEach(port => {
+					if (port.type == "com") {
+
+						allowedIndices.add(parseInt(cfg.channel));
+					}
+				});
+			});
+			
+		}catch(e){
+			//
+		}
+			// Now remove/disconnect those not in allowedIndices
+			for (let each of data) {
+				if (!allowedIndices.has(each.index)) {
+					disconnectComport(each.index);
+				}
+			}
+		}
 };
 
 
@@ -628,8 +721,6 @@ function closeConfigurator(){
 		  }
 	  }
   
-	if(CONFIG_WRITER.port){CONFIG_WRITER.port.forget();
-	};
 	sendTo("close_port_configurator","");
 	
 }
