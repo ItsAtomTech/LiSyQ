@@ -124,6 +124,8 @@ const CHANNEL_CONF = {
 		let targetIndex = undefined;
 		if(typeof(index) == "object"){
 			targetIndex = index.parentNode.getAttribute("index");
+		}else{
+			targetIndex = index;
 		}
 		
 		
@@ -145,6 +147,20 @@ const CHANNEL_CONF = {
 		selectedSaveIndex = targetIndex;
 		
 		showLoadList(true);
+		
+		localStorage.setItem('loaded_comports', selectedSaveIndex);
+		
+	},
+	
+	loadPrevius: function(){
+		let prevIndex = localStorage.getItem('loaded_comports');
+		
+		if(prevIndex == null || prevIndex == undefined){
+			return false;
+		}
+		
+		this.loadConfig(prevIndex);
+		
 		
 	},
 	
@@ -741,6 +757,7 @@ function sendTo(fn,data){
 
 //Try load all saves to list and Memory
 CHANNEL_CONF.loadAllSaved();
+CHANNEL_CONF.loadPrevius();
 
 
 // CHANNEL_CONF.openConfigWindow();

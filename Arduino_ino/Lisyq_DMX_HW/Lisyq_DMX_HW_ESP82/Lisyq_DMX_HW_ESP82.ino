@@ -15,6 +15,13 @@ localStorage storage;
 
 const int jsonStartIndex = 0;        // EEPROM start position
 const int jsonMaxLength = 675;       // Max bytes to reserve (for writing only)
+const int wifiCredLength = 80;
+const int wifiAddressStart = jsonMaxLength+4;
+
+
+#include "modules/wifiSerial.cpp" //
+WiFiConnector wifiConnector; //define our object for wifi serial
+#include <WiFiUdp.h>
 
 
 //DMX Channel Configs
@@ -23,11 +30,22 @@ String DMX_CONFIG[MAX_CHANNELS_LS];
 //Count of Channel configured for Translation
 int CONFIGURED_CHANNEL = 0;
 
+
+// UDP setup
+WiFiUDP Udp;
+unsigned int localUdpPort = 2027;  // local port to listen on
+#define UDP_BUF_SIZE 1024
+//Remote Ip data
+IPAddress recieved_ip;
+uint16_t recieved_port;
+IPAddress IP;
+
+
 void setup() {
   Serial.begin(115200);
   coms.setResponder(processCommands);
   dmx.init(512);  
-  storage.init(jsonMaxLength+2);
+  storage.init(jsonMaxLength+2+wifiCredLength+2);
 
   delay(500);//wait for initialization
   dmx.write(1, 255); 
@@ -36,6 +54,12 @@ void setup() {
   loadCondigData();
 
   dmx.update(true);
+  
+
+  //WiFi Setup
+  delay(1500);
+  wifiConnector.loadSavedNetwork(); //Try to connect with saved WiFi Config  
+  connectUDP();  
   
 }
 
@@ -53,6 +77,8 @@ void loop() {
     prevUpdateTime = millis(); 
   }
   
+  //Proccess Udp Packets
+  udpProcess();
 
 }
 
@@ -187,6 +213,12 @@ void processCommands(String cmd){
           loadCondigData();
       };      
 
+  }else if(cmd == "connect" || wifiConnector.CONFIG_ACTIVE ){
+      wifiConnector.handleCommand(cmd);
+  }else if(cmd == "disconnect"){
+      wifiConnector.handleCommand(cmd);
+  }else if(cmd == "cancel"){
+      wifiConnector.CONFIG_ACTIVE = false; 
   }else{
       writingTo = true;
       processLSData(cmd);
@@ -194,6 +226,14 @@ void processCommands(String cmd){
   }  
   // 
 }
+
+void processCommandsUDP(String cmd){
+      writingTo = true;
+      processLSData(cmd);
+      writingTo = false;
+}
+
+
 
 void processData(String data, String config, int faderValue = 255) {
   int sep1 = data.indexOf(':');
@@ -287,6 +327,96 @@ void processLSData(String dt){
   dmx.update(true);
   // Serial.println("->");
 }
+
+
+//UDP Section
+//Connect/Start UDP if ready and connected to a Network, only if using WiFi and not as Hotspot mode
+void connectUDP() {
+    static bool UDP_CONNECTED = false;
+
+    if (!wifiConnector.connected) {
+        Udp.stop();
+        UDP_CONNECTED = false;
+        return;
+    }
+
+    if (UDP_CONNECTED) {
+        return;
+    }
+
+    if (Udp.begin(localUdpPort)) {
+        UDP_CONNECTED = true;
+        Serial.printf("UDP port: %d\n", localUdpPort);
+    }
+}
+
+
+
+char incomingPacket[UDP_BUF_SIZE];
+void udpProcess() {
+  if (!wifiConnector.connected) return;
+
+  int packetSize = Udp.parsePacket();
+  if (!packetSize) return;
+
+  int len = Udp.read(incomingPacket, UDP_BUF_SIZE);
+  if (len <= 0) return;
+
+  recieved_ip = Udp.remoteIP();
+  recieved_port = Udp.remotePort();
+
+  for (int i = 0; i < len; i++) {
+    processUdpData(incomingPacket[i]);
+    //Serial.write(incomingPacket[i]);
+
+  }
+  processUdpData('\n'); //Terminate end
+}
+
+
+char udpReceivedChars[UDP_BUF_SIZE];
+const char udpEndMarker = '\n';
+bool udpNewData = false;
+bool udpIsConfig = false;
+int udpCurrentChannel = 0;
+
+void processUdpData(char incomingByte) {
+    static byte ndx = 0;
+    Serial.write(incomingByte);
+    if (incomingByte != udpEndMarker) {
+        if (ndx == 1) {
+            udpIsConfig = (udpReceivedChars[0] == 'D' && incomingByte == 'X');
+        }
+
+        udpReceivedChars[ndx] = incomingByte;
+        ndx++;
+        if (ndx >= UDP_BUF_SIZE) ndx = UDP_BUF_SIZE - 1;
+
+        // Example channel processing
+        if (!udpIsConfig && incomingByte == channelMarker) {
+            udpReceivedChars[ndx - 1] = '\0'; // remove comma
+            if (isInChannels(currentChannel) >= 0) {
+                String SData = udpReceivedChars;
+               processCommandsUDP(SData);
+            }
+            ndx = 0;
+            currentChannel++;
+        }
+
+    } else {
+        udpReceivedChars[ndx] = '\0';
+        if (udpIsConfig || isInChannels(currentChannel) >= 0) {
+            String SData = udpReceivedChars;
+            processCommandsUDP(SData);
+        }
+
+        udpNewData = true;
+        ndx = 0;
+        currentChannel = 0;
+        udpIsConfig = false;
+    }
+}
+
 
 
 
