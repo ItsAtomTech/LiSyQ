@@ -75,7 +75,7 @@ body{
 	width:100%;
 	padding:0;
 	position:absolute;
-	top:-10px;
+	top:0px;
 	z-index:4;
 	min-height:20px;
 	display:flex;
@@ -126,6 +126,18 @@ body{
 
 	
 	
+}
+
+.time_templates_search > div > .search_input {
+	min-height:25px;
+}
+
+
+
+.container_bound > .scripts_container{
+	padding-top:40px;
+	/* border:solid red 1px; */
+	min-height:10px;
 }
 
 
