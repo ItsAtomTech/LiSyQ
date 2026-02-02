@@ -216,7 +216,7 @@ Public Class Main
 
                 Try
                     If pchd >= 0 AndAlso pchd < Cports.UdpChannels.Count Then
-                        If Not String.IsNullOrWhiteSpace(strg) Then
+                        If Not strg.Length <= -1 Then
                             Dim idx = pchd
                             Dim msg = strg
                             Dim Th = New System.Threading.Thread(

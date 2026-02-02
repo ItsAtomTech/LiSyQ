@@ -1,12 +1,35 @@
 #include <FastLED.h>
 #include "modules/allaboard.cpp"
-
+#include "modules/storage.cpp"
+#include "modules/communication.cpp"
 
 
 String fxbin; //Cached store of string values from lisyq channel
 
+localStorage storage;
 
 #include "modules/lisyqRecv.cpp"
+
+// Wifi Setup
+const int wifiCredLength = 80;
+const int wifiAddressStart = 180; //Start Address of Wifi creds
+
+#include "modules/wifiSerial.cpp" //
+WiFiConnector wifiConnector; //define our object for wifi serial
+#include <WiFiUdp.h>
+
+
+
+
+// UDP setup
+WiFiUDP Udp;
+unsigned int localUdpPort = 2027;  // local port to listen on
+#define UDP_BUF_SIZE 1024
+//Remote Ip data
+IPAddress recieved_ip;
+uint16_t recieved_port;
+IPAddress IP;
+
 
 
 
@@ -86,6 +109,15 @@ void setup() {
 
     currentPalette = RainbowColors_p;
     currentBlending = LINEARBLEND;
+
+      //WiFi Setup
+  coms.setResponder(processCommands);
+  Serial.println();
+  delay(800);
+  wifiConnector.loadSavedNetwork(); //Try to connect with saved WiFi Config  
+  connectUDP();  
+
+
 }
 
 unsigned long prevMils = 0;
@@ -213,15 +245,13 @@ const TProgmemPalette16 myRedWhiteBluePalette_p PROGMEM =
 neocommands cmd;
 
 
+
 void loop(){
     recvWithEndMarker();
     showNewData();
 
     if(millis() - prevMils >= UPDATES_PER_SECOND){  
-      prevMils = millis();  
- 
-      
-
+      prevMils = millis();
       // Serial.println(channel_cache_1);  
       // Serial.println(channel_cache_2);  
       // Serial.println(channel_cache_3);  
@@ -230,7 +260,6 @@ void loop(){
       for(int ch = 0; ch < channel_size; ch++){
 
         cmd.parseCommand(fxbin, ch);   
-      
       }
 
 //helps on better handling of fire2012 across channels;
@@ -257,9 +286,10 @@ void loop(){
 
     }
 
+      //Proccess Udp Packets
+  udpProcess();
+
 }
-
-
 
 // Additional notes on FastLED compact palettes:
 //
@@ -282,3 +312,63 @@ void loop(){
 // palette to Green (0,255,0) and Blue (0,0,255), and then retrieved 
 // the first sixteen entries from the virtual palette (of 256), you'd get
 // Green, followed by a smooth gradient from green-to-blue, and then Blue.
+
+
+//Other Functions
+
+//Function helper to recieve Data from Serial with no blocking routine
+void processCommands(String cmd){
+  if(cmd == "connect" || wifiConnector.CONFIG_ACTIVE ){
+      wifiConnector.handleCommand(cmd);
+  }else if(cmd == "disconnect"){
+      wifiConnector.handleCommand(cmd);
+  }else if(cmd == "cancel"){
+      wifiConnector.CONFIG_ACTIVE = false; 
+  } 
+  // 
+}
+
+
+
+// UDP Processes function
+
+char incomingPacket[UDP_BUF_SIZE];
+void udpProcess() {
+  if (!wifiConnector.connected) return;
+
+  int packetSize = Udp.parsePacket();
+  if (!packetSize) return;
+
+  int len = Udp.read(incomingPacket, UDP_BUF_SIZE);
+  // if (len <= 0) return;
+
+  recieved_ip = Udp.remoteIP();
+  recieved_port = Udp.remotePort();
+
+  for (int i = 0; i < len; i++) {
+    recvWithEndMarkerUDP(incomingPacket[i]);
+    //Serial.write(incomingPacket[i]);
+  }
+  recvWithEndMarkerUDP('\n'); //Terminate end
+}
+
+
+//Connect/Start UDP if ready and connected to a Network, only if using WiFi and not as Hotspot mode
+void connectUDP() {
+    static bool UDP_CONNECTED = false;
+
+    if (!wifiConnector.connected) {
+        Udp.stop();
+        UDP_CONNECTED = false;
+        return;
+    }
+
+    if (UDP_CONNECTED) {
+        return;
+    }
+
+    if (Udp.begin(localUdpPort)) {
+        UDP_CONNECTED = true;
+        Serial.printf("UDP port: %d\n", localUdpPort);
+    }
+}

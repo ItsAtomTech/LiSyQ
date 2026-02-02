@@ -208,10 +208,11 @@ Module Cports
     Public Sub SendUdp(index As Integer, message As String)
         If index >= 0 AndAlso index < UdpChannels.Count Then
             Dim udp = UdpChannels(index)
+            Dim newLine As Char = vbLf
 
-            If udp IsNot Nothing AndAlso Not String.IsNullOrWhiteSpace(message) Then
+            If udp IsNot Nothing Then
                 SyncLock UdpLocks(index)
-                    Dim data = System.Text.Encoding.UTF8.GetBytes(message)
+                    Dim data = System.Text.Encoding.UTF8.GetBytes(message + newLine)
                     udp.Send(data, data.Length)
                 End SyncLock
             End If
