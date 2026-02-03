@@ -370,7 +370,7 @@ void udpProcess() {
     //Serial.write(incomingPacket[i]);
 
   }
-  processUdpData('\n'); //Terminate end
+  //processUdpData('\n'); //Terminate end, used only for testing!
 }
 
 
