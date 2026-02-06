@@ -349,7 +349,7 @@ void udpProcess() {
     recvWithEndMarkerUDP(incomingPacket[i]);
     //Serial.write(incomingPacket[i]);
   }
-  recvWithEndMarkerUDP('\n'); //Terminate end
+  // recvWithEndMarkerUDP('\n'); //Terminate end, for test only
 }
 
 
