@@ -450,6 +450,13 @@ Public Class Main
         End Function
 
 
+        Public Function SendToComPort(name As String, data As String)
+            Cports.SendToComPort(name, data)
+
+        End Function
+
+
+
     End Class
 
     Private Sub ToolStripMenuItem1_Click(sender As Object, e As EventArgs) Handles ToolStripMenuItem1.Click

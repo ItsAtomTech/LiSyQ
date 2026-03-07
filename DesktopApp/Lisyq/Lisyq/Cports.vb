@@ -1,5 +1,30 @@
 ﻿
+Imports System.IO.Ports
 
+Module SerialHelper
+
+    Private _serialPort As SerialPort = Nothing
+
+    Public Sub SendToComPort(portName As String, data As String)
+        Try
+            If _serialPort IsNot Nothing Then
+                If _serialPort.IsOpen Then
+                    _serialPort.Close()
+                End If
+                _serialPort.Dispose()
+                _serialPort = Nothing
+            End If
+
+            _serialPort = New SerialPort(portName, 115200, Parity.None, 8, StopBits.One)
+            _serialPort.Open()
+            _serialPort.WriteLine(data)
+
+        Catch ex As Exception
+            MessageBox.Show("ComPort error: " & ex.Message)
+        End Try
+    End Sub
+
+End Module
 
 Module Cports
     Public Ports As New List(Of IO.Ports.SerialPort)
@@ -241,6 +266,30 @@ Module Cports
 
         Catch ex As Exception
             NotificationManager.Show(Parent, "Failed to remove UDP channel at index " & index, Color.Red, 1000)
+        End Try
+    End Sub
+
+
+
+    ' Other Functions
+    Private _serialPort As SerialPort = Nothing
+
+    Public Sub SendToComPort(portName As String, data As String)
+        Try
+            If _serialPort IsNot Nothing Then
+                If _serialPort.IsOpen Then
+                    _serialPort.Close()
+                End If
+                _serialPort.Dispose()
+                _serialPort = Nothing
+            End If
+
+            _serialPort = New SerialPort(portName, 115200, Parity.None, 8, StopBits.One)
+            _serialPort.Open()
+            _serialPort.WriteLine(data)
+
+        Catch ex As Exception
+            MessageBox.Show("ComPort error: " & ex.Message)
         End Try
     End Sub
 
