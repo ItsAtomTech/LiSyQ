@@ -59,7 +59,7 @@ CRGB leds[3][NUM_LEDS_MAX];
 //Some more effects externally
 #include "modules/pacifica_waves.cpp"
 #include "modules/fire2012.cpp"
-
+#include "modules/twinklefox.cpp"
 
 
 
@@ -84,9 +84,6 @@ CRGB leds[3][NUM_LEDS_MAX];
 
 CRGBPalette16 currentPalette;
 TBlendType    currentBlending;
-
-
-
 
 
 extern CRGBPalette16 myRedWhiteBluePalette;
@@ -247,8 +244,8 @@ neocommands cmd;
 
 
 void loop(){
-    recvWithEndMarker();
-    showNewData();
+  recvWithEndMarker();
+  showNewData();
 
     if(millis() - prevMils >= UPDATES_PER_SECOND){  
       prevMils = millis();
@@ -257,35 +254,25 @@ void loop(){
       // Serial.println(channel_cache_3);  
 
       
-      for(int ch = 0; ch < channel_size; ch++){
+    for(int ch = 0; ch < channel_size; ch++){
+      cmd.parseCommand(fxbin, ch);   
+    }
 
-        cmd.parseCommand(fxbin, ch);   
-      }
+  //helps on better handling of fire2012 across channels;
+    if(fireFxCalled){
+      random16_add_entropy( random());
+      fireFxCalled = false;
+    }
 
-//helps on better handling of fire2012 across channels;
-  if(fireFxCalled){
-    random16_add_entropy( random());
-    fireFxCalled = false;
-  }
-      
-   
-      
-      
-      //FillLEDsFromPaletteColors( startIndex, 1);
-
-      // rainbowFx(0);
-      
-      // pacifica_loop(1);
-
-      // fire2012(2);
-
-     
+  //pause twinkleFox effect after render to all
+    if(pauseTfox == false){
+      pauseTfox = true;
+    }
+        
       
       FastLED.show();
       //FastLED.delay(1000 / UPDATES_PER_SECOND);
-
     }
-
       //Proccess Udp Packets
   udpProcess();
 

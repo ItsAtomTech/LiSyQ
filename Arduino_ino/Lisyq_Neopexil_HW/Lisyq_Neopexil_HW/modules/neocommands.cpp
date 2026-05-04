@@ -15,9 +15,6 @@ int hexdecode(String s){
 class neocommands{
 	
 	
-
-	
-	
 	private: String getValues(String data, char separator, int index) {
 		int found = 0;
 		int strIndex[] = { 0, -1 };
@@ -104,10 +101,14 @@ class neocommands{
 			palleteFx(index, com_string);		
 		}else if(fx_name == "ocean"){
 			pacificaFx(index, com_string);
-		}
-		else if(fx_name == "fire"){
+		}else if(fx_name == "fire"){
 			fireFx(index,com_string);
 			fireFxCalled = true;
+		}else if(fx_name == "tfox"){
+			pauseTfox = false;
+			tfoxFx(index, com_string);
+			
+			
 		}
 		
 		//Add more effects at this if-else chain
@@ -157,6 +158,10 @@ class neocommands{
 		
 	}
 	
+	//Sample: tfox
+	private: void tfoxFx(int index, String com_string){
+		tfox_effect(index);
+	}
 	
 	
 };
