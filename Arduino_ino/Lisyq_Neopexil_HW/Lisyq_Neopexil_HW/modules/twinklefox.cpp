@@ -6,7 +6,7 @@ bool pauseTfox = true;
 TwinkleFox twinkleFox(NUM_LEDS_MAX); //initilize it with MAX LEDs
 
 //Function for the twinkleFox effect
-void tfox_effect(int index){		
+void tfox_effect(int index, int brightness){		
 		if(pauseTfox){
 			twinkleFox.pause(millis());
 		}else{
@@ -18,4 +18,5 @@ void tfox_effect(int index){
 		}
 		
 		twinkleFox.draw(Fx::DrawContext(millis(), leds[index]));
+		nscale8(leds[index], NUM_LEDS_MAX, brightness);
 }

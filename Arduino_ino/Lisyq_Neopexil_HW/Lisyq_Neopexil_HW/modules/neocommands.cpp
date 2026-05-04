@@ -160,7 +160,9 @@ class neocommands{
 	
 	//Sample: tfox
 	private: void tfoxFx(int index, String com_string){
-		tfox_effect(index);
+		int brightness = hexdecode(getValues(com_string, ':' , 2));
+		tfox_effect(index,brightness);
+		
 	}
 	
 	

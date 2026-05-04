@@ -92,14 +92,15 @@ extern const TProgmemPalette16 myRedWhiteBluePalette_p PROGMEM;
 String f = "";
 
 
-
 void setup() {
     delay( 3000 ); // power-up safety delay
+
     FastLED.addLeds<LED_TYPE, LED_PIN, COLOR_ORDER>(leds[0], NUM_LEDS).setCorrection( TypicalLEDStrip );
     FastLED.addLeds<LED_TYPE, LED_PIN_2, COLOR_ORDER>(leds[1], NUM_LEDS).setCorrection( TypicalLEDStrip );
     FastLED.addLeds<LED_TYPE, LED_PIN_3, COLOR_ORDER_2>(leds[2], NUM_LEDS).setCorrection( TypicalLEDStrip );
     FastLED.setBrightness(  BRIGHTNESS );
     
+
     Serial.begin(115200);
 
     gPal = HeatColors_p;

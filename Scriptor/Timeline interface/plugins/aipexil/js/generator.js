@@ -74,6 +74,25 @@ const aipexil = {
 			
 			
 			
+		},		
+		"tfox": {
+			params: [
+							{
+								name:"Brightness",
+								type: "slider",
+								min: 0,
+								max: 255,
+								default: 120,
+								animatable: true,
+								toHex: true,
+							},	
+							
+							
+						],
+					name: "Twinkle Fox"	,
+			
+			
+			
 		},
 		
 		"pallet": {
