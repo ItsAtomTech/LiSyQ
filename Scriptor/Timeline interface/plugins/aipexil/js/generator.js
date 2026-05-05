@@ -17,8 +17,58 @@ const aipexil = {
 	
 	//here are the premade effects which we loop through to create forms from
 	premade_effects_bin:{
-		
-		
+					
+		"color": {
+			params: [
+							{
+								name:"Color",
+								type: "color",
+								min: 0,
+								max: 255,
+								default: "000000",
+								animatable: true,
+								toHex: false,
+							},	
+							
+							{
+								name:"Brightness",
+								type: "slider",
+								min: 0,
+								max: 255,
+								default: 255,
+								animatable: true,
+								toHex: true,
+							},							
+							{
+								name:"Effects",
+								type: "options",
+								values: [
+									["None", 0],
+									["Strobe", 1],
+									["Pulse", 2],
+									["Beat", 3],
+								],
+								min: 0,
+								max: 3,
+								default: 0,
+								animatable: false,
+								toHex: false,
+								excluded:true,
+							},
+							{
+								name:"Effect threshold",
+								type: "number",
+								min: 0,
+								max: 5,
+								default: 0.5,
+								animatable: false,
+								toHex: false,
+								excluded: true,
+							},								
+						],
+					name: "Ocean (Pacifica)"	,			
+			
+		},	
 		//Fire effects
 		"fire": {
 				params: [
@@ -70,10 +120,7 @@ const aipexil = {
 							
 							
 						],
-					name: "Ocean (Pacifica)"	,
-			
-			
-			
+					name: "Ocean (Pacifica)"	,		
 		},		
 		"tfox": {
 			params: [
@@ -97,53 +144,55 @@ const aipexil = {
 		
 		"pallet": {
 			params: [
-							{
-								name:"Pallet",
-								type: "options",
-								values: [
-									["Rainbow Blended", 0],
-									["Rainbow Strip", 1],
-									["Rainbow Strip Blended", 2],
-									["Purple and Green (Blended)", 3],
-									["Random palette", 4],
-									["Black and White (No Blend)", 5],
-									["Black and White (Blended)", 6],
-									["Cloud Colors (Blended)", 7],
-									["Party Colors (Blended)", 8],
-									["Red White (No Blend)", 9],
-									["Red White (Blended)", 10],
-								
-								],
-								min: 0,
-								max: 100,
-								default: 0,
-								animatable: false,
-								toHex: false,
-							},
-							{
-								name:"Speed",
-								type: "slider",
-								min: 0,
-								max: 255,
-								default: 127,
-								animatable: true,
-								toHex: true,
-							},
-							{
-								name:"Brightness",
-								type: "number",
-								min: 0,
-								max: 255,
-								default: 100,
-								animatable: true,
-								toHex: true,
-							},								
-							
-							
+					{
+						name:"Pallet",
+						type: "options",
+						values: [
+							["Rainbow Blended", 0],
+							["Rainbow Strip", 1],
+							["Rainbow Strip Blended", 2],
+							["Purple and Green (Blended)", 3],
+							["Random palette", 4],
+							["Black and White (No Blend)", 5],
+							["Black and White (Blended)", 6],
+							["Cloud Colors (Blended)", 7],
+							["Party Colors (Blended)", 8],
+							["Red White (No Blend)", 9],
+							["Red White (Blended)", 10],
+							["Dev8 Colors", 11],
+							["Dev8 Colors (Blended)", 12],
+						
 						],
-					name: "Pallete Run"	,
-			
-			
+						min: 0,
+						max: 100,
+						default: 0,
+						animatable: false,
+						toHex: false,
+					},
+					{
+						name:"Speed",
+						type: "slider",
+						min: 0,
+						max: 255,
+						default: 127,
+						animatable: true,
+						toHex: true,
+					},
+					{
+						name:"Brightness",
+						type: "number",
+						min: 0,
+						max: 255,
+						default: 100,
+						animatable: true,
+						toHex: true,
+					},								
+					
+					
+				],
+			name: "Pallete Run"	,
+	
+	
 			
 		},
 		
@@ -186,20 +235,17 @@ const aipexil = {
 						
 						let params_ = this.key_frames[x].effect_params;
 						
-						
 						let stringVal = "fx:"+ params_.fx_type;
 						
 						//hexfy values that needs it
 						for(zg = 0; zg < params_.values.length;zg++){
 							
-							
 							try{
 							
 							let param_val = params_.values[zg];
 							
-							
 							//if param animatable and has dual value
-							if(typeof(param_val) == 'object' && this.premade_effects_bin[params_.fx_type].params[zg].animatable){
+							if(typeof(param_val) == 'object' && this.premade_effects_bin[params_.fx_type].params[zg].animatable && this.premade_effects_bin[params_.fx_type].params[zg].type != "color"){
 								// console.log(aipexil.premade_effects_params);
 							
 								let start_val = parseInt(params_.values[zg][0]);
@@ -207,27 +253,49 @@ const aipexil = {
 								let zlen = parseInt(this.key_frames[x].time_end*this.time_constant) - this.key_frames[x].time_start*this.time_constant;
 														
 								param_val = parseInt(aipexil.linear_flow(start_val,end_val,zlen,time_tick));			
-							
+								
+								
+							}else if(typeof(param_val) == 'object' && (this.premade_effects_bin[params_.fx_type].params[zg].animatable && this.premade_effects_bin[params_.fx_type].params[zg].type == "color")){
+									
+								let start_val = (params_.values[zg][0]) || "000000";
+								let end_val = (params_.values[zg][1]) || "000000"; 
+								let zlen = parseInt(this.key_frames[x].time_end*this.time_constant) - this.key_frames[x].time_start*this.time_constant;
+								let all_params = this.premade_effects_bin[params_.fx_type].params[zg];
+
+								param_val = aipexil.processColor(start_val,end_val,zlen,time_tick,all_params);
+
+
 							};
+
+							
+							
+
 	
 							//If param should be converted to hex
 							if(this.premade_effects_bin[params_.fx_type].params[zg].toHex){					
 								param_val = param_val.toString(16);								
+							}							
+							
+							if(this.premade_effects_bin[params_.fx_type].params[zg].type == "color"){					
+								param_val = this.removeSpecials(param_val);								
 							}
-			
-							stringVal = stringVal+ ":" + param_val;
+							
+							
+							//if this param should not be added to the data string, will only add if the data is undefined or false.
+							if(this.premade_effects_bin[params_.fx_type].params[zg].excluded != true){
+								stringVal = stringVal+ ":" + param_val;
+							}
+							
 											
 
 							}catch(e){
-								
+								// console.error(e);
 								// --
 							}
 											
 						}
 						
 						this.seqData[i] = (stringVal);
-						
-						
 						
 						//onsole.log(this.key_frames[x].valueA);
 						
@@ -247,10 +315,88 @@ const aipexil = {
 	
 					
 
+	split_solor: function(cl){	
+	var col_ar = [];	
+		try{	
+			for(cls = 0; cls < 3;cls++){		
+				col_ar[cls] = cl[cls*2]+cl[(cls*2)+1]		
+			}
+			
+		}catch(e){		
+			col_ar = ["00","00","00"];		
+		}	
+		return col_ar;	
+	},
 
-	
-	
+	normalize_ambient: function(num){
+		if(parseInt(num) > 255){	
+			return 255;	
+		}else if(parseInt(num) < 0){
+			return 0;
+		}else{
+			return num;
+		}
+	},
 
+	ambient_format_zero: function(st){
+		if(st.length < 2){
+			return st = "0"+st;
+			
+		}else{
+			return st;
+		}
+		
+	},
+
+	ambient_combined_hex: function(fg){	
+		var bvx = 0;	
+		var col_ar = [];
+		while(bvx < fg.length){		
+			col_ar[bvx] = this.ambient_format_zero(parseInt(fg[bvx]).toString(16));		
+			bvx++;
+		}
+		return col_ar.join("");
+	},
+
+
+	removeSpecials: function(str = "") {
+		let strs = str.toString();
+		try {
+			strs = strs.replace(/[^a-zA-Z0-9 ]/g, "");
+		} catch(e) {
+			// ---
+		}
+		return strs;
+	},
+
+
+	//Process the color hex into its split and calculate value
+	processColor: function(start_val,end_val,zlen,time_tick){
+		let color_hex = "000000";
+		let start_color_array = this.split_solor(this.removeSpecials(start_val));
+		let end_color_array = this.split_solor(this.removeSpecials(end_val));
+		
+		let calculated_color = 	[];
+			let cind = 0;
+			while(cind < start_color_array.length){
+					
+					var x = parseInt(start_color_array[cind], 16);
+					var y = parseInt(end_color_array[cind], 16);
+					var w = time_tick;
+					var z = zlen;
+					
+					calculated_color[cind] = this.normalize_ambient(this.linear_flow(x,y,z,w));
+
+
+
+					cind++;
+			}
+
+
+			color_hex = this.ambient_combined_hex(calculated_color);
+
+		return color_hex;
+	},
 	
 	
 	//x - star value, y = end value, w = time tick , z = total length

@@ -821,11 +821,17 @@ function pause_template(){
 
 
 function change_params(index, values){
-		
-	if(typeof(aipexil.premade_effects_params[index]) == 'object'){
+	
+	try{
+		if(typeof(aipexil.premade_effects_params[index]) == 'object' && selected_stabs.effect_params.animatable == false){
 		
 		return;
-	};	
+	  };	
+	}catch(e){
+		//--
+	}
+	
+
 	try{
 		if(typeof(selected_stabs.effect_params.values[index]) == 'object' && mode == "edit"){
 		
@@ -909,9 +915,7 @@ function generate_type_inputs(gtype){
 	
 	
 	if(gtype == "premade"){
-		
 		generate_premade_inputs();
-		
 		
 	}else{
 		
@@ -1009,6 +1013,9 @@ function generate_premade_inputs(type){
 			}
 		
 		}
+		
+		
+		
 		
 		//Add from-to Buttons if this param is animatable
 		if(parameter.animatable){
@@ -1108,6 +1115,15 @@ function generate_form(params){
 		in_form.type = "range";
 		in_form.min = params.min;
 		in_form.max = params.max;
+		in_form.value = params.default;
+		in_form.setAttribute("value",params.default);
+		
+		
+	}else if(params.type == "color"){
+		
+
+		in_form = document.createElement("input");
+		in_form.type = "color";
 		in_form.value = params.default;
 		in_form.setAttribute("value",params.default);
 		
