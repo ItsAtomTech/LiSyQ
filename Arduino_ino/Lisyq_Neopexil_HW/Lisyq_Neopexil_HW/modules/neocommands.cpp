@@ -4,14 +4,6 @@ String channel_cache_2 = "";
 String channel_cache_3 = "";
 
 
-int hexdecode(String s){
-	char hex_bin[s.length()+1];
-	s.toCharArray(hex_bin, s.length()+1);
-	
-	return strtoul(hex_bin, NULL, 16);
-	
-}
-
 class neocommands{
 	
 	
@@ -82,8 +74,6 @@ class neocommands{
 		}else{
 			//Clear all effects before procceding
 			  fill_solid( leds[index], NUM_LEDS, CRGB( 0, 0, 0));
-
-			
 			//Serial.println("raw commands"); 
 			//send to raw parser unishox
 		}
@@ -107,6 +97,9 @@ class neocommands{
 		}else if(fx_name == "tfox"){
 			pauseTfox = false;
 			tfoxFx(index, com_string);
+			
+		}else if(fx_name == "color"){
+			colorFx(index, com_string);
 			
 			
 		}
@@ -158,12 +151,23 @@ class neocommands{
 		
 	}
 	
-	//Sample: tfox
+	//Sample: tfox:50
 	private: void tfoxFx(int index, String com_string){
 		int brightness = hexdecode(getValues(com_string, ':' , 2));
 		tfox_effect(index,brightness);
 		
 	}
+	
+	//Fire Fx: command "fx:color:code:brightness"
+	//Sample: color:00ff00:50
+	private: void colorFx(int index, String com_string){
+		String color = getValues(com_string, ':' , 2);
+		int brightness = hexdecode(getValues(com_string, ':' , 3));
+		color_effects(index,color,brightness);
+		
+	}
+	
+	
 	
 	
 };

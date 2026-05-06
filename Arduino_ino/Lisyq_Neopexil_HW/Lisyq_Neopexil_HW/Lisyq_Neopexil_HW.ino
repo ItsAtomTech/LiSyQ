@@ -60,7 +60,7 @@ CRGB leds[3][NUM_LEDS_MAX];
 #include "modules/pacifica_waves.cpp"
 #include "modules/fire2012.cpp"
 #include "modules/twinklefox.cpp"
-
+#include "modules/color_fx.cpp"
 
 
 // This example shows several ways to set up and use 'palettes' of colors
@@ -88,6 +88,11 @@ TBlendType    currentBlending;
 
 extern CRGBPalette16 myRedWhiteBluePalette;
 extern const TProgmemPalette16 myRedWhiteBluePalette_p PROGMEM;
+
+
+extern const TProgmemPalette16 dev8Palette_p PROGMEM;
+
+
 
 String f = "";
 
@@ -169,6 +174,10 @@ TBlendType    currentBlending;
         if( fx_index == 8)  { currentPalette = PartyColors_p;           currentBlending = LINEARBLEND; }
         if( fx_index == 9)  { currentPalette = myRedWhiteBluePalette_p; currentBlending = NOBLEND;  }
         if( fx_index == 10)  { currentPalette = myRedWhiteBluePalette_p; currentBlending = LINEARBLEND; }
+
+        if( fx_index == 11)  { currentPalette = dev8Palette_p; currentBlending = NOBLEND; }
+        if( fx_index == 12)  { currentPalette = dev8Palette_p; currentBlending = LINEARBLEND; }
+
     
 }
 
@@ -238,6 +247,28 @@ const TProgmemPalette16 myRedWhiteBluePalette_p PROGMEM =
 };
 
 
+//Dev 8 Pallete
+const TProgmemPalette16 dev8Palette_p PROGMEM =
+{
+    0x0C6E70, // Dark Teal
+    0x0FA3A3, // Medium Teal
+    0x3EEAA0, // Bright Mint Green
+    0x000000, // Black
+
+    0x0C6E70,
+    0x0FA3A3,
+    0x3EEAA0,
+    0x000000,
+
+    0x0C6E70,
+    0x0C6E70,
+    0x0FA3A3,
+    0x0FA3A3,
+    0x3EEAA0,
+    0x3EEAA0,
+    0xFFFFFF,
+    0x000000
+};
 
 #include "modules/neocommands.cpp"
 neocommands cmd;

@@ -55,3 +55,18 @@ private:
 
 
 };
+
+
+
+//Other Essential functions
+
+//returns an int from a string hex
+int hexdecode(String s){
+	char hex_bin[s.length()+1];
+	s.toCharArray(hex_bin, s.length()+1);
+	
+	return strtoul(hex_bin, NULL, 16);
+	
+}
+
+
