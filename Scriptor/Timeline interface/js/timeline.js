@@ -121,12 +121,18 @@ function parentTrack(id){
 
 
 function locateNode(parentID, childID){
-	//unfinished
 	
 	var parent = document.getElementsByClassName('track_con')[parentID];
+	
+	if(childID != undefined){
+		return parent.querySelector('[content_id="'+childID+'"]'); 
+	}
+	
 	return parent;
 	
 }
+
+
 
 if(typeof make !== 'function'){
    window.make = function(elm){ return document.createElement(elm);};
