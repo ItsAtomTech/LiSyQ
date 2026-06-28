@@ -83,22 +83,22 @@ function _(elm){
 	var refh = elm;
 	var size = ['',''];
 
-try{
-	if(refh.offsetHeight){
-		
-		size[1] = refh.offsetHeight;
-		size[0] = refh.offsetWidth;
-		
-	}else if(refh.style.pixelHeight){
-		size[1] = refh.style.pixelHeight
-		size[0] = refh.style.pixelWidth
-		
-	}
-	
-	}catch(e){
-		console.log("Invalid Element");
-	}
-	return size;
+  try{
+	  if(refh.offsetHeight){
+		  
+		  size[1] = refh.offsetHeight;
+		  size[0] = refh.offsetWidth;
+		  
+	  }else if(refh.style.pixelHeight){
+		  size[1] = refh.style.pixelHeight
+		  size[0] = refh.style.pixelWidth
+		  
+	  }
+	  
+	  }catch(e){
+		  console.log("Invalid Element");
+	  }
+	  return size;
 }
 
 function capInput(ipt,min,max){
@@ -131,6 +131,15 @@ function locateNode(parentID, childID){
 if(typeof make !== 'function'){
    window.make = function(elm){ return document.createElement(elm);};
 }
+
+
+
+function generateUUID32() {
+    return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
+        (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+    ).slice(0, 32);
+}
+
 
 //create the track bound info bar 
 function createTrackBound(data){
@@ -336,9 +345,6 @@ function add_track(data,com,mode){
 		
 	
 		
-		
-	
-		
 		//something more here
 		
 		if(data == undefined || data == null){
@@ -439,9 +445,6 @@ function context_menu_track(e){
 	e.stopPropagation();
 	
 	if(e.target.classList[0] == 'track_con'){
-		
-		
-		
 		
 		set_coords_context(e.screenX,e.screenY);
 		
@@ -619,10 +622,14 @@ function modify_sub_track(data,com){
 		tm_data.misc = data.misc;
 		tm_data.data = data.data;
 		tm_data.content_length = data.content_length;
-		tm_data.name =  data.name,
-		tm_data.color = data.color,		
+		tm_data.name =  data.name;
+		tm_data.color = data.color;		
 		tm_data.end_at = tm_data.start_at + data.content_length;
-
+		
+		//group details
+		tm_data.group = data.group;		
+		
+		
 	selected_content.getElementsByClassName("content_details_inline")[0].innerHTML = data.name;
 	
 	selected_content.style.width = "calc(var(--scale) *" + tm_data.content_length + "px)";
@@ -1036,9 +1043,7 @@ function remove_onmove(){
 
 
 
-	
-
-//Clear all Pending Buffers on Com Ports etc.
+	//Clear all Pending Buffers on Com Ports etc.
 function clearAllBuffer(){
 
 	try{
@@ -1057,6 +1062,72 @@ function clearAllBuffer(){
 //--
 
 
+
+// ================================
+// Grouping Logics ================
+// ================================
+
+
+//assigns a new group data to the selected contents
+function groupSelected(){
+	let selected_contents_elm = [];
+	let selected_datas = selected_contents_data;
+	
+	if(multiple_selected){
+		selected_contents_elm = selected_contents;
+	}else{
+		console.warn("Select Mutiple to Group...");
+		showToast("Select Mutiple to Group...");
+		return;
+	}
+	
+	let groupID = generateUUID32()+"_gr"
+	
+	if(selected_datas.length <= 0){
+		return;
+	}
+	
+	push_undo("subtrack", "edit", selected_track_indexes,selected_contents_data, selected_contents_indexes);
+	
+	
+	let extIndex= 0;
+	for(contents of selected_contents_elm){
+		
+	  
+		  let the_element = contents;
+		  let the_parent = contents.parentNode.getAttribute("tracks_id")  
+		  let content_ids = the_element.getAttribute("content_id");
+		  
+		  let content_lengths = timeline_data[the_parent].sub_tracks[content_ids].content_length;
+
+		  timeline_data[the_parent].sub_tracks[content_ids].group = groupID;
+		  extIndex++;
+			
+		}
+	
+	
+	console.log(selected_contents_elm);
+	
+	
+	//Also put the updated data for a redo
+  	push_undo("subtrack", "edit", selected_track_indexes,selected_contents_data, selected_contents_indexes,true);
+  
+	
+}
+
+
+
+//Remove Group Data for selected items
+function ungroupSelected(){
+	  //To-Do - Implement the Function for Ungroup single and multiple selected data
+	
+}
+
+
+
+// ================================
+// Grouping Logics End ============
+// ================================
 
 
 
