@@ -1121,6 +1121,49 @@ function groupSelected(){
 function ungroupSelected(){
 	  //To-Do - Implement the Function for Ungroup single and multiple selected data
 	
+	let selected_contents_elm = [];
+	let selected_datas = selected_contents_data;
+	
+	let data_id;
+	
+	if(multiple_selected){
+		selected_contents_elm = selected_contents;
+	}else{
+		data_id = selected_content.getAttribute("content_id");
+		
+		selected_contents_elm[0] = selected_content;
+	}
+
+	console.log(data_id);
+	
+	
+	if(multiple_selected){
+		push_undo("subtrack", "edit", selected_track_indexes,selected_contents_data, selected_contents_indexes);
+	}else{
+		push_undo("subtrack", "edit", selected_track_index, timeline_data[selected_track_index].sub_tracks[data_id],data_id);
+	}
+		
+	
+	let extIndex= 0;
+	for(contents of selected_contents_elm){
+		
+	  
+		  let the_element = contents;
+		  let the_parent = contents.parentNode.getAttribute("tracks_id")  
+		  let content_ids = the_element.getAttribute("content_id");
+		  
+		  let content_lengths = timeline_data[the_parent].sub_tracks[content_ids].content_length;
+
+		  timeline_data[the_parent].sub_tracks[content_ids].group = undefined;
+		  extIndex++;
+		}
+	
+	
+	showToast("Ungrouped selection");
+	
+	console.log(selected_contents_elm);
+	
+	
 }
 
 
