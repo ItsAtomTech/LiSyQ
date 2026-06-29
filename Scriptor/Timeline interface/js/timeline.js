@@ -12,6 +12,8 @@ var selected_contents = [];
 var selected_contents_data = [];
 var selected_contents_indexes = [];
 
+let alreadySelectedGroup = false;
+
 var loaded_from_data = false;
 var sub_data_id;
 
@@ -284,7 +286,7 @@ function see_event(){//clicked on track ?
 		}
 	}
 	try{
-		if(event.ctrlKey){
+		if(event.ctrlKey && event.shiftKey == false){
 			selection.enable();
 		}else if(event.ctrlKey == false){
 			selection.disable();				
@@ -615,10 +617,13 @@ function add_sub_tracks(data,com,mode,sub_index){
 
 function modify_sub_track(data,com){
 	
-	var data_id = selected_content.getAttribute("content_id");
-	
-	var selected_item = selected_content.getAttribute('content_id');
-	
+	try{
+		var data_id = selected_content.getAttribute("content_id");
+		var selected_item = selected_content.getAttribute('content_id');
+	}catch(e){
+		return false;
+		console.log(e);
+	}
 
 	if(com == undefined){
 		push_undo("subtrack", "edit", selected_track_index, decople_data(timeline_data[selected_track_index].sub_tracks[data_id]),data_id);
@@ -667,6 +672,7 @@ function set_track_node(){//gets the content block selected
 		sameSelection = true;
 	}else{
 		sameSelection = false;
+		
 	}
 	
 	
@@ -689,7 +695,7 @@ function set_track_node(){//gets the content block selected
 	this.parentNode.addEventListener("mouseleave", remove_onmove);
 
 
-	if(e.ctrlKey){
+	if(e.ctrlKey && !e.shiftKey){
 		multiple_selected = true;
 		selection.cancel();
 	}else{
@@ -795,6 +801,11 @@ function set_track_node(){//gets the content block selected
 	}else{
 		origin_sub = this.getBoundingClientRect().x;
 	}
+	
+	//process extra events to be used for the group function
+	groupEventsMonitor(e);
+	
+	
 }
 
 //Multiple selections helper
@@ -870,7 +881,9 @@ function reposition_subtrack(){
 			set_coords_context(event.screenX,event.screenY);
 			return;
 		}		
-				
+		
+		if (event.shiftKey) return;
+		
 		
 		// console.log(event);
 		
@@ -931,11 +944,15 @@ function reposition_subtrack(){
 		event.target.onmouseup = (function(){
 					
 			push_undo("subtrack", "edit", selected_track_index, decople_data(timeline_data[selected_track_index].sub_tracks[selected_item]), selected_item);
+			
+			event.target.onmouseup = null;
 		
 		});	
 		event.target.onmouseleave = (function(){
 					
 			push_undo("subtrack", "edit", selected_track_index, decople_data(timeline_data[selected_track_index].sub_tracks[selected_item]), selected_item);
+			
+			event.target.onmouseleave = null;
 		
 		});
 	
@@ -1011,11 +1028,18 @@ function multiple_moves(){
 		event.target.onmouseup = (function(){
 
 			push_undo("subtrack", "edit", selected_track_indexes,selected_contents_data, selected_contents_indexes);
+			
+			event.target.onmouseup = null;
+			
 		
 		});	
 		event.target.onmouseleave = (function(){
-					
-			push_undo("subtrack", "edit", selected_track_indexes,selected_contents_data, selected_contents_indexes);
+			
+			if(!event.target.classList.contains("track_con")){
+				push_undo("subtrack", "edit", selected_track_indexes,selected_contents_data, selected_contents_indexes);
+			}
+			
+			 event.target.onmouseleave = null; // removes itself after firing once
 		
 		});
 		
@@ -1172,6 +1196,166 @@ function ungroupSelected(){
 	
 }
 
+
+
+//Selects group on a single track
+function selectGroupLocal(){
+	let selectedContent = selected_content;
+	
+	
+	let trackId = selectedContent.parentNode.getAttribute("tracks_id");
+	let content_id = selectedContent.getAttribute("content_id");
+	
+	if(!selectedContent){
+		return;
+	}
+	
+	revoke_selections('force');
+	
+	let selected_data = timeline_data[trackId].sub_tracks[content_id];
+	if(selected_data.group == undefined || selected_data.group == false){
+		return;
+	}
+	
+	let groups = selected_data.group;
+	
+	let grouped_contents = [];
+	
+	//retrive all same group
+	for(let tc = 0; tc < timeline_data[trackId].sub_tracks.length; tc++){
+		let each_data = (timeline_data[trackId].sub_tracks[tc]);
+		if(each_data.group === groups){
+			grouped_contents.push(tc);
+		}
+	}
+	
+	selected_contents_data.length = 0;
+	
+	selected_contents_data = (selected_contents_data);
+	
+	if(grouped_contents.length >= 1){
+		multiple_selected = true;
+	}
+	
+	
+	selected_track_indexes.length = 0;
+	
+	
+	let ext = 0;
+	for(each of grouped_contents){
+		
+		let node = locateNode(trackId,each);
+		node.classList.add("selected_content");
+		push_to_selections(node);
+		
+		selected_contents_data[ext] = (timeline_data[trackId].sub_tracks[each]);
+		selected_track_indexes[ext] = trackId;
+		
+		ext++;
+	}
+	
+	prev_content = null;
+
+}
+
+
+function selectGroupGlobal(){
+	
+	let selectedContent = selected_content;
+	let trackId = selectedContent.parentNode.getAttribute("tracks_id");
+	let content_id = selectedContent.getAttribute("content_id");
+	
+	if(!selectedContent){
+		return;
+	}
+	
+	revoke_selections('force');
+	
+	let selected_data = timeline_data[trackId].sub_tracks[content_id];
+	if(selected_data.group == undefined || selected_data.group == false){
+		return;
+	}
+	
+	let groups = selected_data.group;
+	
+	let grouped_contents = [];
+	let grouped_contents_track = [];
+	
+	//retrive all same group on all Tracks
+	for(let trc = 0; trc < timeline_data.length; trc++){
+	
+		for(let tc = 0; tc < timeline_data[trc].sub_tracks.length; tc++){
+			let each_data = (timeline_data[trc].sub_tracks[tc]);
+			if(each_data.group === groups){
+				grouped_contents.push(tc);
+				grouped_contents_track.push(trc);
+			}
+		}
+	}
+	
+	selected_contents_data.length = 0;
+	if(grouped_contents.length >= 1){
+		multiple_selected = true;
+	}
+	
+	selected_track_indexes.length = 0;
+	
+	let ext = 0;
+	for(each of grouped_contents){
+		
+		let node = locateNode(grouped_contents_track[ext],each);
+		node.classList.add("selected_content");
+		push_to_selections(node);
+		
+		let track_selected = grouped_contents_track[ext];
+		
+		selected_contents_data[ext] = decople_data(timeline_data[track_selected].sub_tracks[each]);
+		selected_track_indexes[ext] = decople_data(grouped_contents_track[ext]);
+		
+		ext++;
+	}
+	
+	prev_content = null;
+	
+	
+}
+
+
+
+//Monitor keybinded click events for group selection
+let prev_elms = null;
+function groupEventsMonitor(ev){
+	if (!ev) return false;
+	let ctrl = ev.ctrlKey;
+	let shift = ev.shiftKey;
+
+
+	//select similar grouped on one track
+	if(shift && !ctrl){
+		selected_contents_data.length = 0;		
+		revoke_selections("force");
+		selectGroupLocal();
+		alreadySelectedGroup = true;
+		
+	//select similar grouped on all of the tracks	
+	}else if(ctrl && shift){
+		can_move_track = false;
+		revoke_selections("force");
+		
+		selectGroupGlobal();
+		alreadySelectedGroup = true;
+
+	}
+
+	
+	
+}
+
+
+function process_keyups(){
+	//
+	
+}
 
 
 // ================================
@@ -1840,14 +2024,13 @@ function normalize_copies(dta){
 		//delete  dta[z].track_id;
 	}
 	
-	
 	return dta;
 	
 	// console.log(dta, base_track_id);
 }
 
 
-function paste_content(){
+function paste_content(includeGroup=false){
 	
 	var to_paste = JSON.parse(JSON.stringify(copied));	
 	if(!to_paste && copies.length <= 0){
@@ -1876,6 +2059,11 @@ function paste_content(){
 			selected_track_index = start_at_track + topaste.track_distance;
 			
 			pasting_copies[extId] = topaste;
+			
+			if(!includeGroup){
+				topaste.group = undefined;
+			}
+		
 			
 			// console.log(selected_track_index);
 				
@@ -1930,6 +2118,11 @@ function paste_content(){
 	
 	to_paste.start_at = time;
 	to_paste.end_at = to_paste.start_at + to_paste.content_length;
+	
+	if(!includeGroup){
+		to_paste.group = undefined;
+	}
+	
 	
 	add_sub_tracks(to_paste);
 	

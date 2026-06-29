@@ -90,6 +90,8 @@ function shortcuts(e) {
 }
 
 function shortcuts_keyup(e) {
+    alreadySelectedGroup = false;
+    
     if (e.target.tagName === "INPUT") return;
 
     try {
@@ -101,4 +103,6 @@ function shortcuts_keyup(e) {
         console.log(er);
         // console.log(e.key.toUpperCase());
     }
+    
+    
 }
