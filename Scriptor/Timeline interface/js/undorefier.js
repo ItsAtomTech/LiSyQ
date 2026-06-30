@@ -301,6 +301,11 @@ function push_undo(type, action_command, index, data, subtrack_index,forRedo=fal
         default:
             return false;
     }
+    
+    if(type == "subtrack" && (data.length == 0 || subtrack_index.length == 0)){
+        return;
+    }
+    
     add_undo(udata,forRedo);
     
     optimizedData=false;

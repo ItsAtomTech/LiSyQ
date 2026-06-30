@@ -3,7 +3,7 @@ document.body.addEventListener("keyup", shortcuts_keyup);
 
 var editing_shortcuts = true;
 
-function shortcuts(e) {
+async function shortcuts(e) {
     if (e.code === "KeyS" && e.ctrlKey) {
         save_to_file();
     }
@@ -58,6 +58,7 @@ function shortcuts(e) {
     if (editing_shortcuts) {
         if (e.code === "KeyZ" && e.ctrlKey) {
             if (shown) return;
+            
             undo();
         }
 
