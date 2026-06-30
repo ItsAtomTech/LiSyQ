@@ -935,4 +935,12 @@ Public Class Main
     Private Sub ToolStripMenuItem24_Click_1(sender As Object, e As EventArgs) Handles ToolStripMenuItem24.Click
         WebView21.ExecuteScriptAsync("openPortConfig()")
     End Sub
+
+    Private Sub GroupSelectionToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles GroupSelectionToolStripMenuItem.Click
+        WebView21.ExecuteScriptAsync("groupSelected()")
+    End Sub
+
+    Private Sub UngroupSelectionToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles UngroupSelectionToolStripMenuItem.Click
+        WebView21.ExecuteScriptAsync("ungroupSelected()")
+    End Sub
 End Class

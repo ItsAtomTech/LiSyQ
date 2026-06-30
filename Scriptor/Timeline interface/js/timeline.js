@@ -1108,7 +1108,7 @@ function groupSelected(){
 	let selected_contents_elm = [];
 	let selected_datas = selected_contents_data;
 	
-	if(multiple_selected){
+	if(multiple_selected || selected_contents_indexes.length > 1){
 		selected_contents_elm = selected_contents;
 	}else{
 		console.warn("Select Mutiple to Group...");
@@ -1143,6 +1143,8 @@ function groupSelected(){
 	
 	console.log(selected_contents_elm);
 	
+	showToast("Grouped "+selected_contents_elm.length + " items");
+	
 	
 	//Also put the updated data for a redo
   	push_undo("subtrack", "edit", selected_track_indexes,selected_contents_data, selected_contents_indexes,true);
@@ -1154,14 +1156,13 @@ function groupSelected(){
 
 //Remove Group Data for selected items
 function ungroupSelected(){
-	  //To-Do - Implement the Function for Ungroup single and multiple selected data
-	
+
 	let selected_contents_elm = [];
 	let selected_datas = selected_contents_data;
 	
 	let data_id;
 	
-	if(multiple_selected){
+	if(multiple_selected || selected_contents_indexes.length > 1){
 		selected_contents_elm = selected_contents;
 	}else{
 		data_id = selected_content.getAttribute("content_id");
@@ -1172,7 +1173,7 @@ function ungroupSelected(){
 	console.log(data_id);
 	
 	
-	if(multiple_selected){
+	if(multiple_selected || selected_contents_indexes.length > 1){
 		push_undo("subtrack", "edit", selected_track_indexes,selected_contents_data, selected_contents_indexes);
 	}else{
 		push_undo("subtrack", "edit", selected_track_index, timeline_data[selected_track_index].sub_tracks[data_id],data_id);
@@ -1194,7 +1195,7 @@ function ungroupSelected(){
 		}
 	
 	
-	showToast("Ungrouped selection");
+	showToast("Un-Grouped "+selected_contents_elm.length + " items");
 	
 	console.log(selected_contents_elm);
 	
