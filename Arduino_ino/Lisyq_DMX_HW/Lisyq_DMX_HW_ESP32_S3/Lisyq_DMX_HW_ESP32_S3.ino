@@ -1,0 +1,484 @@
+
+// IMPORTANT!: ONLY USE FOR ESP32 Boards, 
+// MIGHT not work on Avr boards etc
+// ===================================
+#include "modules/storage.cpp"
+#include "modules/communication.cpp"
+#include "modules/serialRecv.cpp"
+#include <ArduinoJson.h>
+
+
+#include <ESPDMX32S3.h>//Uses a modified ESP DMX Lib, Lib is located on the 
+// modules folder of this project. Please Install First
+
+DMXESPSerial dmx;
+
+localStorage storage;
+
+const int jsonStartIndex = 0;        // EEPROM start position
+const int jsonMaxLength = 3026;       // Max bytes to reserve (for writing only)
+
+
+
+#include "modules/wifiSerial.cpp" //
+WiFiConnector wifiConnector; //define our object for wifi serial
+#include <WiFiUdp.h>
+
+
+// This one is only used for the S3 R16N8 With a builtin RGB
+#include <Adafruit_NeoPixel.h>
+// For Built in RGB led
+// Define the pin and number of LEDs
+#define LED_PIN 48
+#define NUM_LEDS 1
+
+// Initialize the NeoPixel library
+Adafruit_NeoPixel strip = Adafruit_NeoPixel(NUM_LEDS, LED_PIN, NEO_GRB + NEO_KHZ800);
+
+//DMX Channel Configs
+String DMX_CONFIG[MAX_CHANNELS_LS];
+
+//Count of Channel configured for Translation
+int CONFIGURED_CHANNEL = 0;
+bool isRemoteConnected = false; // Was the device ever recieved a LiSyQ Commands
+
+// UDP setup
+WiFiUDP Udp;
+unsigned int localUdpPort = 2027;  // local port to listen on
+#define UDP_BUF_SIZE 8192
+//Remote Ip data
+IPAddress recieved_ip;
+uint16_t recieved_port;
+IPAddress IP;
+
+
+void setup() {
+  Serial.begin(115200);
+  coms.setResponder(processCommands);
+  dmx.init(512);  
+  storage.init(jsonMaxLength);
+
+  delay(500);//wait for initialization
+  dmx.write(1, 255); 
+  // DmxSimple.write(0, 0);
+  Serial.println("I: Initilaizing");
+  loadCondigData();
+
+  dmx.update(true);
+  
+  strip.show(); // Turn off all LEDs initially
+  strip.setBrightness(150); // Set brightness (0-255)
+
+  strip.setPixelColor(0, strip.Color(255, 0, 0)); // Red
+  strip.show();
+
+
+  //WiFi Setup
+  delay(1500);
+  wifiConnector.loadSavedNetwork(); //Try to connect with saved WiFi Config  
+  connectUDP();  
+  
+}
+
+
+unsigned long prevUpdateTime = 0;
+int updateInterval = 5;
+bool writingTo = false;
+
+void loop() {
+  recvWithEndMarker();  // Hardware Serial
+  showNewData();
+
+  if(millis() - prevUpdateTime >= updateInterval){
+    dmx.update(true);
+    prevUpdateTime = millis(); 
+  }
+  
+  //Proccess Udp Packets
+  udpProcess();
+  ledMonitor();
+}
+
+
+//parsing Config from Serial which starts with "DX" 
+//Format: DX-channels:configs:counts
+//Sample: DX-0,1,2:c12|f15|p16,...:3
+
+//save Data from Config
+bool saveFromConfig(String data){
+  
+  String channelsData =  getValue(data, ':', 0);
+  String configsData =  getValue(data, ':', 1);
+  String countsData =  getValue(data, ':', 2);
+
+
+  //Parse Config from DATA String
+
+  if(channelsData.length() <= 0 
+  || configsData.length() <= 1 
+  || countsData.length() <= 0){
+      Serial.println("ER-Config err");  
+      return false;
+  }  
+
+  // Dummy Create config JSON
+  StaticJsonDocument<jsonMaxLength> config;
+  // config["channels"] = "0,1,2";
+  // config["configs"] = "c12|f15|p16";
+  // config["counts"] = 4;  
+  
+  config["channels"] = channelsData;
+  config["configs"] = configsData;
+  config["counts"] = countsData;
+
+  //Serialize to String
+  String jsonString;
+  serializeJson(config, jsonString);
+  Serial.println("Saving:");
+  Serial.println(jsonString);
+
+  //Store in EEPROM
+  storage.setItem(jsonStartIndex, jsonMaxLength, jsonString);
+  
+  delay(500); // Pause before doing a thing after save process
+  return true;
+}
+
+
+
+//Loads saved Data from eeprom
+void loadCondigData(){
+  // Load from EEPROM (no size needed with improved getItem)
+  String loadedData = storage.getItem(jsonStartIndex);
+
+  // Deserialize
+  StaticJsonDocument<jsonMaxLength> loadedConfig;
+  DeserializationError error = deserializeJson(loadedConfig, loadedData);
+
+
+
+  if (error) {
+    Serial.print("Failed to parse: ");
+    Serial.println(error.c_str());
+    Serial.print("Config not set!");
+  } else {
+    // Serial.println("Ch: " + String(loadedConfig["channels"].as<const char*>()));
+    putToChannels(String(loadedConfig["channels"].as<const char*>()));
+    //Serial.println("Cn: " + String(loadedConfig["configs"].as<const char*>()));
+    putToDMXConfig(String(loadedConfig["configs"].as<const char*>()));
+
+    CONFIGURED_CHANNEL = loadedConfig["counts"].as<int>();
+    Serial.println("Ct: " + String(CONFIGURED_CHANNEL)); 
+    Serial.println("Cc: " + String(channels[0])); 
+
+  }
+  
+  loadedData = ""; 
+  loadedConfig.clear();
+}
+
+
+int channelCount = 0;
+
+void putToChannels(String data) {
+  channelCount = 0;
+
+  int startIdx = 0;
+  int commaIdx = data.indexOf(',');
+
+  while (commaIdx != -1 && channelCount < MAX_CHANNELS_LS) {
+    channels[channelCount++] = data.substring(startIdx, commaIdx).toInt();
+    startIdx = commaIdx + 1;
+    commaIdx = data.indexOf(',', startIdx);
+  }
+
+  if (startIdx < data.length() && channelCount < MAX_CHANNELS_LS) {
+    channels[channelCount++] = data.substring(startIdx).toInt();
+  }
+
+  // Clear the rest of the array
+  for (int i = channelCount; i < MAX_CHANNELS_LS; i++) {
+    channels[i] = -1;
+  }
+}
+
+
+int dmxConfigCount = 0;
+void putToDMXConfig(String data) {
+  dmxConfigCount = 0; // reset count
+
+  int startIdx = 0;
+  int commaIdx = data.indexOf(',');
+
+  while (commaIdx != -1 && dmxConfigCount < MAX_CHANNELS_LS) {
+    DMX_CONFIG[dmxConfigCount++] = data.substring(startIdx, commaIdx);
+    startIdx = commaIdx + 1;
+    commaIdx = data.indexOf(',', startIdx);
+  }
+
+  // Last one
+  if (startIdx < data.length() && dmxConfigCount < MAX_CHANNELS_LS) {
+    DMX_CONFIG[dmxConfigCount++] = data.substring(startIdx);
+  }
+}
+
+
+//Function helper to recieve Data from Serial with no blocking routine
+void processCommands(String cmd){
+  String type = getValue(cmd, '-', 0);
+  String RAW_DATA = getValue(cmd, '-', 1);
+  Serial.println(RAW_DATA);  
+  if(type == "DX"){
+      if(saveFromConfig(RAW_DATA)){
+          loadCondigData();
+      };      
+
+  }else if(cmd == "connect" || wifiConnector.CONFIG_ACTIVE ){
+      wifiConnector.handleCommand(cmd);
+  }else if(cmd == "disconnect"){
+      wifiConnector.handleCommand(cmd);
+  }else if(cmd == "cancel"){
+      wifiConnector.CONFIG_ACTIVE = false; 
+  }else{
+      writingTo = true;
+      processLSData(cmd);
+      writingTo = false;
+  }  
+  // 
+}
+
+void processCommandsUDP(String cmd){
+      writingTo = true;
+      processLSData(cmd);
+      writingTo = false;
+}
+
+
+
+void processData(String data, String config, int faderValue = 255) {
+  int sep1 = data.indexOf(':');
+  int sep2 = data.indexOf(':', sep1 + 1);
+
+  String colorHex = data.substring(0, sep1);
+  String pos1Hex = (sep2 != -1) ? data.substring(sep1 + 1, sep2) : "";
+  String pos2Hex = (sep2 != -1) ? data.substring(sep2 + 1) : "";
+
+  int colorR = strtol(colorHex.substring(0, 2).c_str(), NULL, 16);
+  int colorG = strtol(colorHex.substring(2, 4).c_str(), NULL, 16);
+  int colorB = strtol(colorHex.substring(4, 6).c_str(), NULL, 16);
+
+  // Defaults
+  int colorAddr = -1, faderAddr = -1, posAddr = -1;
+
+  // Parse config parts
+  int cIndex = config.indexOf("c");
+  int fIndex = config.indexOf("f");
+  int pIndex = config.indexOf("p");
+
+  if (cIndex != -1) {
+    int cEnd = config.indexOf('|', cIndex);
+    colorAddr = config.substring(cIndex + 1, cEnd != -1 ? cEnd : config.length()).toInt();
+  }
+
+  if (fIndex != -1) {
+    int fEnd = config.indexOf('|', fIndex);
+    faderAddr = config.substring(fIndex + 1, fEnd != -1 ? fEnd : config.length()).toInt();
+  }
+
+  if (pIndex != -1) {
+    posAddr = config.substring(pIndex + 1).toInt();
+  }
+
+  //Writes to dmx based on Configs, ignores writing if ~ notation is detected 
+
+  // Write color
+  if (colorAddr >= 0 && colorHex.indexOf('~') < 0) {
+    writeToAddress(colorAddr + 0, colorR);
+    writeToAddress(colorAddr + 1, colorG);
+    writeToAddress(colorAddr + 2, colorB);
+  }
+
+  // Write fader
+  if (faderAddr >= 0) {
+    writeToAddress(faderAddr, faderValue);
+  }
+
+  // Only write positions if both config and values exist
+  if (posAddr >= 0 && pos1Hex.length() > 0 && pos2Hex.length() > 0) {
+    int pos1 = strtol(pos1Hex.c_str(), NULL, 16);
+    int pos2 = strtol(pos2Hex.c_str(), NULL, 16);
+
+    if(pos1Hex.indexOf('~') < 0){
+      writeToAddress(posAddr + 0, pos1);
+    }
+
+
+    if(pos2Hex.indexOf('~') < 0){
+      writeToAddress(posAddr + 1, pos2);
+    }
+    
+    
+  }
+}
+
+
+//function helper for writing
+void writeToAddress(int address, int value) {
+  // Serial.print("Writing "); Serial.print(value);
+  // Serial.print(" to address "); Serial.println(address);
+
+  dmx.write(address, value); 
+  
+}
+
+//Process The Data for each channel
+void processLSData(String dt){
+
+  int channelIndex = isInChannels(currentChannel);
+
+  // Serial.print("Dat: "+ dt); 
+  if(channelIndex >= 0){
+    // Serial.print(" <- "+ String(currentChannel) + " "); 
+    String CONFIG_DATA = DMX_CONFIG[channelIndex];
+    // Serial.println(CONFIG_DATA);
+    processData(dt,CONFIG_DATA,250);
+
+  }
+  dmx.update(true);
+  // Serial.println("->");
+  isRemoteConnected = true;
+
+}
+
+
+//UDP Section
+//Connect/Start UDP if ready and connected to a Network, only if using WiFi and not as Hotspot mode
+void connectUDP() {
+    static bool UDP_CONNECTED = false;
+
+    if (!wifiConnector.connected) {
+        Udp.stop();
+        UDP_CONNECTED = false;
+        return;
+    }
+
+    if (UDP_CONNECTED) {
+        return;
+    }
+
+    if (Udp.begin(localUdpPort)) {
+        UDP_CONNECTED = true;
+        Serial.printf("UDP port: %d\n", localUdpPort);
+    }
+}
+
+
+
+char incomingPacket[UDP_BUF_SIZE];
+void udpProcess() {
+  if (!wifiConnector.connected) return;
+
+  int packetSize = Udp.parsePacket();
+  if (!packetSize) return;
+
+  int len = Udp.read(incomingPacket, UDP_BUF_SIZE);
+  if (len <= 0) return;
+
+  recieved_ip = Udp.remoteIP();
+  recieved_port = Udp.remotePort();
+
+  for (int i = 0; i < len; i++) {
+    processUdpData(incomingPacket[i]);
+    //Serial.write(incomingPacket[i]);
+
+  }
+  //processUdpData('\n'); //Terminate end, used only for testing!
+}
+
+
+char udpReceivedChars[UDP_BUF_SIZE];
+const char udpEndMarker = '\n';
+bool udpNewData = false;
+bool udpIsConfig = false;
+int udpCurrentChannel = 0;
+
+void processUdpData(char incomingByte) {
+    static byte ndx = 0;
+    Serial.write(incomingByte);
+    if (incomingByte != udpEndMarker) {
+        if (ndx == 1) {
+            udpIsConfig = (udpReceivedChars[0] == 'D' && incomingByte == 'X');
+        }
+
+        udpReceivedChars[ndx] = incomingByte;
+        ndx++;
+        if (ndx >= UDP_BUF_SIZE) ndx = UDP_BUF_SIZE - 1;
+
+        // Example channel processing
+        if (!udpIsConfig && incomingByte == channelMarker) {
+            udpReceivedChars[ndx - 1] = '\0'; // remove comma
+            if (isInChannels(currentChannel) >= 0) {
+                String SData = udpReceivedChars;
+               processCommandsUDP(SData);
+            }
+            ndx = 0;
+            currentChannel++;
+        }
+
+    } else {
+        udpReceivedChars[ndx] = '\0';
+        if (udpIsConfig || isInChannels(currentChannel) >= 0) {
+            String SData = udpReceivedChars;
+            processCommandsUDP(SData);
+        }
+
+        udpNewData = true;
+        ndx = 0;
+        currentChannel = 0;
+        udpIsConfig = false;
+    }
+}
+
+
+
+
+
+//Uses the Builtin RGB Neopixel
+unsigned long prevStateMs = 0;
+void ledMonitor(){
+
+  if(millis() - prevStateMs <= 500){ //execute this every 500ms
+      return;
+  }
+  prevStateMs = millis();
+
+  if(wifiConnector.connected && isRemoteConnected == false){
+      strip.setPixelColor(0, strip.Color(20, 250, 0)); // Lime
+  }else if(isRemoteConnected == true){
+    strip.setPixelColor(0, strip.Color(0, 60, 220)); // Light Blue
+  }else{
+      strip.setPixelColor(0, strip.Color(253, 0, 0)); // Red
+  }
+
+  strip.show();
+}
+
+
+
+
+
+	//Split and get the String at Sepcific Location of index
+String getValue(String data, char separator, int index) {
+	  int found = 0;
+	  int strIndex[] = { 0, -1 };
+	  int maxIndex = data.length() - 1;
+
+	  for (int i = 0; i <= maxIndex && found <= index; i++) {
+		if (data.charAt(i) == separator || i == maxIndex) {
+		  found++;
+		  strIndex[0] = strIndex[1] + 1;
+		  strIndex[1] = (i == maxIndex) ? i + 1 : i;
+		}
+	  }
+	  return found > index ? data.substring(strIndex[0], strIndex[1]) : "";
+	}

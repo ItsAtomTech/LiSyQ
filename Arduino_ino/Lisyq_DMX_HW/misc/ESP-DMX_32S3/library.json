@@ -1,0 +1,12 @@
+{
+    "name": "ESPDMX_32S3",
+    "keywords": "DMX, controller, remote",
+    "description": "Control DMX lights with an ESP32",
+    "repository":
+    {
+        "type": "git",
+        "url": "https://github.com/Rickgg/ESP-Dmx"
+    },
+    "frameworks": "arduino",
+    "platforms": "espressif"
+}
