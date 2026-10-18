@@ -18,6 +18,7 @@
 #include "ESPDMX32S3.h"
 
 
+#define DMX_TX_PIN 17  // Serial1 TX pin
 
 #define dmxMaxChannel  512
 #define defaultMax 32
@@ -42,22 +43,18 @@ enum DMXState { IDLE, BREAK_START, BREAK_DONE, SEND_DATA, DATA_DONE };
 void DMXESPSerial::init() {
   chanSize = defaultMax;
 
-  Serial1.begin(DMXSPEED);
+  Serial1.begin(DMXSPEED,DMXFORMAT);
   pinMode(sendPin, OUTPUT);
   dmxStarted = true;
 }
 
 // Set up the DMX-Protocol
 void DMXESPSerial::init(int chanQuant) {
-
-  if (chanQuant > dmxMaxChannel || chanQuant <= 0) {
-    chanQuant = defaultMax;
-  }
-
+  if (chanQuant > dmxMaxChannel || chanQuant <= 0) chanQuant = defaultMax;
   chanSize = chanQuant;
-
-  Serial1.begin(DMXSPEED);
+  Serial1.begin(DMXSPEED, DMXFORMAT);
   pinMode(sendPin, OUTPUT);
+  pinMode(DMX_TX_PIN, OUTPUT);
   dmxStarted = true;
 }
 
@@ -110,23 +107,29 @@ void DMXESPSerial::update() {
 }
 
 
+
 void DMXESPSerial::update(bool noneBlock) {
   switch (dmxState) {
     case IDLE:
       if (!dmxStarted) init();
-      digitalWrite(sendPin, HIGH);
-      Serial1.begin(BREAKSPEED, BREAKFORMAT);
-      Serial1.write(0);  // DMX Break = 0 byte
-      Serial1.flush();
+      digitalWrite(sendPin, HIGH); // DE/RE enable
+
+      // Manual BREAK using GPIO — pull TX LOW for 88us
+      pinMode(DMX_TX_PIN, OUTPUT);
+      digitalWrite(DMX_TX_PIN, LOW);
+      delayMicroseconds(88);       // Break
+      digitalWrite(DMX_TX_PIN, HIGH);
+      delayMicroseconds(12);       // MAB (Mark After Break)
+
+      // Re-attach pin to UART
+      Serial1.begin(DMXSPEED, DMXFORMAT);
       dmxTimestamp = micros();
       dmxState = BREAK_DONE;
       break;
 
     case BREAK_DONE:
       if (micros() - dmxTimestamp >= 110) {
-        Serial1.end();
-        Serial1.begin(DMXSPEED, DMXFORMAT);
-        digitalWrite(sendPin, LOW);
+        Serial1.write(0);          // start byte
         Serial1.write(dmxData, chanSize);
         Serial1.flush();
         dmxTimestamp = micros();
@@ -136,8 +139,8 @@ void DMXESPSerial::update(bool noneBlock) {
 
     case DATA_DONE:
       if (micros() - dmxTimestamp >= 100) {
-        Serial1.end();
-        dmxState = IDLE; // ready for next update
+        digitalWrite(sendPin, LOW);
+        dmxState = IDLE;
       }
       break;
 

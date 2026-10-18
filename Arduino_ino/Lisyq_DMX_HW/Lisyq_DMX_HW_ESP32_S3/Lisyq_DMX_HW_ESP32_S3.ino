@@ -8,10 +8,17 @@
 #include <ArduinoJson.h>
 
 
-#include <ESPDMX32S3.h>//Uses a modified ESP DMX Lib, Lib is located on the 
-// modules folder of this project. Please Install First
 
-DMXESPSerial dmx;
+
+#include "driver/uart.h"
+
+#define DMX_UART_NUM  UART_NUM_1
+#define DMX_TX_PIN    17
+#define DMX_RTS_PIN   4
+#define DMX_BUF_SIZE  512
+
+
+
 
 localStorage storage;
 
@@ -51,20 +58,40 @@ IPAddress recieved_ip;
 uint16_t recieved_port;
 IPAddress IP;
 
+TaskHandle_t dmxTaskHandle = NULL;
+
+void dmxTask(void *pvParameters) {
+  while (true) {
+    dmxUpdate();
+    vTaskDelay(pdMS_TO_TICKS(22)); // ~44fps DMX refresh rate
+  }
+}
+
 
 void setup() {
   Serial.begin(115200);
   coms.setResponder(processCommands);
-  dmx.init(512);  
+  dmxInit(512);
   storage.init(jsonMaxLength);
 
+  xTaskCreatePinnedToCore(
+    dmxTask,        // function
+    "DMX Task",     // name
+    2048,           // stack size
+    NULL,           // parameters
+    2,              // priority
+    &dmxTaskHandle, // handle
+    0               // core 0
+  );
+
+
   delay(500);//wait for initialization
-  dmx.write(1, 255); 
+  dmxWrite(1, 200); 
   // DmxSimple.write(0, 0);
   Serial.println("I: Initilaizing");
   loadCondigData();
 
-  dmx.update(true);
+  dmxUpdate();
   
   strip.show(); // Turn off all LEDs initially
   strip.setBrightness(150); // Set brightness (0-255)
@@ -89,11 +116,7 @@ void loop() {
   recvWithEndMarker();  // Hardware Serial
   showNewData();
 
-  if(millis() - prevUpdateTime >= updateInterval){
-    dmx.update(true);
-    prevUpdateTime = millis(); 
-  }
-  
+   //dmxUpdate();
   //Proccess Udp Packets
   udpProcess();
   ledMonitor();
@@ -318,7 +341,11 @@ void processData(String data, String config, int faderValue = 255) {
     }
     
     
+    
   }
+
+//Implement features a,b,d etc... below
+
 }
 
 
@@ -327,7 +354,7 @@ void writeToAddress(int address, int value) {
   // Serial.print("Writing "); Serial.print(value);
   // Serial.print(" to address "); Serial.println(address);
 
-  dmx.write(address, value); 
+  dmxWrite(address, value); 
   
 }
 
@@ -344,7 +371,7 @@ void processLSData(String dt){
     processData(dt,CONFIG_DATA,250);
 
   }
-  dmx.update(true);
+  //dmxUpdate();
   // Serial.println("->");
   isRemoteConnected = true;
 
@@ -463,8 +490,43 @@ void ledMonitor(){
   strip.show();
 }
 
+//=========================== ESP S3 DMX Implementation ====== 
+
+uint8_t dmxData[513] = {0};
+int dmxChanSize = 32;
+
+void dmxInit(int chanQuant) {
+  dmxChanSize = chanQuant;
+  uart_config_t uart_config = {
+    .baud_rate  = 250000,
+    .data_bits  = UART_DATA_8_BITS,
+    .parity     = UART_PARITY_DISABLE,
+    .stop_bits  = UART_STOP_BITS_2,
+    .flow_ctrl  = UART_HW_FLOWCTRL_DISABLE,
+  };
+  uart_param_config(DMX_UART_NUM, &uart_config);
+  uart_set_pin(DMX_UART_NUM, DMX_TX_PIN, UART_PIN_NO_CHANGE, DMX_RTS_PIN, UART_PIN_NO_CHANGE);
+  uart_driver_install(DMX_UART_NUM, DMX_BUF_SIZE * 2, 0, 0, NULL, 0);
+}
+
+void dmxWrite(int channel, uint8_t value) {
+  if (channel < 1 || channel > 512) return;
+  dmxData[channel] = value;
+}
+
+void dmxUpdate() {
+  // Send BREAK
+  uart_set_line_inverse(DMX_UART_NUM, UART_SIGNAL_TXD_INV);
+  delayMicroseconds(176); // Break ~176us
+  uart_set_line_inverse(DMX_UART_NUM, UART_SIGNAL_INV_DISABLE);
+  delayMicroseconds(12);  // MAB ~12us
+
+  // Send start code + data
+  uart_write_bytes(DMX_UART_NUM, (const char*)dmxData, dmxChanSize + 1);
+}
 
 
+//======================= ESP S3 DMX Implementation End ======
 
 
 	//Split and get the String at Sepcific Location of index
