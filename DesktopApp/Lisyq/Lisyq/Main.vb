@@ -379,6 +379,10 @@ Public Class Main
             Return True
         End Function
 
+        Public Function OpenSelectDirectory(startAt As String) As String
+            Return Main.OpenSelectDirectory_Native(startAt)
+        End Function
+
         'Triggers New File Save intead of writing to an existing file
         Public Function AsNewTrigger()
 
@@ -590,6 +594,26 @@ Public Class Main
         End If
 
     End Sub
+
+
+    Public Function OpenSelectDirectory_Native(startAt As String) As String
+        Using folderPicker As New FolderBrowserDialog()
+            folderPicker.Description = "Select a directory"
+            folderPicker.ShowNewFolderButton = True
+
+            If Not String.IsNullOrWhiteSpace(startAt) AndAlso System.IO.Directory.Exists(startAt) Then
+                folderPicker.SelectedPath = startAt
+            End If
+
+            If folderPicker.ShowDialog() = Windows.Forms.DialogResult.OK Then
+                NotificationManager.Show(Me, "Directory: " & folderPicker.SelectedPath & " has been selected.", Color.Green, 2000)
+                Return folderPicker.SelectedPath
+            End If
+        End Using
+
+        Return String.Empty
+    End Function
+
     Public Sub Open_File()
         OpenFileDialog1.Filter = "LSYS Files (*.lsys*)|*.lsys"
         If OpenFileDialog1.ShowDialog <> Windows.Forms.DialogResult.Cancel Then

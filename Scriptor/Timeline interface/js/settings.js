@@ -7,6 +7,7 @@ const settings = {
 	default_values:{
 		includeData: false,
 		followMode: 'normal', //values: normal, page
+		auto_backup_dir : '', //values: normal, page
 	},
 
 
@@ -82,7 +83,11 @@ function getColorCurrent(){
 let Settingsdia =  {
 
 	
-	includeData: function(){ return "<div class='dai_title'><b>Project Options and Settings</b></div>"+
+	includeData: function(){
+
+		let savedABK = settings.get('auto_backup_dir').trim();
+
+		return "<div class='dai_title'><b>Project Options and Settings</b></div>"+
 		"<hr class='dashed'>"+
 		"<div class='option_row'>"+
 			
@@ -104,7 +109,7 @@ let Settingsdia =  {
 			+"/> <span class='icon_small'> &#128449; </span> Pick </button> "+
 			
 			
-			"<input type='text' class='primary_background primary_color normal' value='"+returnString(settings.get('auto_backup_dir'))+"' id='auto_bc_input' placeholder='dir/...'/> </div>"
+			"<input type='text' class='primary_background primary_color normal' value='"+savedABK+"' id='auto_bc_input' onchange='saveSettingsAutoSD()' placeholder='dir/...'/> </div>"
 			
 			
 			+"</div>"+
