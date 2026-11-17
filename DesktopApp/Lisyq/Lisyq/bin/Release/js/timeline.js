@@ -2495,8 +2495,10 @@ async function load_from_file(df){
 		//-
 	}
 	
-	
 	selected_content = null; //remove selection for the newly loaded timeline
+	await sleep(300);
+	saveBackUpLySys();
+	
 	return;
 	
 }
@@ -2658,6 +2660,41 @@ function command_save(){
 	scanOptimized();
 	
 }
+
+
+async function saveBackUpLySys(){
+	var rec_project = {
+		"templates":encode(JSON.stringify(templates)),
+		"timeline":encode(JSON.stringify(comulate_timeline())),	
+		"options": encode(JSON.stringify(fileOptions)),
+		"markers": encode(JSON.stringify(markers)),
+	}
+	
+	let path_name = await window.chrome.webview.hostObjects.NativeObject.getCurrentPath();
+	let filename = path_name.split('\\').pop();
+	
+	let dateData = new Date().toISOString().slice(0, 10);
+	
+	let path = undefined;
+	if(settings.get("auto_backup_dir")){
+		path = settings.get("auto_backup_dir") + "\\" + dateData+"_"+filename+".bak";
+	}
+	
+	console.log(path);
+	try{	
+		let to_transfer = JSON.stringify(rec_project);	
+		let saved = await window.chrome.webview.hostObjects.NativeObject.SaveToFile(path,to_transfer);	
+		
+		console.log(saved ? "Backup file saved": "Backup not saved");
+		
+		
+	}catch(e){
+		//-
+	}
+	
+	
+}
+
 
 
 //Preview media from plugin

@@ -383,6 +383,17 @@ Public Class Main
             Return Main.OpenSelectDirectory_Native(startAt)
         End Function
 
+        Public Function SaveToFile(path As String, data As String) As Boolean
+            Return Main.SaveToFile_Native(path, data)
+        End Function
+
+        Public Function getCurrentPath() As String
+            Return Main.SavePath
+        End Function
+
+
+
+
         'Triggers New File Save intead of writing to an existing file
         Public Function AsNewTrigger()
 
@@ -595,6 +606,7 @@ Public Class Main
 
     End Sub
 
+    'Directory Picker and File Writer
 
     Public Function OpenSelectDirectory_Native(startAt As String) As String
         Using folderPicker As New FolderBrowserDialog()
@@ -613,6 +625,29 @@ Public Class Main
 
         Return String.Empty
     End Function
+
+
+    Public Function SaveToFile_Native(path As String, data As String) As Boolean
+        Try
+            Dim dir As String = System.IO.Path.GetDirectoryName(path)
+
+            If Not String.IsNullOrEmpty(dir) AndAlso Not System.IO.Directory.Exists(dir) Then
+                System.IO.Directory.CreateDirectory(dir)
+            End If
+
+            System.IO.File.WriteAllText(path, data, System.Text.Encoding.UTF8)
+            Return True
+        Catch ex As Exception
+            Return False
+
+        End Try
+
+
+    End Function
+
+
+    'Directory Picker and File Writer End
+
 
     Public Sub Open_File()
         OpenFileDialog1.Filter = "LSYS Files (*.lsys*)|*.lsys"
