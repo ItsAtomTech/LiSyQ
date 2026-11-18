@@ -2692,7 +2692,12 @@ async function saveBackUpLySys(){
 		//-
 	}
 	
-	
+	try{
+		let purgeold = await window.chrome.webview.hostObjects.NativeObject.removeOldBakFiles(settings.get("auto_backup_dir"));
+	}catch(e){
+		
+		
+	}
 }
 
 

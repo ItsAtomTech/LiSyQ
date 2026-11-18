@@ -390,6 +390,9 @@ Public Class Main
         Public Function getCurrentPath() As String
             Return Main.SavePath
         End Function
+        Public Function removeOldBakFiles(path As String)
+            Main.removeOldBakFiles_Native(path)
+        End Function
 
 
 
@@ -645,6 +648,36 @@ Public Class Main
 
     End Function
 
+
+    Dim LastRemoveOldBackup As Boolean = False
+    Public Sub removeOldBakFiles_Native(folder As String)
+        Dim allowedSuffixes() As String = {".lsys.bak", ".ntlis.bak"}
+        Dim cutoff As DateTime = DateTime.Now.AddMonths(-1)
+
+        If String.IsNullOrWhiteSpace(folder) OrElse Not System.IO.Directory.Exists(folder) Then Return
+
+        If LastRemoveOldBackup Then
+            Return
+        End If
+
+
+        For Each filePath As String In System.IO.Directory.GetFiles(folder, "*.bak", System.IO.SearchOption.TopDirectoryOnly)
+            Dim fileName As String = System.IO.Path.GetFileName(filePath)
+
+            Dim isAllowed As Boolean = Array.Exists(allowedSuffixes,
+            Function(s) fileName.EndsWith(s, StringComparison.OrdinalIgnoreCase))
+
+            If isAllowed AndAlso System.IO.File.GetLastWriteTime(filePath) < cutoff Then
+                Try
+                    System.IO.File.Delete(filePath)
+                Catch ex As Exception
+                End Try
+            End If
+        Next
+
+        LastRemoveOldBackup = True
+
+    End Sub
 
     'Directory Picker and File Writer End
 
