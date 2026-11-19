@@ -85,7 +85,7 @@ let Settingsdia =  {
 	
 	includeData: function(){
 
-		let savedABK = settings.get('auto_backup_dir').trim();
+		let savedABK = settings.get('auto_backup_dir') ? settings.get('auto_backup_dir').trim() : "";
 
 		return "<div class='dai_title'><b>Project Options and Settings</b></div>"+
 		"<hr class='dashed'>"+
@@ -113,7 +113,7 @@ let Settingsdia =  {
 			
 			
 			+"</div>"+
-			"<div class='option_info small'>Once Configured, Projects being worked on would be automatically coppied into a backup file. Backup is made when loading a project file and at the set interval of every 45s (when not on playing mode) if there were changes.</div>"+
+			"<div class='option_info small'>Once Configured, Projects being worked on would be automatically coppied into a backup file. Backup is made when loading a project file and at the set interval of every 5 minutes (when not on playing mode) if there were changes.</div>"+
 			
 			
 			

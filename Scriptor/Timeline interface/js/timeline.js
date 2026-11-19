@@ -2701,6 +2701,32 @@ async function saveBackUpLySys(){
 }
 
 
+let AUTOSAVE_INSTANCE = 0;
+function AutoSaveLsysBackup(caller=undefined){
+	if(AUTOSAVE_INSTANCE >= 1 && caller != "timer"){
+		console.warn("INSTANCE_CALL is limited to 1");
+		return;
+	}
+	
+	if(!playing && !optimizedData && undo_stack.length > 0){ 
+		saveBackUpLySys();
+		console.log("Auto Backup saved.");
+	};
+	
+	AUTOSAVE_INSTANCE = 1;
+	setTimeout(AutoSaveLsysBackup, 300000, "timer");
+}
+
+function resetAUTOSAVEInstance(){
+	AUTOSAVE_INSTANCE = 0;
+}
+
+//Start auto save if settings is set
+if(settings.get("auto_backup_dir")){
+	resetAUTOSAVEInstance();
+	setTimeout(AutoSaveLsysBackup, 2000);
+}
+
 
 //Preview media from plugin
 

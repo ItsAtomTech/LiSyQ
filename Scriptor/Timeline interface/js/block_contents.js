@@ -647,5 +647,7 @@ async function backupDirectoryPicker(){
 function saveSettingsAutoSD(){
 	settings.set("auto_backup_dir", _("auto_bc_input").value.trim());
 	
-	
+	if(settings.get("auto_backup_dir")){
+		AutoSaveLsysBackup();
+	}
 }
