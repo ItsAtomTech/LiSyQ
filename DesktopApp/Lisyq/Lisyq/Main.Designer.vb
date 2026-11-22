@@ -37,6 +37,8 @@ Partial Class Main
         Me.ToolStripMenuItem14 = New System.Windows.Forms.ToolStripMenuItem()
         Me.CancelToolStripMenuItem1 = New System.Windows.Forms.ToolStripMenuItem()
         Me.sendToTemplates = New System.Windows.Forms.ToolStripMenuItem()
+        Me.GroupSelectionToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.UngroupSelectionToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.track_options = New System.Windows.Forms.ContextMenuStrip(Me.components)
         Me.ToolStripMenuItem13 = New System.Windows.Forms.ToolStripMenuItem()
         Me.ToolStripMenuItem10 = New System.Windows.Forms.ToolStripMenuItem()
@@ -89,8 +91,6 @@ Partial Class Main
         Me.ToolStripMenuItem19 = New System.Windows.Forms.ToolStripMenuItem()
         Me.SaveFileDialog2 = New System.Windows.Forms.SaveFileDialog()
         Me.directoryPicker = New System.Windows.Forms.OpenFileDialog()
-        Me.GroupSelectionToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me.UngroupSelectionToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         CType(Me.WebView21, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.template_menu.SuspendLayout()
         Me.content_menu.SuspendLayout()
@@ -161,42 +161,42 @@ Partial Class Main
         Me.content_menu.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.ToolStripMenuItem3, Me.ToolStripMenuItem4, Me.ToolStripMenuItem5, Me.ToolStripMenuItem14, Me.CancelToolStripMenuItem1, Me.sendToTemplates, Me.GroupSelectionToolStripMenuItem, Me.UngroupSelectionToolStripMenuItem})
         Me.content_menu.Name = "template_menu"
         Me.content_menu.RenderMode = System.Windows.Forms.ToolStripRenderMode.System
-        Me.content_menu.Size = New System.Drawing.Size(181, 202)
+        Me.content_menu.Size = New System.Drawing.Size(173, 180)
         Me.content_menu.Text = "Content Options"
         '
         'ToolStripMenuItem3
         '
         Me.ToolStripMenuItem3.ForeColor = System.Drawing.SystemColors.ControlLight
         Me.ToolStripMenuItem3.Name = "ToolStripMenuItem3"
-        Me.ToolStripMenuItem3.Size = New System.Drawing.Size(180, 22)
+        Me.ToolStripMenuItem3.Size = New System.Drawing.Size(172, 22)
         Me.ToolStripMenuItem3.Text = "Edit"
         '
         'ToolStripMenuItem4
         '
         Me.ToolStripMenuItem4.ForeColor = System.Drawing.SystemColors.ControlLight
         Me.ToolStripMenuItem4.Name = "ToolStripMenuItem4"
-        Me.ToolStripMenuItem4.Size = New System.Drawing.Size(180, 22)
+        Me.ToolStripMenuItem4.Size = New System.Drawing.Size(172, 22)
         Me.ToolStripMenuItem4.Text = "Remove"
         '
         'ToolStripMenuItem5
         '
         Me.ToolStripMenuItem5.ForeColor = System.Drawing.SystemColors.ControlLight
         Me.ToolStripMenuItem5.Name = "ToolStripMenuItem5"
-        Me.ToolStripMenuItem5.Size = New System.Drawing.Size(180, 22)
+        Me.ToolStripMenuItem5.Size = New System.Drawing.Size(172, 22)
         Me.ToolStripMenuItem5.Text = "Copy"
         '
         'ToolStripMenuItem14
         '
         Me.ToolStripMenuItem14.ForeColor = System.Drawing.SystemColors.ControlLight
         Me.ToolStripMenuItem14.Name = "ToolStripMenuItem14"
-        Me.ToolStripMenuItem14.Size = New System.Drawing.Size(180, 22)
+        Me.ToolStripMenuItem14.Size = New System.Drawing.Size(172, 22)
         Me.ToolStripMenuItem14.Text = "Track Options"
         '
         'CancelToolStripMenuItem1
         '
         Me.CancelToolStripMenuItem1.ForeColor = System.Drawing.SystemColors.ControlLight
         Me.CancelToolStripMenuItem1.Name = "CancelToolStripMenuItem1"
-        Me.CancelToolStripMenuItem1.Size = New System.Drawing.Size(180, 22)
+        Me.CancelToolStripMenuItem1.Size = New System.Drawing.Size(172, 22)
         Me.CancelToolStripMenuItem1.Text = "Cancel"
         '
         'sendToTemplates
@@ -204,8 +204,22 @@ Partial Class Main
         Me.sendToTemplates.BackColor = System.Drawing.Color.Transparent
         Me.sendToTemplates.ForeColor = System.Drawing.SystemColors.ControlLight
         Me.sendToTemplates.Name = "sendToTemplates"
-        Me.sendToTemplates.Size = New System.Drawing.Size(180, 22)
+        Me.sendToTemplates.Size = New System.Drawing.Size(172, 22)
         Me.sendToTemplates.Text = "Add to Templates"
+        '
+        'GroupSelectionToolStripMenuItem
+        '
+        Me.GroupSelectionToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlLight
+        Me.GroupSelectionToolStripMenuItem.Name = "GroupSelectionToolStripMenuItem"
+        Me.GroupSelectionToolStripMenuItem.Size = New System.Drawing.Size(172, 22)
+        Me.GroupSelectionToolStripMenuItem.Text = "Group Selection"
+        '
+        'UngroupSelectionToolStripMenuItem
+        '
+        Me.UngroupSelectionToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlLight
+        Me.UngroupSelectionToolStripMenuItem.Name = "UngroupSelectionToolStripMenuItem"
+        Me.UngroupSelectionToolStripMenuItem.Size = New System.Drawing.Size(172, 22)
+        Me.UngroupSelectionToolStripMenuItem.Text = "Ungroup Selection"
         '
         'track_options
         '
@@ -632,20 +646,6 @@ Partial Class Main
         '
         Me.directoryPicker.Title = "Directory Picker"
         '
-        'GroupSelectionToolStripMenuItem
-        '
-        Me.GroupSelectionToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlLight
-        Me.GroupSelectionToolStripMenuItem.Name = "GroupSelectionToolStripMenuItem"
-        Me.GroupSelectionToolStripMenuItem.Size = New System.Drawing.Size(180, 22)
-        Me.GroupSelectionToolStripMenuItem.Text = "Group Selection"
-        '
-        'UngroupSelectionToolStripMenuItem
-        '
-        Me.UngroupSelectionToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ControlLight
-        Me.UngroupSelectionToolStripMenuItem.Name = "UngroupSelectionToolStripMenuItem"
-        Me.UngroupSelectionToolStripMenuItem.Size = New System.Drawing.Size(180, 22)
-        Me.UngroupSelectionToolStripMenuItem.Text = "Ungroup Selection"
-        '
         'Main
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -656,7 +656,7 @@ Partial Class Main
         Me.Icon = CType(resources.GetObject("$this.Icon"), System.Drawing.Icon)
         Me.MinimumSize = New System.Drawing.Size(300, 488)
         Me.Name = "Main"
-        Me.Text = "LiSyQ Studio v1.2"
+        Me.Text = "LiSyQ Studio v1.3"
         CType(Me.WebView21, System.ComponentModel.ISupportInitialize).EndInit()
         Me.template_menu.ResumeLayout(False)
         Me.content_menu.ResumeLayout(False)
